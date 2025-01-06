@@ -16,8 +16,6 @@
     - [Funktion 3](#funktion-3)
 7. [Einstellungen](#einstellungen)
 8. [Fehlerbehebung](#fehlerbehebung)
-9. [FAQ](#faq)
-10. [Support](#support)
 
 ### Einleitung
 - **Zielgruppe**: Wer sollte dieses Handbuch lesen?
