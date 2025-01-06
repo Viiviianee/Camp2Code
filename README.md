@@ -20,7 +20,6 @@
 ### Einleitung
 - **Zielgruppe**: Wer sollte dieses Handbuch lesen?
 - **Zweck**: Eine kurze Beschreibung, was die Applikation macht.
-- **Kontaktinformation**: Informationen zur Kontaktaufnahme mit dem Support-Team.
 
 ### Systemanforderungen
 - **Betriebssystem**: Unterstützte Betriebssysteme.
