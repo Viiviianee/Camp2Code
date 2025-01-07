@@ -22,5 +22,5 @@ class BaseCar:
         self.speed = None
         self.direction = None
 
-foo = BaseCar()
-print(foo.steering_angle)
+basecar = BaseCar()
+print(basecar.steering_angle)
