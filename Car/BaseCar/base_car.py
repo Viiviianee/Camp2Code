@@ -22,5 +22,5 @@ class BaseCar:
         self.speed = None
         self.direction = None
 
-
-print("Success")
+foo = BaseCar()
+print(foo.steering_angle)
