@@ -52,10 +52,10 @@ class BaseCar:
     def drive(self):
         #self.backwheels.speed(self._speed)
         self.frontwheels.turn(self._steering_angle)
-        self.backwheels.speed = self.speed  # Methods backwards and forwards are accessing on backwheels.speed which is on default 0
+        self.backwheels.speed = abs(self.speed)  # Methods backwards and forwards are accessing on backwheels.speed which is on default 0
         if self._speed < 0:
             self.backwheels.backward()
-            self.direction= -1
+            self.direction = -1
         else:
             self.backwheels.forward()
             self.direction= 1 
