@@ -18,8 +18,8 @@ from basisklassen import PWM
 
 class BaseCar:
     def __init__(self):
-        self._steering_angle = None
-        self._speed = None
+        self._steering_angle = 90
+        self._speed = 0
         self.direction = 0
         self.backwheels = BackWheels()
         self.frontwheels = FrontWheels()
@@ -50,8 +50,9 @@ class BaseCar:
             self._speed = 100
 
     def drive(self):
-        self.backwheels.speed(self._speed)
+        #self.backwheels.speed(self._speed)
         self.frontwheels.turn(self._steering_angle)
+        self.backwheels.speed = self.speed  # Methods backwards and forwards are accessing on backwheels.speed which is on default 0
         if self._speed < 0:
             self.backwheels.backward()
             self.direction= -1
@@ -60,11 +61,20 @@ class BaseCar:
             self.direction= 1 
     
     def stop(self):
-        self._speed= 0
+        self._speed = 0
         self.backwheels.stop()
-        self.direction= 0
+        self.direction = 0
 
-basecar = BaseCar()
-print(basecar.steering_angle)
-basecar.steering_angle=120
-print(basecar.steering_angle)
+def main():
+    basecar = BaseCar()
+    basecar.speed = 30
+    basecar.steering_angle = 135
+    basecar.drive()
+    time.sleep(2)
+    basecar.stop()
+
+
+
+
+if __name__ == "__main__":
+    main()
