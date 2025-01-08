@@ -8,6 +8,8 @@ import json
 import pdb
 import os
 from pathlib import Path
+from datetime import datetime
+from datetime import timezone
 
 
 from basisklassen import Ultrasonic
@@ -81,64 +83,88 @@ class BaseCar:
         self.speed = 0
         self.backwheels.stop()
 
-    # def mode_driving_1(self):
-    #     self.speed = 30
-    #     self.steering_angle = 90
-    #     time.sleep(0.5)
+    def mode_driving_1(self, speed, time_fw = 3, time_bw = 3, time_sp = 1):
+        """Car drives "fahrmodus1": 3sek forwards, 1 sek stop, 3 sek backwards.
+        Args:
+            speed (int): speed of the motors. Min is -100. Max is 100.
+            time_fw (int): duration car drives forward. Default to 3.
+            time_bw (int): duration car drives backward. Default to 3.
+            time_sp (int): duration car stopps. Default to 1.
+        """
+        print("----"*30)
+        print(datetime.now(tz=timezone.utc).strftime("%H:%M:%S"))
+        self.drive(speed, 90)
+        time.sleep(time_fw)
+        self.stop()
+        time.sleep(time_sp)
 
-    #     self.drive()
-    #     time.sleep(3)
+        print("----"*30)
+        print(datetime.now(tz=timezone.utc).strftime("%H:%M:%S"))
+        speed = speed * (-1)
+        self.drive(speed)
+        time.sleep(time_bw)
+        self.stop()
 
-    #     self.stop()
-    #     time.sleep(0.5)
+    def mode_driving_2(self, speed, time_fw=1, time_cw=8, time_ccw=8, time_bw=1):
+        """Car drives "fahrmodus2": 1sek forwards no steering angle, 8 sek with max steering angle clockwise, 8 sek backwards with max steering angle, 1 sek backwards.
+                                    1sek forwards no steering angle, 8 sek with max steering angle counterclockwise, 8 sek backwards with max steering angle, 1 sek backwards.
+            Args:
+                speed (int): speed of the motors. Min is -100. Max is 100.
+                time_fw (int): duration car drives forward. Default to 1.
+                time_bw (int): duration car drives backward. Default to 1.
+                time_cw (int): duration car cw. Default to 8.
+                time_ccw (int): duration car ccw. Default to 8.
+        """
 
-    #     self.speed = -30
-    #     self.drive()
-    #     time.sleep(3)
+        print("----"*30)
+        print(datetime.now(tz=timezone.utc).strftime("%H:%M:%S"))
+        self.drive(speed, 90)
+        time.sleep(time_fw)
 
-    #     self.stop()
+        print("----"*30)
+        print(datetime.now(tz=timezone.utc).strftime("%H:%M:%S"))
+        self.drive(steering_angle = 135)
+        time.sleep(time_cw)
+        self.stop()
 
-    # def mode_driving_2(self):
-    #     self.speed = 30
-    #     self.steering_angle = 90
-    #     time.sleep(0.5)
+        print("----"*30)
+        print(datetime.now(tz=timezone.utc).strftime("%H:%M:%S"))
+        speed = speed * (-1)
+        self.drive(speed, 135)
+        time.sleep(time_cw)
+        self.stop()
 
-    #     self.drive()
-    #     time.sleep(1)
+        print("----"*30)
+        print(datetime.now(tz=timezone.utc).strftime("%H:%M:%S"))
+        self.drive(speed, 90)
+        time.sleep(time_bw)
+        self.stop()
 
-    #     self.stop()
-    #     self.speed = 30
-    #     self.steering_angle = 135
-    #     time.sleep(0.5)
+        print("----"*30)
+        print(datetime.now(tz=timezone.utc).strftime("%H:%M:%S"))
+        speed = speed * (-1)
+        self.drive(speed, 90)
+        time.sleep(time_fw)
+        self.stop()
 
-    #     self.drive()
-    #     time.sleep(8)
+        print("----"*30)
+        print(datetime.now(tz=timezone.utc).strftime("%H:%M:%S"))
+        self.drive(speed, steering_angle = 45)
+        time.sleep(time_ccw)
+        self.stop()
 
-    #     self.stop()
-    #     time.sleep(0.5)
+        print("----"*30)
+        print(datetime.now(tz=timezone.utc).strftime("%H:%M:%S"))
+        speed = speed * (-1)
+        self.drive(speed, steering_angle = 45)
+        time.sleep(time_ccw)
+        self.stop()
 
-    #     self.speed = -30
-    #     self.drive()
-    #     time.sleep(8)
-
-    #     self.stop()
-    #     time.sleep(0.5)
-
-    #     self.speed = 30
-    #     self.steering_angle = 45
-    #     self.drive()
-    #     time.sleep(8)
-
-    #     self.stop()
-    #     time.sleep(0.5)
-
-    #     self.speed = -30
-    #     self.drive()
-    #     time.sleep(8)
-
-    #     self.steering_angle = 90
-    #     self.stop()
-
+        print("----"*30)
+        print(datetime.now(tz=timezone.utc).strftime("%H:%M:%S"))
+        self.drive(speed, 90)
+        time.sleep(time_bw)
+        self.stop()
 
 
 @click.command()
@@ -166,10 +192,10 @@ def main(modus):
             quit()
     basecar = BaseCar()
     if modus == 1:
-        basecar.mode_driving_1()
+        basecar.mode_driving_1(45)
 
     if modus == 2:
-        basecar.mode_driving_2()
+        basecar.mode_driving_2(45)
 
     # foo = Infrared()
     # while True:
