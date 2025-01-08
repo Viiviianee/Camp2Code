@@ -56,8 +56,12 @@ class BaseCar:
         if value > 100:
             self._speed = 100
 
-    def drive(self):
+    def drive(self, speed = None, steering_angle = None):
         #self.backwheels.speed(self._speed)
+        if speed != None:
+            self._speed = speed
+        if steering_angle != None:
+            self._steering_angle = steering_angle
         self.frontwheels.turn(self._steering_angle)
         self.backwheels.speed = abs(self.speed)  # Methods backwards and forwards are accessing on backwheels.speed which is on default 0
         if self._speed < 0:
@@ -68,7 +72,7 @@ class BaseCar:
             self.direction= 1
 
     def stop(self):
-        self._speed = 0
+        #self._speed = 0
         self.backwheels.stop()
         self.direction = 0
 
