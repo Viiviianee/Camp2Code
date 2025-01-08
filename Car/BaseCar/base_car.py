@@ -17,7 +17,19 @@ from basisklassen import Motor
 from basisklassen import PWM
 
 class BaseCar:
+    """
+    A class to represent a basecar.
+ 
+    Attributes:
+    steering angle (int) : Steering angle of the car.
+    speed (int) : Speed of the car.
+    direction (int) : 0 for stop, 1 for forwards, -1 for backwards. 
+    
+    """
     def __init__(self):
+        """
+    Initialize a car object.
+    """
         self._steering_angle = 90
         self._speed = 0
         self.direction = 0
