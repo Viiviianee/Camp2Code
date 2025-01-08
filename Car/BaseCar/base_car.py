@@ -34,6 +34,10 @@ class BaseCar:
                 forward_B = data["forward_B"]
         self.frontwheels = FrontWheels(turning_offset=turning_offset)
         self.backwheels = BackWheels(forward_A = forward_A, forward_B = forward_B )
+        self.driving_modus = {
+        1: '3s Geradeausfahrt, 1s Pause, 3s Rückwärtsfahrt',
+        2: '1s Geradeausfahrt, 8s im Uhrzeigersinn + zurück, 8s gegen Uhrzeigersinn + zurück'
+        }
 
     @property
     def steering_angle(self):
@@ -169,11 +173,10 @@ class BaseCar:
 
 @click.command()
 @click.option('--modus', '--m', type=int, default=None, help="Auswahl Fahrtmodus")
-def main(modus):
-    modi = {
-        1: '3s Geradeausfahrt, 1s Pause, 3s Rückwärtsfahrt',
-        2: '1s Geradeausfahrt, 8s im Uhrzeigersinn + zurück, 8s gegen Uhrzeigersinn + zurück'
-        }
+@click.option('--speed', '--s', type=int, default=None, help="Auswahl Geschwindigkeit")
+def main(modus, speed):
+    basecar = BaseCar()
+    modi = basecar.driving_modus
 
     if modus == None:
         print('----' * 20)
@@ -184,26 +187,29 @@ def main(modus):
 
     while modus == None:
         try:
-            modus_list = list(modi.keys())
-            modus = int(input('Wähle  (Andere Taste für Abbruch): ? '))
+            modus = int(input('Wähle Fahrmodus: '))
             break
         except:
-            print('Getroffene Auswahl nicht möglich.')
+            print('Getroffene Auswahl nicht möglich')
             quit()
-    basecar = BaseCar()
+
+    if modus not in [1, 2]:
+        print("Ungueltiger Fahrmodus")
+        quit()
+
+    while speed == None:
+        try:
+            speed = int(input('Geschwindigkeit  (1-100): ? '))
+            break
+        except:
+            print('Ungueltige Geschwindigkeit')
+            quit()
+
     if modus == 1:
-        basecar.mode_driving_1(45)
+        basecar.mode_driving_1(speed)
 
-    if modus == 2:
-        basecar.mode_driving_2(45)
-
-    # foo = Infrared()
-    # while True:
-    #     print(foo.read_analog())
-    #     time.sleep(2)
-
-
-
+    elif modus == 2:
+        basecar.mode_driving_2(speed)
 
 if __name__ == "__main__":
     main()
