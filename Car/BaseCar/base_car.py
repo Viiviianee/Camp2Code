@@ -84,7 +84,11 @@ class BaseCar:
             self.direction= 1
 
     def stop(self):
-        #self._speed = 0
+        """
+        Stop the car.
+
+        This method stops the car by calling the `stop` method on the `backwheels` object and sets the direction to 0.
+        """
         self.backwheels.stop()
         self.direction = 0
 
@@ -95,8 +99,6 @@ def main():
     basecar.drive()
     time.sleep(2)
     basecar.stop()
-
-
 
 
 if __name__ == "__main__":
