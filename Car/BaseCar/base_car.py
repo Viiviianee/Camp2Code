@@ -77,7 +77,14 @@ class BaseCar:
             self._speed = 100
 
     def drive(self, speed = None, steering_angle = None):
-        #self.backwheels.speed(self._speed)
+        """This method enables the car to drive at a certain speed and angle depending on the value of the arguments.
+            Depending on the positive or negative speed, the direction of travel is set using the 'backwheels.forward()' 
+            or 'backwheels.backward()' method. A negative speed will set 'directions' to -1. A posotive speed will set 'directions' to 1.
+
+        Args:
+            speed (int): speed of the motors. Min is -100. Max is 100. Default to None.
+            steering_angle (int): angle of the fron wheels. Min 45 for left turn. Max 135 for right turn. Default to None.        
+        """
         if speed != None:
             self._speed = speed
         if steering_angle != None:
