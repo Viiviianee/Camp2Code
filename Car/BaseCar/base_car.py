@@ -57,12 +57,12 @@ class BaseCar:
         if value > 100:
             self._speed = 100
 
-    def drive(self, new_val_steering_angle = None, new_val_speed = None ):
-        if new_val_steering_angle:
-            self.steering_angle = new_val_steering_angle
+    def drive(self, speed = None, steering_angle = None):
+        if steering_angle:
+            self.steering_angle = steering_angle
 
-        if new_val_speed:
-            self.speed = new_val_speed
+        if speed:
+            self.speed = speed
 
         self.frontwheels.turn(self._steering_angle)
         print(f"Current value of steering_angle: {self.steering_angle}")
@@ -81,63 +81,63 @@ class BaseCar:
         self.speed = 0
         self.backwheels.stop()
 
-    def mode_driving_1(self):
-        self.speed = 30
-        self.steering_angle = 90
-        time.sleep(0.5)
+    # def mode_driving_1(self):
+    #     self.speed = 30
+    #     self.steering_angle = 90
+    #     time.sleep(0.5)
 
-        self.drive()
-        time.sleep(3)
+    #     self.drive()
+    #     time.sleep(3)
 
-        self.stop()
-        time.sleep(0.5)
+    #     self.stop()
+    #     time.sleep(0.5)
 
-        self.speed = -30
-        self.drive()
-        time.sleep(3)
+    #     self.speed = -30
+    #     self.drive()
+    #     time.sleep(3)
 
-        self.stop()
+    #     self.stop()
 
-    def mode_driving_2(self):
-        self.speed = 30
-        self.steering_angle = 90
-        time.sleep(0.5)
+    # def mode_driving_2(self):
+    #     self.speed = 30
+    #     self.steering_angle = 90
+    #     time.sleep(0.5)
 
-        self.drive()
-        time.sleep(1)
+    #     self.drive()
+    #     time.sleep(1)
 
-        self.stop()
-        self.speed = 30
-        self.steering_angle = 135
-        time.sleep(0.5)
+    #     self.stop()
+    #     self.speed = 30
+    #     self.steering_angle = 135
+    #     time.sleep(0.5)
 
-        self.drive()
-        time.sleep(8)
+    #     self.drive()
+    #     time.sleep(8)
 
-        self.stop()
-        time.sleep(0.5)
+    #     self.stop()
+    #     time.sleep(0.5)
 
-        self.speed = -30
-        self.drive()
-        time.sleep(8)
+    #     self.speed = -30
+    #     self.drive()
+    #     time.sleep(8)
 
-        self.stop()
-        time.sleep(0.5)
+    #     self.stop()
+    #     time.sleep(0.5)
 
-        self.speed = 30
-        self.steering_angle = 45
-        self.drive()
-        time.sleep(8)
+    #     self.speed = 30
+    #     self.steering_angle = 45
+    #     self.drive()
+    #     time.sleep(8)
 
-        self.stop()
-        time.sleep(0.5)
+    #     self.stop()
+    #     time.sleep(0.5)
 
-        self.speed = -30
-        self.drive()
-        time.sleep(8)
+    #     self.speed = -30
+    #     self.drive()
+    #     time.sleep(8)
 
-        self.steering_angle = 90
-        self.stop()
+    #     self.steering_angle = 90
+    #     self.stop()
 
 
 
