@@ -19,12 +19,12 @@ from basisklassen import PWM
 class BaseCar:
     """
     A class to represent a basecar.
- 
+
     Attributes:
     steering angle (int) : Steering angle of the car.
     speed (int) : Speed of the car.
-    direction (int) : 0 for stop, 1 for forwards, -1 for backwards. 
-    
+    direction (int) : 0 for stop, 1 for forwards, -1 for backwards.
+
     """
     def __init__(self):
         """
@@ -58,10 +58,18 @@ class BaseCar:
 
     @property
     def speed(self):
+        """Gets the speed. -100-100. 0 is stop. 100 is max speed.
+        Returns:
+            int: speed of the motors.
+        """
         return self._speed
 
     @speed.setter
     def speed(self,value):
+        """Sets the speed. -100-100. 0 is stop. 100 is max speed.
+            Args:
+                speed (int): speed of the motors.
+        """
         self._speed=value
         if value < -100:
             self._speed = -100
