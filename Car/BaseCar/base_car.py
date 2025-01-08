@@ -5,7 +5,7 @@ import math
 import RPi.GPIO as GPIO
 import smbus
 import json
-
+from pathlib import Path
 
 from basisklassen import Ultrasonic
 from basisklassen import Infrared
@@ -21,13 +21,20 @@ class BaseCar:
         self._steering_angle = 90
         self._speed = 0
         self.direction = 0
-        self.backwheels = BackWheels()
-        self.frontwheels = FrontWheels()
+        path = Path(__file__).parents[0].joinpath("config.json")
+        with open(path, "r") as f:
+                data = json.load(f)
+                turning_offset = data["turning_offset"]
+                forward_A = data["forward_A"]
+                forward_B = data["forward_B"]
+        self.frontwheels = FrontWheels(turning_offset=turning_offset)
+        self.backwheels = BackWheels(forward_A = forward_A, forward_B = forward_B )
+
 
     @property
     def steering_angle(self):
         return self._steering_angle
-    
+
     @steering_angle.setter
     def steering_angle(self,value):
         self._steering_angle=value
@@ -40,7 +47,7 @@ class BaseCar:
     @property
     def speed(self):
         return self._speed
-    
+
     @speed.setter
     def speed(self,value):
         self._speed=value
@@ -58,8 +65,8 @@ class BaseCar:
             self.direction = -1
         else:
             self.backwheels.forward()
-            self.direction= 1 
-    
+            self.direction= 1
+
     def stop(self):
         self._speed = 0
         self.backwheels.stop()
