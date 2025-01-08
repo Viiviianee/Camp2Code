@@ -45,10 +45,32 @@ class BaseCar:
 
     @property
     def steering_angle(self):
+        """
+        Gets the current steering angle.
+
+        This property retrieves the value of the private `_steering_angle` attribute,
+        which represents the angle of the steering mechanism in degrees.
+
+        Returns:
+        int: The current steering angle.
+        """
         return self._steering_angle
 
     @steering_angle.setter
     def steering_angle(self,value):
+        """
+        Sets the steering angle, ensuring it remains within valid bounds.
+
+        This property sets the value of the private `_steering_angle` attribute.
+        The angle is clamped to a minimum of 45 degrees and a maximum of 135 degrees.
+
+        Args:
+            value (int): The desired steering angle.
+
+        Side Effects:
+            If the input value is less than 45, `_steering_angle` is set to 45.
+            If the input value is greater than 135, `_steering_angle` is set to 135.
+        """    
         self._steering_angle=value
         if value < 45:
             self._steering_angle = 45
