@@ -24,12 +24,14 @@ class BaseCar:
         self._steering_angle = 90
         self._speed = 0
         self.direction = 0
-        self.backwheels = BackWheels()
         path = Path(__file__).parents[0].joinpath("config.json")
         with open(path, "r") as f:
                 data = json.load(f)
                 turning_offset = data["turning_offset"]
+                forward_A = data["forward_A"]
+                forward_B = data["forward_B"]
         self.frontwheels = FrontWheels(turning_offset=turning_offset)
+        self.backwheels = BackWheels(forward_A = forward_A, forward_B = forward_B )
 
     @property
     def steering_angle(self):
@@ -67,11 +69,11 @@ class BaseCar:
 
         self.backwheels.speed = abs(self.speed)
         if self.speed < 0:
-            self.backwheels.forward()
+            self.backwheels.backward()
             self.direction = -1
             print(f"Current value of speed: {self.speed}")
         else:
-            self.backwheels.backward()
+            self.backwheels.forward()
             self.direction= 1
             print(f"Current value of speed: {self.speed}")
 
@@ -169,10 +171,10 @@ def main(modus):
     if modus == 2:
         basecar.mode_driving_2()
 
-    foo = Infrared()
-    while True:
-        print(foo.read_analog())
-        time.sleep(2)
+    # foo = Infrared()
+    # while True:
+    #     print(foo.read_analog())
+    #     time.sleep(2)
 
 
 
