@@ -32,7 +32,7 @@ class BaseCar:
     """
         self._steering_angle = 90
         self._speed = 0
-        self.direction = 0
+        self._direction = 0
         path = Path(__file__).parents[0].joinpath("config.json")
         with open(path, "r") as f:
                 data = json.load(f)
@@ -97,6 +97,14 @@ class BaseCar:
             self._speed = -100
         if value > 100:
             self._speed = 100
+
+    @property
+    def direction(self):
+        """Retruns the current direction of the car.
+        Returns:
+            int: direction of the car.
+        """
+        return self._direction
 
     def drive(self, speed = None, steering_angle = None):
         """This method enables the car to drive at a certain speed and angle depending on the value of the arguments.
