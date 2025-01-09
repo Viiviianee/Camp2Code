@@ -5,16 +5,17 @@ import math
 import RPi.GPIO as GPIO
 import smbus
 import json
+import sys
 from pathlib import Path
 
-from basisklassen import Ultrasonic
-from basisklassen import Infrared
+# Pfad relativ zu dieser Datei dynamisch ermitteln
+project_path = Path(__file__).resolve().parent.parent
+sys.path.append(str(project_path))
+
+
 from basisklassen import FrontWheels
 from basisklassen import BackWheels
 
-from basisklassen import Servo
-from basisklassen import Motor
-from basisklassen import PWM
 
 class BaseCar:
     """
@@ -123,10 +124,10 @@ class BaseCar:
         self.backwheels.speed = abs(self.speed)  # Methods backwards and forwards are accessing on backwheels.speed which is on default 0
         if self._speed < 0:
             self.backwheels.backward()
-            self.direction = -1
+            self._direction = -1
         else:
             self.backwheels.forward()
-            self.direction= 1
+            self._direction = 1
 
     def stop(self):
         """
@@ -135,15 +136,68 @@ class BaseCar:
         This method stops the car by calling the `stop` method on the `backwheels` object and sets the direction to 0.
         """
         self.backwheels.stop()
-        self.direction = 0
+        self._direction = 0
+    
+    def fahrmodus1(self, speed, time_fw = 3, time_bw = 3, time_sp = 1):
+        """Car drives "fahrmodus1": 3sek forwards, 1 sek stop, 3 sek backwards.
+
+            Args:
+                speed (int): speed of the motors. Min is -100. Max is 100. 
+                time_fw (int): duration car drives forward. Default to 3.
+                time_bw (int): duration car drives backward. Default to 3.
+                time_sp (int): duration car stopps. Default to 1.
+        """
+
+        #fahrt forwärts für 3 sek
+        self.drive(speed, 90)
+        time.sleep(time_fw)
+        self.stop()
+        time.sleep(time_sp)
+        #fahrt rückwärts für 3 sek
+        speed = speed * (-1)
+        self.drive(speed)
+        time.sleep(time_bw)
+        self.stop()
+
+
+    def fahrmodus2(self, speed, time_fw=1, time_cw=8, time_ccw=8, time_bw=1):
+        """Car drives "fahrmodus2": 1sek forwards no steering angle, 8 sek with max steering angle clockwise, 8 sek backwards with max steering angle, 1 sek backwards.
+                                    1sek forwards no steering angle, 8 sek with max steering angle counterclockwise, 8 sek backwards with max steering angle, 1 sek backwards.
+            Args:
+                speed (int): speed of the motors. Min is -100. Max is 100. 
+                time_fw (int): duration car drives forward. Default to 1.
+                time_bw (int): duration car drives backward. Default to 1.
+                time_cw (int): duration car cw. Default to 8.
+                time_ccw (int): duration car ccw. Default to 8.
+            """
+        
+        self.drive(speed, 90)
+        time.sleep(time_fw)
+        self.drive(steering_angle = 135)
+        time.sleep(time_cw)
+        self.stop()
+        speed = speed * (-1)
+        time.sleep(time_cw)
+        self.drive(speed, 90)
+        time.sleep(time_bw)
+        self.stop()
+        speed = speed * (-1)
+        self.drive(speed, 90)
+        time.sleep(time_fw)
+        self.drive(steering_angle = 45)
+        time.sleep(time_ccw)
+        self.stop()
+        speed = speed * (-1)
+        time.sleep(time_ccw)
+        self.drive(speed, 90)
+        time.sleep(time_bw)
+        self.stop()
+
 
 def main():
     basecar = BaseCar()
-    basecar.speed = 30
-    basecar.steering_angle = 135
-    basecar.drive()
-    time.sleep(2)
-    basecar.stop()
+    basecar.fahrmodus1(30)
+ 
 
 
 if __name__ == "__main__":
