@@ -1,5 +1,6 @@
 import sys
 import time
+import numpy as np
 from pathlib import Path
 
 # Pfad relativ zu dieser Datei dynamisch ermitteln
@@ -19,7 +20,7 @@ class SonicCar(BaseCar):
   def get_distance(self): 
     return self.ultrasonic.distance()
   
-  def fahrmodus3(self, speed, min_distance, steering_angle = 90):
+  def fahrmodus3(self, speed, min_distance = 30, steering_angle = 90):
     print("Starte Fahrmodus 3: fahren bis Hindernis erkannt wird, dann stoppen.")
     self.steering_angle = steering_angle
     fail_counter = 0
@@ -30,10 +31,10 @@ class SonicCar(BaseCar):
           self.stop()
           self.ultrasonic.stop()
           break
-       elif distance < 0:
-          print("Sensor Fehler!")
+       elif distance < -2:
+          print(f"Sensor Fehler! {fail_counter}")
           fail_counter += 1
-          if fail_counter >= 3:
+          if fail_counter >= 30:
             self.stop()
             self.ultrasonic.stop()
             break
@@ -44,11 +45,13 @@ class SonicCar(BaseCar):
   
   def fahrmodus4(self, speed, threshold = 5):
    print("Starte Fahrmodus 4: Erkunden bis Hindernis erkannt wird, dann stoppen.")
+   max_steering_angles = [45, 135]
    counter_bw = 0
    while True:
       self.fahrmodus3(speed,30)
-      if self._directions == 0:
-         self.drive(-30,135)
+      if self._direction == 0:
+         idx = np.random.randint(0,2)
+         self.drive(-30,max_steering_angles[idx])
          time.sleep(3)
          counter_bw += 1
          self.stop()
@@ -56,12 +59,11 @@ class SonicCar(BaseCar):
       if counter_bw >= threshold:
          self.stop()
          break
-
      
 
 def main():
    car = SonicCar()
-   car.fahrmodus3(30, 30)
+   car.fahrmodus4(40)
 
 if __name__ == "__main__":
     main()

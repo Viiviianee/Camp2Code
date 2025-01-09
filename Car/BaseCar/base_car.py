@@ -5,7 +5,10 @@ import math
 import RPi.GPIO as GPIO
 import smbus
 import json
+import csv
 import sys
+from datetime import datetime
+from datetime import timezone
 from pathlib import Path
 
 # Pfad relativ zu dieser Datei dynamisch ermitteln
@@ -34,6 +37,8 @@ class BaseCar:
         self._steering_angle = 90
         self._speed = 0
         self._direction = 0
+        self.result = []
+        self.result_t = {}
         path = Path(__file__).parents[0].joinpath("config.json")
         with open(path, "r") as f:
                 data = json.load(f)
@@ -128,6 +133,14 @@ class BaseCar:
         else:
             self.backwheels.forward()
             self._direction = 1
+        self.result_t = {#"counter": cnt,
+                        "time": str(datetime.now(tz=timezone.utc).strftime("%H:%M:%S")),
+                        "speed": self.speed,
+                        "steering_angle": self.steering_angle,
+                        "direction": self.direction,
+                        #"distance_ahead": distance_ahead
+                        }
+        self.result.append(self.result_t)
 
     def stop(self):
         """
@@ -158,6 +171,7 @@ class BaseCar:
         self.drive(speed)
         time.sleep(time_bw)
         self.stop()
+        self.logging()
 
 
     def fahrmodus2(self, speed, time_fw=1, time_cw=8, time_ccw=8, time_bw=1):
@@ -192,11 +206,23 @@ class BaseCar:
         self.drive(speed, 90)
         time.sleep(time_bw)
         self.stop()
+        self.logging()
 
+    def logging(self):
+      #Geschwindigkeit über self._speed
+      #Fahrrichtung über self.__direction
+      #Lenkwinkel über self._steering_angle
+      #'get_distance()' return value
+      #Schreiben in JSON / CSV
+        path = Path(__file__).parents[0].joinpath("log.csv")
+        with open(path, "w") as f:
+            writer = csv.DictWriter(f, fieldnames=["time", "speed", "steering_angle", "direction"])
+            writer.writeheader()
+            writer.writerows(self.result) #result = list of dict
 
 def main():
     basecar = BaseCar()
-    basecar.fahrmodus1(30)
+    basecar.fahrmodus2(30)
  
 
 
