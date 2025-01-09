@@ -1,4 +1,5 @@
 import sys
+import time
 from pathlib import Path
 
 # Pfad relativ zu dieser Datei dynamisch ermitteln
@@ -18,9 +19,9 @@ class SonicCar(BaseCar):
   def get_distance(self): 
     return self.ultrasonic.distance()
   
-  def fahrmodus3(self, speed, min_distance):
+  def fahrmodus3(self, speed, min_distance, steering_angle = 90):
     print("Starte Fahrmodus 3: fahren bis Hindernis erkannt wird, dann stoppen.")
-    self.steering_angle = 90
+    self.steering_angle = steering_angle
     fail_counter = 0
     while True:  
        distance = self.get_distance()
@@ -41,8 +42,22 @@ class SonicCar(BaseCar):
 
 
   
-  def fahrmodus4(self):
-     pass
+  def fahrmodus4(self, speed, threshold = 5):
+   print("Starte Fahrmodus 4: Erkunden bis Hindernis erkannt wird, dann stoppen.")
+   counter_bw = 0
+   while True:
+      self.fahrmodus3(speed,30)
+      if self._directions == 0:
+         self.drive(-30,135)
+         time.sleep(3)
+         counter_bw += 1
+         self.stop()
+         time.sleep(0.5)
+      if counter_bw >= threshold:
+         self.stop()
+         break
+
+     
 
 def main():
    car = SonicCar()
