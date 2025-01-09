@@ -173,7 +173,7 @@ class BaseCar:
         
         self.drive(speed, 90)
         time.sleep(time_fw)
-        self.drive(steering_angle = 135)
+        self.drive(steering_angle=135)
         time.sleep(time_cw)
         self.stop()
         speed = speed * (-1)
@@ -184,7 +184,7 @@ class BaseCar:
         speed = speed * (-1)
         self.drive(speed, 90)
         time.sleep(time_fw)
-        self.drive(steering_angle = 45)
+        self.drive(steering_angle=45)
         time.sleep(time_ccw)
         self.stop()
         speed = speed * (-1)
