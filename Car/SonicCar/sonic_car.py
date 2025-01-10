@@ -14,8 +14,10 @@ from basisklassen import Ultrasonic
 class SonicCar(BaseCar):
 
   def __init__(self):
-    self.ultrasonic = Ultrasonic()
     super().__init__()
+    self.fieldnames.append("distance_ahead")
+    self.distance = None
+    self.ultrasonic = Ultrasonic()
 
   def get_distance(self):
     return self.ultrasonic.distance()
@@ -25,21 +27,26 @@ class SonicCar(BaseCar):
     self.steering_angle = steering_angle
     fail_counter = 0
     while True:
-       distance = self.get_distance()
-       if distance < min_distance and distance > 0:
+       self.distance = self.get_distance()
+       if self.distance < min_distance and self.distance > 0:
           print("Hindernis erkannt!")
           self.stop()
           self.ultrasonic.stop()
+          self.result[-1]["distance_ahead"] = self.distance
           break
-       elif distance < -2:
+       elif self.distance < -2:
           print(f"Sensor Fehler! {fail_counter}")
+          self.result[-1]["distance_ahead"] = self.distance
           fail_counter += 1
           if fail_counter >= 30:
             self.stop()
             self.ultrasonic.stop()
+            self.result[-1]["distance_ahead"] = self.distance
             break
        else:
           self.drive(speed)
+          self.result[-1]["distance_ahead"] = self.distance
+    self.logging()
 
 
 
@@ -52,18 +59,22 @@ class SonicCar(BaseCar):
       if self._direction == 0:
          idx = np.random.randint(0,2)
          self.drive(-30,max_steering_angles[idx])
+         self.result[-1]["distance_ahead"] = self.distance
          time.sleep(3)
          counter_bw += 1
          self.stop()
+         self.result[-1]["distance_ahead"] = self.distance
          time.sleep(0.5)
       if counter_bw >= threshold:
          self.stop()
+         self.result[-1]["distance_ahead"] = self.distance
          break
+   self.logging()
 
 
 def main():
    car = SonicCar()
-   car.fahrmodus4(40)
+   car.fahrmodus4(50)
 
 if __name__ == "__main__":
     main()
