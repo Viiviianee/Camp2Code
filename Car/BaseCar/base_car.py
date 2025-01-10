@@ -184,13 +184,13 @@ class BaseCar:
                 time_cw (int): duration car cw. Default to 8.
                 time_ccw (int): duration car ccw. Default to 8.
             """
-        
         self.drive(speed, 90)
         time.sleep(time_fw)
         self.drive(steering_angle=135)
         time.sleep(time_cw)
         self.stop()
         speed = speed * (-1)
+        self.drive(speed)
         time.sleep(time_cw)
         self.drive(speed, 90)
         time.sleep(time_bw)
