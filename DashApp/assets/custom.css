@@ -1,0 +1,57 @@
+.card-orange {
+  border: 2px solid orange;
+  background-color: white;
+}
+
+.card-pink {
+  border: 2px solid hotpink;
+  background-color: white;
+}
+
+.card-green {
+  border: 2px solid limegreen;
+  background-color: white;
+}
+
+.card-blue {
+  border: 2px solid cornflowerblue;
+  background-color: white;
+}
+
+.card-yellow {
+  border: 2px solid gold;
+  background-color: white;
+}
+
+.card-header-orange {
+  background-color: rgba(255, 165, 0, 0.2);
+}
+
+.card-header-pink {
+  background-color: rgba(255, 105, 180, 0.2);
+}
+
+.card-header-green {
+  background-color: rgba(50, 205, 50, 0.2);
+}
+
+.card-header-blue {
+  background-color: rgba(100, 148, 237, 0.2);
+}
+
+.card-header-yellow {
+  background-color:rgba(255, 217, 0, 0.2);
+}
+
+.div-place-holder {
+  background-color: grey;
+}
+
+.main-container {
+  margin: 20px; 
+}
+
+.custom-border {
+  border: 2px solid rgba(0, 0, 0, 0.2);  
+  padding: 20px;             
+}
