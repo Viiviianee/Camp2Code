@@ -202,6 +202,7 @@ class BaseCar:
         time.sleep(time_ccw)
         self.stop()
         speed = speed * (-1)
+        self.drive(speed)
         time.sleep(time_ccw)
         self.drive(speed, 90)
         time.sleep(time_bw)
