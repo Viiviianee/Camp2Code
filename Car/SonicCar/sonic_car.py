@@ -6,7 +6,6 @@ from pathlib import Path
 # Pfad relativ zu dieser Datei dynamisch ermitteln
 project_path = Path(__file__).resolve().parent.parent
 sys.path.append(str(project_path))
-#print(str(project_path))
 
 from BaseCar.base_car import BaseCar
 from basisklassen import Ultrasonic
@@ -70,8 +69,8 @@ class SonicCar(BaseCar):
          self.result[-1]["distance_ahead"] = self.distance
          time.sleep(0.5)
       if counter_bw >= threshold:
-         self.stop()
-         self.result[-1]["distance_ahead"] = self.distance
+         # self.stop()
+         # self.result[-1]["distance_ahead"] = self.distance
          break
    self.logging()
 
