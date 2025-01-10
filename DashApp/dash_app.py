@@ -2,7 +2,7 @@ from dash import Dash, html, dcc, Input, Output, State
 import pandas as pd
 import plotly.express as px
 import dash_bootstrap_components as dbc
- 
+
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 #Fahrzeugdaten
@@ -21,7 +21,7 @@ def create_kpi_card(card_id, header, value):
                     html.H5(value),
                     dbc.Button("Details", color="primary")
                 ]
-            ), 
+            ),
         ],
         id=card_id
     )

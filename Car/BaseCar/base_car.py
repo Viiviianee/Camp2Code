@@ -40,6 +40,8 @@ class BaseCar:
         self.result = []
         self.result_t = {}
         self.fieldnames = ["time", "speed", "steering_angle", "direction"]
+        self.starting_time = None
+        self.number_digits = 1
         path = Path(__file__).parents[0].joinpath("config.json")
         with open(path, "r") as f:
                 data = json.load(f)
@@ -59,7 +61,7 @@ class BaseCar:
             {"speed" : 30, "steering_angle" : 45, "time" : 8, "stop" : 1},
             {"speed" : -30, "steering_angle" : 45, "time" : 8, "stop" : 0},
             {"speed" : -30, "steering_angle" : 90, "time" : 1, "stop" : 1}
-            ]       
+            ]
 
 
     @property
@@ -139,19 +141,18 @@ class BaseCar:
         if steering_angle != None:
             self._steering_angle = steering_angle
         self.frontwheels.turn(self._steering_angle)
-        self.backwheels.speed = abs(self.speed)  # Methods backwards and forwards are accessing on backwheels.speed which is on default 0
+        self.backwheels.speed = abs(self.speed)
         if self._speed < 0:
             self.backwheels.backward()
             self._direction = -1
         else:
             self.backwheels.forward()
             self._direction = 1
-        self.result_t = {#"counter": cnt,
-                        "time": str(datetime.now(tz=timezone.utc).strftime("%H:%M:%S")),
-                        "speed": self.speed,
+        self.result_t = {
+                        "time": round(time.perf_counter() - self.starting_time,self.number_digits),
+                        "speed": self.backwheels.speed,
                         "steering_angle": self.steering_angle,
                         "direction": self.direction,
-                        #"distance_ahead": distance_ahead
                         }
         self.result.append(self.result_t)
 
@@ -164,12 +165,11 @@ class BaseCar:
         """
         self.backwheels.stop()
         self._direction = 0
-        self.result_t = {#"counter": cnt,
-                        "time": str(datetime.now(tz=timezone.utc).strftime("%H:%M:%S")),
-                        "speed": self.speed,
+        self.result_t = {
+                        "time": round(time.perf_counter() - self.starting_time,self.number_digits ),
+                        "speed": self.backwheels.speed,
                         "steering_angle": self.steering_angle,
                         "direction": self.direction,
-                        #"distance_ahead": distance_ahead
                         }
         self.result.append(self.result_t)
 
@@ -182,6 +182,7 @@ class BaseCar:
                 time_bw (int): duration car drives backward. Default to 3.
                 time_sp (int): duration car stopps. Default to 1.
         """
+        self.starting_time = time.perf_counter()
 
         #fahrt forwärts für 3 sek
         self.drive(speed, 90)
@@ -200,7 +201,7 @@ class BaseCar:
     #     """Car drives "fahrmodus2": 1sek forwards no steering angle, 8 sek with max steering angle clockwise, 8 sek backwards with max steering angle, 1 sek backwards.
     #                                 1sek forwards no steering angle, 8 sek with max steering angle counterclockwise, 8 sek backwards with max steering angle, 1 sek backwards.
     #         Args:
-    #             speed (int): speed of the motors. Min is -100. Max is 100. 
+    #             speed (int): speed of the motors. Min is -100. Max is 100.
     #             time_fw (int): duration car drives forward. Default to 1.
     #             time_bw (int): duration car drives backward. Default to 1.
     #             time_cw (int): duration car cw. Default to 8.
@@ -230,39 +231,39 @@ class BaseCar:
     #     time.sleep(time_bw)
     #     self.stop()
     #     self.logging()
-    
+
     def fahrmodus1_2(self, mode = 0, lst = None):
+        self.starting_time = time.perf_counter()
         if lst == None:
             lst = self.lst
             if mode == 1:
-                lst = self.lst[:2] 
+                lst = self.lst[:2]
             elif mode == 2:
-                lst = self.lst[2:] 
-        for element in lst:   
+                lst = self.lst[2:]
+            else:
+                print("Value of mode is not valid")
+                quit()
+        for element in lst:
             self.drive(element["speed"], element["steering_angle"])
             time.sleep(element["time"])
-            if element["stop"] != 0:
-                print("STOPPED!")
-                self.stop()
-                time.sleep(1)
-            self.logging()
+            # if element["stop"] != 0:
+            #     print("STOPPED!")
+            #     self.stop()
+            #     time.sleep(1)
+        self.stop()
+        self.logging()
 
     def logging(self):
-      #Geschwindigkeit über self._speed
-      #Fahrrichtung über self.__direction
-      #Lenkwinkel über self._steering_angle
-      #'get_distance()' return value
-      #Schreiben in JSON / CSV
         path = Path(__file__).parents[1].joinpath("log.csv")
         with open(path, "w") as f:
             writer = csv.DictWriter(f, fieldnames=self.fieldnames)
             writer.writeheader()
-            writer.writerows(self.result) #result = list of dict
+            writer.writerows(self.result)
 
 def main():
     basecar = BaseCar()
-    basecar.fahrmodus2(30)
- 
+    basecar.fahrmodus1_2(mode=2)
+
 
 
 if __name__ == "__main__":
