@@ -14,8 +14,9 @@ from basisklassen import Ultrasonic
 class SonicCar(BaseCar):
 
   def __init__(self):
-    self.ultrasonic = Ultrasonic()
     super().__init__()
+    self.fieldnames.append("distance_ahead")
+    self.ultrasonic = Ultrasonic()
 
   def get_distance(self):
     return self.ultrasonic.distance()
@@ -30,6 +31,7 @@ class SonicCar(BaseCar):
           print("Hindernis erkannt!")
           self.stop()
           self.ultrasonic.stop()
+          self.result[-1]["distance_ahead"] = distance
           break
        elif distance < -2:
           print(f"Sensor Fehler! {fail_counter}")
@@ -37,9 +39,12 @@ class SonicCar(BaseCar):
           if fail_counter >= 30:
             self.stop()
             self.ultrasonic.stop()
+            self.result[-1]["distance_ahead"] = distance
             break
        else:
           self.drive(speed)
+          self.result[-1]["distance_ahead"] = distance
+    self.logging()
 
 
 
@@ -59,11 +64,12 @@ class SonicCar(BaseCar):
       if counter_bw >= threshold:
          self.stop()
          break
+   self.logging()
 
 
 def main():
    car = SonicCar()
-   car.fahrmodus4(40)
+   car.fahrmodus4(30)
 
 if __name__ == "__main__":
     main()
