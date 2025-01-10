@@ -47,6 +47,18 @@ class BaseCar:
                 forward_B = data["forward_B"]
         self.frontwheels = FrontWheels(turning_offset=turning_offset)
         self.backwheels = BackWheels(forward_A = forward_A, forward_B = forward_B )
+        self.lst= [
+            {"speed" : 30, "steering_angle" : 90, "time" : 3, "stop" : 1},
+            {"speed" : -30, "steering_angle" : 90, "time" : 3, "stop" : 1},
+            {"speed" : 30, "steering_angle" : 90, "time" : 1, "stop" : 0},
+            {"speed" : 30, "steering_angle" : 135, "time" : 8, "stop" : 1},
+            {"speed" : -30, "steering_angle" : 135, "time" : 8, "stop" : 0},
+            {"speed" : -30, "steering_angle" : 90, "time" : 1, "stop" : 1},
+            {"speed" : 30, "steering_angle" : 90, "time" : 1, "stop" : 0},
+            {"speed" : 30, "steering_angle" : 45, "time" : 8, "stop" : 1},
+            {"speed" : -30, "steering_angle" : 45, "time" : 8, "stop" : 0},
+            {"speed" : -30, "steering_angle" : 90, "time" : 1, "stop" : 1}
+            ]       
 
 
     @property
@@ -174,40 +186,56 @@ class BaseCar:
         self.logging()
 
 
-    def fahrmodus2(self, speed, time_fw=1, time_cw=8, time_ccw=8, time_bw=1):
-        """Car drives "fahrmodus2": 1sek forwards no steering angle, 8 sek with max steering angle clockwise, 8 sek backwards with max steering angle, 1 sek backwards.
-                                    1sek forwards no steering angle, 8 sek with max steering angle counterclockwise, 8 sek backwards with max steering angle, 1 sek backwards.
-            Args:
-                speed (int): speed of the motors. Min is -100. Max is 100. 
-                time_fw (int): duration car drives forward. Default to 1.
-                time_bw (int): duration car drives backward. Default to 1.
-                time_cw (int): duration car cw. Default to 8.
-                time_ccw (int): duration car ccw. Default to 8.
-            """
-        self.drive(speed, 90)
-        time.sleep(time_fw)
-        self.drive(steering_angle=135)
-        time.sleep(time_cw)
-        self.stop()
-        speed = speed * (-1)
-        self.drive(speed)
-        time.sleep(time_cw)
-        self.drive(speed, 90)
-        time.sleep(time_bw)
-        self.stop()
-        speed = speed * (-1)
-        self.drive(speed, 90)
-        time.sleep(time_fw)
-        self.drive(steering_angle=45)
-        time.sleep(time_ccw)
-        self.stop()
-        speed = speed * (-1)
-        self.drive(speed)
-        time.sleep(time_ccw)
-        self.drive(speed, 90)
-        time.sleep(time_bw)
-        self.stop()
-        self.logging()
+    # def fahrmodus2(self, speed, time_fw=1, time_cw=8, time_ccw=8, time_bw=1):
+    #     """Car drives "fahrmodus2": 1sek forwards no steering angle, 8 sek with max steering angle clockwise, 8 sek backwards with max steering angle, 1 sek backwards.
+    #                                 1sek forwards no steering angle, 8 sek with max steering angle counterclockwise, 8 sek backwards with max steering angle, 1 sek backwards.
+    #         Args:
+    #             speed (int): speed of the motors. Min is -100. Max is 100. 
+    #             time_fw (int): duration car drives forward. Default to 1.
+    #             time_bw (int): duration car drives backward. Default to 1.
+    #             time_cw (int): duration car cw. Default to 8.
+    #             time_ccw (int): duration car ccw. Default to 8.
+    #         """
+    #     self.drive(speed, 90)
+    #     time.sleep(time_fw)
+    #     self.drive(steering_angle=135)
+    #     time.sleep(time_cw)
+    #     self.stop()
+    #     speed = speed * (-1)
+    #     self.drive(speed)
+    #     time.sleep(time_cw)
+    #     self.drive(speed, 90)
+    #     time.sleep(time_bw)
+    #     self.stop()
+    #     speed = speed * (-1)
+    #     self.drive(speed, 90)
+    #     time.sleep(time_fw)
+    #     self.drive(steering_angle=45)
+    #     time.sleep(time_ccw)
+    #     self.stop()
+    #     speed = speed * (-1)
+    #     self.drive(speed)
+    #     time.sleep(time_ccw)
+    #     self.drive(speed, 90)
+    #     time.sleep(time_bw)
+    #     self.stop()
+    #     self.logging()
+    
+    def fahrmodus1_2(self, mode = 0, lst = None):
+        if lst == None:
+            lst = self.lst
+            if mode == 1:
+                lst = self.lst[:2] 
+            elif mode == 2:
+                lst = self.lst[2:] 
+        for element in lst:   
+            self.drive(element["speed"], element["steering_angle"])
+            time.sleep(element["time"])
+            if element["stop"] != 0:
+                print("STOPPED!")
+                self.stop()
+                time.sleep(1)
+            self.logging()
 
     def logging(self):
       #Geschwindigkeit über self._speed
@@ -223,7 +251,7 @@ class BaseCar:
 
 def main():
     basecar = BaseCar()
-    basecar.fahrmodus2(30)
+    basecar.fahrmodus2_5(1)
  
 
 
