@@ -1,5 +1,7 @@
 *.vscode
 
 *.json
+*.csv
 **/__pycache__/
 test.py
+test.ipynb

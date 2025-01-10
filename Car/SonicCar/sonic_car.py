@@ -17,14 +17,14 @@ class SonicCar(BaseCar):
     self.ultrasonic = Ultrasonic()
     super().__init__()
 
-  def get_distance(self): 
+  def get_distance(self):
     return self.ultrasonic.distance()
-  
+
   def fahrmodus3(self, speed, min_distance = 30, steering_angle = 90):
     print("Starte Fahrmodus 3: fahren bis Hindernis erkannt wird, dann stoppen.")
     self.steering_angle = steering_angle
     fail_counter = 0
-    while True:  
+    while True:
        distance = self.get_distance()
        if distance < min_distance and distance > 0:
           print("Hindernis erkannt!")
@@ -42,7 +42,7 @@ class SonicCar(BaseCar):
           self.drive(speed)
 
 
-  
+
   def fahrmodus4(self, speed, threshold = 5):
    print("Starte Fahrmodus 4: Erkunden bis Hindernis erkannt wird, dann stoppen.")
    max_steering_angles = [45, 135]
@@ -59,7 +59,7 @@ class SonicCar(BaseCar):
       if counter_bw >= threshold:
          self.stop()
          break
-     
+
 
 def main():
    car = SonicCar()
