@@ -14,8 +14,9 @@ from basisklassen import Ultrasonic
 class SonicCar(BaseCar):
 
   def __init__(self):
-    self.ultrasonic = Ultrasonic()
     super().__init__()
+    self.fieldnames.append("distance_ahead")
+    self.ultrasonic = Ultrasonic()
 
   def get_distance(self):
     return self.ultrasonic.distance()
@@ -43,8 +44,6 @@ class SonicCar(BaseCar):
        else:
           self.drive(speed)
           self.result[-1]["distance_ahead"] = distance
-    if "distance_ahead" not in self.fieldnames:
-      self.fieldnames.append("distance_ahead")
     self.logging()
 
 
@@ -70,7 +69,7 @@ class SonicCar(BaseCar):
 
 def main():
    car = SonicCar()
-   car.fahrmodus4(60)
+   car.fahrmodus4(30)
 
 if __name__ == "__main__":
     main()

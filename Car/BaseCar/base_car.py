@@ -225,7 +225,7 @@ class BaseCar:
       #Lenkwinkel über self._steering_angle
       #'get_distance()' return value
       #Schreiben in JSON / CSV
-        path = Path(__file__).parents[0].joinpath("log.csv")
+        path = Path(__file__).parents[1].joinpath("log.csv")
         with open(path, "w") as f:
             writer = csv.DictWriter(f, fieldnames=self.fieldnames)
             writer.writeheader()
