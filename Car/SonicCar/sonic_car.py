@@ -6,7 +6,6 @@ from pathlib import Path
 # Pfad relativ zu dieser Datei dynamisch ermitteln
 project_path = Path(__file__).resolve().parent.parent
 sys.path.append(str(project_path))
-#print(str(project_path))
 
 from BaseCar.base_car import BaseCar
 from basisklassen import Ultrasonic
@@ -16,6 +15,7 @@ class SonicCar(BaseCar):
   def __init__(self):
     super().__init__()
     self.fieldnames.append("distance_ahead")
+    self.number_digits = 2
     self.distance = None
     self.ultrasonic = Ultrasonic()
 
@@ -24,6 +24,8 @@ class SonicCar(BaseCar):
 
   def fahrmodus3(self, speed, min_distance = 30, steering_angle = 90):
     print("Starte Fahrmodus 3: fahren bis Hindernis erkannt wird, dann stoppen.")
+    if not self.starting_time:
+      self.starting_time = time.perf_counter()
     self.steering_angle = steering_angle
     fail_counter = 0
     while True:
@@ -52,6 +54,7 @@ class SonicCar(BaseCar):
 
   def fahrmodus4(self, speed, threshold = 5):
    print("Starte Fahrmodus 4: Erkunden bis Hindernis erkannt wird, dann stoppen.")
+   self.starting_time = time.perf_counter()
    max_steering_angles = [45, 135]
    counter_bw = 0
    while True:
@@ -66,8 +69,8 @@ class SonicCar(BaseCar):
          self.result[-1]["distance_ahead"] = self.distance
          time.sleep(0.5)
       if counter_bw >= threshold:
-         self.stop()
-         self.result[-1]["distance_ahead"] = self.distance
+         # self.stop()
+         # self.result[-1]["distance_ahead"] = self.distance
          break
    self.logging()
 
