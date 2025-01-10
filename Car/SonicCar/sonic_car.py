@@ -30,6 +30,7 @@ class SonicCar(BaseCar):
           print("Hindernis erkannt!")
           self.stop()
           self.ultrasonic.stop()
+          self.result[-1]["distance_ahead"] = distance
           break
        elif distance < -2:
           print(f"Sensor Fehler! {fail_counter}")
@@ -37,9 +38,14 @@ class SonicCar(BaseCar):
           if fail_counter >= 30:
             self.stop()
             self.ultrasonic.stop()
+            self.result[-1]["distance_ahead"] = distance
             break
        else:
           self.drive(speed)
+          self.result[-1]["distance_ahead"] = distance
+    if "distance_ahead" not in self.fieldnames:
+      self.fieldnames.append("distance_ahead")
+    self.logging()
 
 
 
@@ -59,11 +65,12 @@ class SonicCar(BaseCar):
       if counter_bw >= threshold:
          self.stop()
          break
+   self.logging()
 
 
 def main():
    car = SonicCar()
-   car.fahrmodus4(40)
+   car.fahrmodus4(60)
 
 if __name__ == "__main__":
     main()

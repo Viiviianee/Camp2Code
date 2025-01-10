@@ -39,6 +39,7 @@ class BaseCar:
         self._direction = 0
         self.result = []
         self.result_t = {}
+        self.fieldnames = ["time", "speed", "steering_angle", "direction"]
         path = Path(__file__).parents[0].joinpath("config.json")
         with open(path, "r") as f:
                 data = json.load(f)
@@ -76,7 +77,7 @@ class BaseCar:
         Side Effects:
             If the input value is less than 45, `_steering_angle` is set to 45.
             If the input value is greater than 135, `_steering_angle` is set to 135.
-        """    
+        """
         self._steering_angle=value
         if value < 45:
             self._steering_angle = 45
@@ -114,12 +115,12 @@ class BaseCar:
 
     def drive(self, speed = None, steering_angle = None):
         """This method enables the car to drive at a certain speed and angle depending on the value of the arguments.
-            Depending on the positive or negative speed, the direction of travel is set using the 'backwheels.forward()' 
+            Depending on the positive or negative speed, the direction of travel is set using the 'backwheels.forward()'
             or 'backwheels.backward()' method. A negative speed will set 'directions' to -1. A posotive speed will set 'directions' to 1.
 
         Args:
             speed (int): speed of the motors. Min is -100. Max is 100. Default to None.
-            steering_angle (int): angle of the fron wheels. Min 45 for left turn. Max 135 for right turn. Default to None.        
+            steering_angle (int): angle of the fron wheels. Min 45 for left turn. Max 135 for right turn. Default to None.
         """
         if speed != None:
             self._speed = speed
@@ -142,6 +143,7 @@ class BaseCar:
                         }
         self.result.append(self.result_t)
 
+
     def stop(self):
         """
         Stop the car.
@@ -150,12 +152,20 @@ class BaseCar:
         """
         self.backwheels.stop()
         self._direction = 0
-    
+        self.result_t = {#"counter": cnt,
+                        "time": str(datetime.now(tz=timezone.utc).strftime("%H:%M:%S")),
+                        "speed": self.speed,
+                        "steering_angle": self.steering_angle,
+                        "direction": self.direction,
+                        #"distance_ahead": distance_ahead
+                        }
+        self.result.append(self.result_t)
+
     def fahrmodus1(self, speed, time_fw = 3, time_bw = 3, time_sp = 1):
         """Car drives "fahrmodus1": 3sek forwards, 1 sek stop, 3 sek backwards.
 
             Args:
-                speed (int): speed of the motors. Min is -100. Max is 100. 
+                speed (int): speed of the motors. Min is -100. Max is 100.
                 time_fw (int): duration car drives forward. Default to 3.
                 time_bw (int): duration car drives backward. Default to 3.
                 time_sp (int): duration car stopps. Default to 1.
@@ -178,7 +188,7 @@ class BaseCar:
         """Car drives "fahrmodus2": 1sek forwards no steering angle, 8 sek with max steering angle clockwise, 8 sek backwards with max steering angle, 1 sek backwards.
                                     1sek forwards no steering angle, 8 sek with max steering angle counterclockwise, 8 sek backwards with max steering angle, 1 sek backwards.
             Args:
-                speed (int): speed of the motors. Min is -100. Max is 100. 
+                speed (int): speed of the motors. Min is -100. Max is 100.
                 time_fw (int): duration car drives forward. Default to 1.
                 time_bw (int): duration car drives backward. Default to 1.
                 time_cw (int): duration car cw. Default to 8.
@@ -217,14 +227,14 @@ class BaseCar:
       #Schreiben in JSON / CSV
         path = Path(__file__).parents[0].joinpath("log.csv")
         with open(path, "w") as f:
-            writer = csv.DictWriter(f, fieldnames=["time", "speed", "steering_angle", "direction"])
+            writer = csv.DictWriter(f, fieldnames=self.fieldnames)
             writer.writeheader()
             writer.writerows(self.result) #result = list of dict
 
 def main():
     basecar = BaseCar()
-    basecar.fahrmodus2(30)
- 
+    basecar.fahrmodus1(30)
+
 
 
 if __name__ == "__main__":
