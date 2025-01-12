@@ -233,6 +233,7 @@ def read_data_dropdown(n_clicks):
 
 @app.callback(
     Output("information_box", "children"),
+    Output("information_box", "color"),
     Input("load_button", "n_clicks"),
     prevent_initial_call=True,
 )
@@ -240,92 +241,41 @@ def update_information_box_text(n_clicks):
     try:
         datahandler = Datahandler()
         datahandler.read_data_log()
-        return "Loading was successful"
+        return "Loading was successful", "success"
     except Exception as _:
-        return "Loading was not successful"
-
-
-@app.callback(
-    Output("information_box", "color"),
-    Input("load_button", "n_clicks"),
-    prevent_initial_call=True,
-)
-def update_information_box_color(n_clicks):
-    try:
-        datahandler = Datahandler()
-        datahandler.read_data_log()
-        return "success"
-    except Exception as _:
-        return "danger"
+        return "Loading was not successful", "danger"
 
 
 @app.callback(
     Output("card-speed-min", "children"),
+    Output("card-speed-max", "children"),
+    Output("card-speed-mean", "children"),
+    Output("card-driving-distance", "children"),
+    Output("card-driving-time", "children"),
     Input("load_button", "n_clicks"),
     prevent_initial_call=True,
 )
-def update_card_speed_min(n_clicks):
+def update_card(n_clicks):
     datahandler = Datahandler()
     datahandler.read_data_log()
     min_val = min(datahandler.log_values["speed"])
-    return [dbc.CardHeader("Geschwindigkeit (Min)"), dbc.CardBody([html.H5(min_val)])]
-
-
-@app.callback(
-    Output("card-speed-max", "children"),
-    Input("load_button", "n_clicks"),
-    prevent_initial_call=True,
-)
-def update_card_speed_max(n_clicks):
-    datahandler = Datahandler()
-    datahandler.read_data_log()
     max_val = max(datahandler.log_values["speed"])
-    return [dbc.CardHeader("Geschwindigkeit (Max)"), dbc.CardBody([html.H5(max_val)])]
-
-
-@app.callback(
-    Output("card-speed-mean", "children"),
-    Input("load_button", "n_clicks"),
-    prevent_initial_call=True,
-)
-def update_card_speed_average(n_clicks):
-    datahandler = Datahandler()
-    datahandler.read_data_log()
     average = sum(datahandler.log_values["speed"]) / len(
         datahandler.log_values["speed"]
     )
-    return [
-        dbc.CardHeader("Geschwindigkeit (Mean)"),
-        dbc.CardBody([html.H5(average)]),
-    ]
-
-
-@app.callback(
-    Output("card-driving-distance", "children"),
-    Input("load_button", "n_clicks"),
-    prevent_initial_call=True,
-)
-def update_card_distance(n_clicks):
-    datahandler = Datahandler()
-    datahandler.read_data_log()
     distance = (
         sum(datahandler.log_values["speed"])
         / len(datahandler.log_values["speed"])
         * datahandler.log_values["time"][-1]
     )
-    return [dbc.CardHeader("Zurückgelegte Strecke"), dbc.CardBody([html.H5(distance)])]
-
-
-@app.callback(
-    Output("card-driving-time", "children"),
-    Input("load_button", "n_clicks"),
-    prevent_initial_call=True,
-)
-def update_card_driving_time(n_clicks):
-    datahandler = Datahandler()
-    datahandler.read_data_log()
     time = datahandler.log_values["time"][-1]
-    return [dbc.CardHeader("Zeit"), dbc.CardBody([html.H5(time)])]
+    return (
+        [dbc.CardHeader("Geschwindigkeit (Min)"), dbc.CardBody([html.H5(min_val)])],
+        [dbc.CardHeader("Geschwindigkeit (Max)"), dbc.CardBody([html.H5(max_val)])],
+        [dbc.CardHeader("Geschwindigkeit (Mean)"), dbc.CardBody([html.H5(average)])],
+        [dbc.CardHeader("Zurückgelegte Strecke"), dbc.CardBody([html.H5(distance)])],
+        [dbc.CardHeader("Zeit"), dbc.CardBody([html.H5(time)])],
+    )
 
 
 @app.callback(
@@ -386,9 +336,10 @@ def execute_driving(speed, mode, n_clicks):
                 car.fahrmodus4(speed=speed)
             return "Mode has been executed.", int(0)
         else:
-            return None , int(0)
+            return None, int(0)
     except Exception as _:
         return "Error. Mode has not been executed.", int(0)
+
 
 @app.callback(
     Output("information_box_driving", "children", allow_duplicate=True),
@@ -398,19 +349,22 @@ def execute_driving(speed, mode, n_clicks):
     prevent_initial_call=True,
 )
 def execute_reset(n_clicks):
-    return None, int(0),\
+    return (
+        None,
+        int(0),
         dcc.Dropdown(
-        options=[
-            "Mode 1",
-            "Mode 2",
-            "Mode 3",
-            "Mode 4",
-            "Mode 5",
-            "Mode 6",
-            "Mode 7",
-        ],
-        value=None,
-        id="dropdown_driving_modus",
+            options=[
+                "Mode 1",
+                "Mode 2",
+                "Mode 3",
+                "Mode 4",
+                "Mode 5",
+                "Mode 6",
+                "Mode 7",
+            ],
+            value=None,
+            id="dropdown_driving_modus",
+        ),
     )
 
 
