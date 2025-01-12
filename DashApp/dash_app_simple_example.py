@@ -365,13 +365,12 @@ def update_plot_2(dd_value):
 
 
 @app.callback(
-    Output("information_box_driving", "children"),
+    Output("information_box_driving", "children", allow_duplicate=True),
     Output("button_driving", "n_clicks"),
     Input("slider_speed", "value"),
     Input("dropdown_driving_modus", "value"),
     Input("button_driving", "n_clicks"),
     prevent_initial_call=True,
-    allow_duplicate=True,
 )
 def execute_driving(speed, mode, n_clicks):
     try:
@@ -387,27 +386,20 @@ def execute_driving(speed, mode, n_clicks):
                 car.fahrmodus4(speed=speed)
             return "Mode has been executed.", int(0)
         else:
-            return None, int(0)
+            return None , int(0)
     except Exception as _:
         return "Error. Mode has not been executed.", int(0)
 
-
 @app.callback(
+    Output("information_box_driving", "children", allow_duplicate=True),
     Output("slider_speed", "value"),
-    Input("button_reset", "n_clicks"),
-    prevent_initial_call=True,
-)
-def execute_reset_slider(n_clicks):
-    return int(0)
-
-
-@app.callback(
     Output("dropdown_bar", "children"),
     Input("button_reset", "n_clicks"),
     prevent_initial_call=True,
 )
-def execute_reset_dropdown(n_clicks):
-    return dcc.Dropdown(
+def execute_reset(n_clicks):
+    return None, int(0),\
+        dcc.Dropdown(
         options=[
             "Mode 1",
             "Mode 2",
