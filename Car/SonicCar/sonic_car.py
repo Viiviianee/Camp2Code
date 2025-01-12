@@ -14,7 +14,6 @@ class SonicCar(BaseCar):
 
   def __init__(self):
     super().__init__()
-    self.fieldnames.append("distance_ahead")
     self.number_digits = 2
     self.distance = None
     self.ultrasonic = Ultrasonic()
@@ -23,6 +22,7 @@ class SonicCar(BaseCar):
     return self.ultrasonic.distance()
 
   def fahrmodus3(self, speed, min_distance = 30, steering_angle = 90):
+    self.fieldnames.append("distance_ahead")
     print("Starte Fahrmodus 3: fahren bis Hindernis erkannt wird, dann stoppen.")
     if not self.starting_time:
       self.starting_time = time.perf_counter()
@@ -53,6 +53,7 @@ class SonicCar(BaseCar):
 
 
   def fahrmodus4(self, speed, threshold = 5):
+   self.fieldnames.append("distance_ahead")
    print("Starte Fahrmodus 4: Erkunden bis Hindernis erkannt wird, dann stoppen.")
    self.starting_time = time.perf_counter()
    max_steering_angles = [45, 135]
