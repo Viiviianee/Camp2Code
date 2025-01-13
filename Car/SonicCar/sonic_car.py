@@ -49,8 +49,9 @@ class SonicCar(BaseCar):
             min_distance (int, optional): The minimum distance to detect an obstacle. Defaults to 30.
             steering_angle (int, optional): The steering angle of the car. Defaults to 90 (straight).
         """
-        self.fieldnames.append("distance_ahead")
         print("Starting driving mode 3: Drive until an obstacle is detected, then stop.")
+        if "distance_ahead" not in self.fieldnames:
+            self.fieldnames.append("distance_ahead")
         if not self.starting_time:
             self.starting_time = time.perf_counter()
         self.steering_angle = steering_angle
@@ -89,7 +90,8 @@ class SonicCar(BaseCar):
             speed (int): The speed at which the car should drive.
             threshold (int, optional): The number of exploration steps before stopping. Defaults to 5.
         """
-        self.fieldnames.append("distance_ahead")
+        if "distance_ahead" not in self.fieldnames:
+            self.fieldnames.append("distance_ahead")
         print("Starting driving mode 4: Explore until an obstacle is detected, then stop.")
         self.starting_time = time.perf_counter()
         max_steering_angles = [45, 135]
