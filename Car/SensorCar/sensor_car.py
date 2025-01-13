@@ -26,6 +26,7 @@ class SensorCar(SonicCar):
         self.no_line_threshhold = 100
         self.ultrasonic = Ultrasonic()
         self.infrared = Infrared(references=cal_vals)
+        self.steering_angle_previous = 90
 
     def get_val_infrared_analog(self):
         return self.infrared.read_analog()
@@ -42,16 +43,51 @@ class SensorCar(SonicCar):
     def _drive_and_log(self, speed, steering_angle):
         self.drive(speed, steering_angle=steering_angle)
         self.result[-1]["ir_val"] = self.val_from_infrared
+        self.steering_angle_previous = steering_angle
     
     def _stop_and_log(self):
         self.stop()
         self.result[-1]["ir_val"] = self.val_from_infrared
 
+    # def fahrmodus5(self, speed):
+    #     if "ir_val" not in self.fieldnames:
+    #         self.fieldnames.append("ir_val")
+    #     self.starting_time = time.perf_counter()
+    #     while True:
+    #         self.val_from_infrared = self.get_val_infrared_digital()
+    #         if self.val_from_infrared == [1, 1, 1, 1, 1]:
+    #             print("Goal reached - quit")
+    #             self._stop_and_log()
+    #             break
+    #         elif self.val_from_infrared == [1, 0, 0, 0, 0]:
+    #             self._drive_and_log(speed=speed, steering_angle=45)
+    #         elif self.val_from_infrared == [1, 1, 0, 0, 0]:
+    #             self._drive_and_log(speed=speed, steering_angle=55)
+    #         elif self.val_from_infrared == [0, 1, 0, 0, 0]:
+    #             self._drive_and_log(speed=speed, steering_angle=65)
+    #         elif self.val_from_infrared == [0, 1, 1, 0, 0]:
+    #             self._drive_and_log(speed=speed, steering_angle=75)
+
+    #         elif self.val_from_infrared == [0, 0, 1, 0, 0] or self.val_from_infrared == [0, 0, 0, 0, 0]:
+    #             self._drive_and_log(speed=speed, steering_angle=90)
+            
+    #         elif self.val_from_infrared == [0, 0, 1, 1, 0]:
+    #             self._drive_and_log(speed=speed, steering_angle=105)
+    #         elif self.val_from_infrared == [0, 0, 0, 1, 0]:
+    #             self._drive_and_log(speed=speed, steering_angle=115)
+    #         elif self.val_from_infrared == [0, 0, 0, 1, 1]:
+    #             self._drive_and_log(speed=speed, steering_angle=125)
+    #         elif self.val_from_infrared == [0, 0, 0, 0, 1]:
+    #             self._drive_and_log(speed=speed, steering_angle=135)
+
+    #         else:
+    #             self._drive_and_log(speed=speed, steering_angle=self.steering_angle_previous)
+    #     self.logging()
+    
     def fahrmodus5(self, speed):
         if "ir_val" not in self.fieldnames:
             self.fieldnames.append("ir_val")
         self.starting_time = time.perf_counter()
-        no_line_counter = 0
         while True:
             self.val_from_infrared = self.get_val_infrared_digital()
             if self.val_from_infrared == [1, 1, 1, 1, 1]:
@@ -60,27 +96,19 @@ class SensorCar(SonicCar):
                 break
             elif self.val_from_infrared == [1, 0, 0, 0, 0]:
                 self._drive_and_log(speed=speed, steering_angle=45)
-            elif self.val_from_infrared == [1, 1, 0, 0, 0]:
-                self._drive_and_log(speed=speed, steering_angle=55)
             elif self.val_from_infrared == [0, 1, 0, 0, 0]:
-                self._drive_and_log(speed=speed, steering_angle=65)
-            elif self.val_from_infrared == [0, 1, 1, 0, 0]:
-                self._drive_and_log(speed=speed, steering_angle=75)
+                self._drive_and_log(speed=speed, steering_angle=67.5)
 
             elif self.val_from_infrared == [0, 0, 1, 0, 0] or self.val_from_infrared == [0, 0, 0, 0, 0]:
                 self._drive_and_log(speed=speed, steering_angle=90)
             
-            elif self.val_from_infrared == [0, 0, 1, 1, 0]:
-                self._drive_and_log(speed=speed, steering_angle=105)
             elif self.val_from_infrared == [0, 0, 0, 1, 0]:
-                self._drive_and_log(speed=speed, steering_angle=115)
-            elif self.val_from_infrared == [0, 0, 0, 1, 1]:
-                self._drive_and_log(speed=speed, steering_angle=125)
+                self._drive_and_log(speed=speed, steering_angle=112.5)
             elif self.val_from_infrared == [0, 0, 0, 0, 1]:
                 self._drive_and_log(speed=speed, steering_angle=135)
 
             else:
-                continue
+                self._drive_and_log(speed=speed, steering_angle=self.steering_angle_previous)
         self.logging()
     
     def fahrmodus6(self, speed):
