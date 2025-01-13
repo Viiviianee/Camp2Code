@@ -42,15 +42,24 @@ class Datahandler:
             values = {}
             for fieldname in fieldnames:
                 try:
-                    values[fieldname] = [
-                        float(dictionary[fieldname]) for dictionary in dictionaries
-                    ]
+                    if fieldname == "ir_val":
+                        values[fieldname] = []
+                        for dictionary in dictionaries:
+                            foo =  dictionary["ir_val"]
+                            foo = foo.replace(",", "")
+                            foo = foo.replace(" ", "")
+                            foo = [int(foo[i]) for i in range (1,6,1) ]
+                            values[fieldname].append(foo)
+                    else:
+                        values[fieldname] = [float(dictionary[fieldname]) for dictionary in dictionaries]
+
                 except ValueError as _:
                     print(f"Skip casting for {fieldname}")
                     continue
             self.log_values = values
             self.keys = fieldnames
-            self.keys = [fieldname for fieldname in fieldnames if fieldname != "time"]
+            self.keys = [fieldname for fieldname in fieldnames if fieldname not in ["time", "ir_val"]]
+
 
     def plot_values(self):
         keys = list(self.log_values.keys())
