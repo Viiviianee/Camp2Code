@@ -233,6 +233,24 @@ class BaseCar:
     #     self.logging()
 
     def fahrmodus1_2(self, mode = 0, lst = None):
+        """
+        Executes the driving mode by processing a list of driving commands.
+
+        Parameters:
+        - mode (int): The mode that defines which subset of driving commands to use.
+                      - 0 (default) uses the full list (self.lst).
+                      - 1 uses the first two elements of self.lst.
+                      - 2 uses elements starting from the third element of self.lst.
+        - lst (list of dicts, optional): A list of dictionaries containing driving instructions.
+                                         If None, uses self.lst.
+
+        Each element in the list should be a dictionary containing the following keys:
+        - "speed" (float): The speed at which to drive.
+        - "steering_angle" (float): The steering angle to use.
+        - "time" (float): The time duration for which to drive at the specified speed and steering angle.
+
+        The method drives the vehicle according to the instructions, and then stops it. After that, it logs the results.
+        """
         self.starting_time = time.perf_counter()
         if lst == None:
             lst = self.lst
@@ -254,6 +272,14 @@ class BaseCar:
         self.logging()
 
     def logging(self):
+        """
+        Logs the results of the driving session to a CSV file.
+
+        The log is written to a file named 'log.csv' located in the parent directory of the current script.
+        The CSV contains a header defined by self.fieldnames and rows from self.result.
+
+        Note: This method assumes that self.fieldnames and self.result are defined elsewhere in the class.
+        """
         path = Path(__file__).parents[1].joinpath("log.csv")
         with open(path, "w") as f:
             writer = csv.DictWriter(f, fieldnames=self.fieldnames)
@@ -261,6 +287,11 @@ class BaseCar:
             writer.writerows(self.result)
 
 def main():
+    """
+    Main function to initialize and run the BaseCar's driving session.
+
+    It creates an instance of BaseCar and starts driving with mode 2.
+    """
     basecar = BaseCar()
     basecar.fahrmodus1_2(mode=2)
 
