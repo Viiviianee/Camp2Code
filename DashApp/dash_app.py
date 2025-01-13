@@ -3,7 +3,12 @@ import pandas as pd
 import plotly.express as px
 import dash_bootstrap_components as dbc
 
-app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+app = Dash(
+         __name__, external_stylesheets=[
+             dbc.themes.BOOTSTRAP, 
+             "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+            ], 
+    )
 
 #Dummy Fahrzeugdaten
 speed_min = 0
@@ -12,6 +17,10 @@ speed_mean = 50
 driving_time = 10
 driving_distance = 500
 
+
+#Layout-Components
+
+#Cards
 def create_kpi_card(card_id, card_color, header, value):
     card_class_name = "card-" + card_color
     header_class_name = "card-header-" + card_color
@@ -30,36 +39,62 @@ def create_kpi_card(card_id, card_color, header, value):
 
     return card
 
+#Navbar
+navbar = dbc.Navbar(
+    dbc.Container(
+        [
+           html.A(
+                html.Img(src="/assets/autonomes-auto.png", height="50px", className="navbar-logo")
+            ),
+            dbc.Nav(
+                [
+                    dbc.NavItem(dbc.NavLink("Dashboard", href="#", active=True)),
+                    dbc.NavItem(dbc.NavLink("Car", href="#")),
+                ],
+                navbar=True,
+                className="me-auto",  # Links linksbündig
+            ),
+        ],
+        fluid=True  # Container über die volle Breite
+    ),
+    color="dark",
+    dark=True,
+)
+
 # App Layout
 app.layout = html.Div(
     dbc.Stack(
         [
-            html.H1("Dashboard", id="my-header"),
-            dbc.Row(
+            navbar,
+            dbc.Stack(
                 [
-                    dbc.Col(create_kpi_card("card-speed-min", "pink", "Geschwindigkeit (Min)", speed_min), className="align-items-stretch"),
-                    dbc.Col(create_kpi_card("card-speed-max", "green", "Geschwindigkeit (Max)", speed_max), className="align-items-stretch"),
-                    dbc.Col(create_kpi_card("card-speed-mean", "orange", "Geschwindigkeit (Mean)", speed_mean), className="align-items-stretch"),
-                    dbc.Col(create_kpi_card("card-driving-distance", "yellow", "Zurückgelegte Strecke", driving_distance), className="align-items-stretch"),
-                    dbc.Col(create_kpi_card("card-driving-time", "blue", "Fahrzeit", driving_time), className="align-items-stretch"),
+                    dbc.Row(
+                        [
+                            dbc.Col(create_kpi_card("card-speed-min", "pink", "Geschwindigkeit (Min)", speed_min), className="align-items-stretch"),
+                            dbc.Col(create_kpi_card("card-speed-max", "green", "Geschwindigkeit (Max)", speed_max), className="align-items-stretch"),
+                            dbc.Col(create_kpi_card("card-speed-mean", "orange", "Geschwindigkeit (Mean)", speed_mean), className="align-items-stretch"),
+                            dbc.Col(create_kpi_card("card-driving-distance", "yellow", "Zurückgelegte Strecke", driving_distance), className="align-items-stretch"),
+                            dbc.Col(create_kpi_card("card-driving-time", "blue", "Fahrzeit", driving_time), className="align-items-stretch"),
+                        ],
+                        className="row-cols-5 g-3"
+                    ),
+                    html.Div(
+                        dbc.Stack(
+                            [
+                                #Placeholder can be deleted or replaced
+                                html.Div("Platzhalter DropDown", className="div-place-holder"),
+                                #Placeholder can be deleted or replaced
+                                html.Div("Platzhalter Graph", className="div-place-holder")
+                            ],
+                            gap=1
+                        ),
+                        className= "custom-border"
+                    )
                 ],
-                className="row-cols-5 g-3"
-            ),
-            html.Div(
-                dbc.Stack(
-                    [
-                        #Placeholder can be deleted or replaced
-                        html.Div("Platzhalter DropDown", className="div-place-holder"),
-                        #Placeholder can be deleted or replaced
-                        html.Div("Platzhalter Graph", className="div-place-holder")
-                    ],
-                    gap=1
-                ),
-                className= "custom-border"
+                gap=5,
+                className="main-container"
             )
-        ],
-        gap=5,
-        className="main-container"
+        ]
     )
 )
 
