@@ -58,6 +58,12 @@ class SensorCar(SonicCar):
                 self.result[-1]["ir_val"] = self.val_from_infrared
                 break
         self.logging()
+    
+    def fahrmodus6(self, speed):
+        pass
+    
+    def fahrmodus7(self, speed):
+        pass
         
 
 
@@ -69,6 +75,7 @@ class SensorCar(SonicCar):
 def main():
     car = SensorCar()
     car.fahrmodus5(30)
+    #car._test_measure()
     
     
 

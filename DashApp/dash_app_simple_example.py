@@ -10,9 +10,11 @@ import sys
 
 project_path = Path(__file__).resolve().parent.parent.joinpath("Car", "SonicCar")
 sys.path.append(str(project_path))
-
 from sonic_car import SonicCar
 
+project_path = Path(__file__).resolve().parent.parent.joinpath("Car", "SensorCar")
+sys.path.append(str(project_path))
+from sensor_car import SensorCar
 
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
@@ -334,7 +336,7 @@ def update_plot_2(dd_value):
 def execute_driving(speed, mode, n_clicks):
     try:
         if n_clicks == 1 and speed and mode:
-            car = SonicCar()
+            car = SensorCar()
             if mode == "Mode 1":
                 car.fahrmodus1_2(mode=1)
             elif mode == "Mode 2":
@@ -343,6 +345,12 @@ def execute_driving(speed, mode, n_clicks):
                 car.fahrmodus3(speed=speed)
             elif mode == "Mode 4":
                 car.fahrmodus4(speed=speed)
+            elif mode == "Mode 5":
+                car.fahrmodus5(speed=speed)
+            elif mode == "Mode 6":
+                car.fahrmodus6(speed=speed)
+            elif mode == "Mode 7":
+                car.fahrmodus7(speed=speed)
             return "Mode has been executed.", int(0)
         else:
             return None, int(0)
