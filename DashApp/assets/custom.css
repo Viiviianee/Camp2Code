@@ -1,46 +1,46 @@
-.card-orange {
-  border: 2px solid orange;
+.card-e9c46b {
+  border: 3px solid #e9c46b;
   background-color: white;
 }
 
-.card-pink {
-  border: 2px solid hotpink;
+.card-e66f51 {
+  border: 3px solid #e66f51;
   background-color: white;
 }
 
-.card-green {
-  border: 2px solid limegreen;
+.card-f3a261 {
+  border: 3px solid #f3a261;
   background-color: white;
 }
 
-.card-blue {
-  border: 2px solid cornflowerblue;
+.card-2a9d8e {
+  border: 3px solid #2a9d8e;
   background-color: white;
 }
 
-.card-yellow {
-  border: 2px solid gold;
+.card-264553 {
+  border: 3px solid #264553;
   background-color: white;
 }
 
-.card-header-orange {
-  background-color: rgba(255, 165, 0, 0.2);
+.card-header-e9c46b {
+  background-color: rgba(233, 195, 107, 0.3);
 }
 
-.card-header-pink {
-  background-color: rgba(255, 105, 180, 0.2);
+.card-header-e66f51 {
+  background-color: rgba(230, 111, 81, 0.3);
 }
 
-.card-header-green {
-  background-color: rgba(50, 205, 50, 0.2);
+.card-header-f3a261 {
+  background-color: rgba(243, 163, 97, 0.3);
 }
 
-.card-header-blue {
-  background-color: rgba(100, 148, 237, 0.2);
+.card-header-2a9d8e {
+  background-color: rgba(42, 157, 142, 0.3);
 }
 
-.card-header-yellow {
-  background-color:rgba(255, 217, 0, 0.2);
+.card-header-264553 {
+  background-color:rgba(38, 69, 83, 0.3);
 }
 
 .div-place-holder {
@@ -61,5 +61,26 @@
 }
 
 .custom-navbar{
-  background-color: rgb(27, 40, 69);
+  background-color: #264553 !important;
+}
+
+.card-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dash-graph {
+  height: 100% !important;  /* Sicherstellen, dass der Graph die gesamte Höhe nutzt */
+  width: 100% !important;   /* Sicherstellen, dass der Graph die gesamte Breite nutzt */
+}
+
+.custom-btn {
+  background-color: #264553;
+  border-color: #264553;
+
+}
+.custom-btn:hover {
+  background-color: rgba(38, 69, 83, 0.8); /* Hintergrundfarbe bei Hover */
+  border-color: rgba(38, 69, 83, 0.8);     /* Rahmenfarbe bei Hover */
 }
