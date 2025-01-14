@@ -1,0 +1,61 @@
+import sys
+import time
+import json
+from pathlib import Path
+
+project_path = Path(__file__).resolve().parent.parent
+sys.path.append(str(project_path))
+
+#print(project_path)
+
+from basisklassen import Infrared
+from BaseCar.base_car import BaseCar
+from SonicCar.sonic_car import SonicCar
+
+class SensorCar(SonicCar):
+
+    def __init__(self):
+        super().__init__()
+        path = project_path.joinpath("BaseCar", "config.json")
+        with open(path, "r") as f:
+            data = json.load(f)
+            cal_vals = data["cal_vals"]
+        self.infrared = Infrared(cal_vals)
+                
+
+
+    def fahrmodus5(self):
+        self.starting_time = time.perf_counter()
+        cnt = 0
+        while True :
+            sensor_data = self.infrared.read_digital()            
+            if all(t == 0 for t in sensor_data):
+                cnt += 1
+                if cnt > 100:
+                    print("Stop")
+                    self.stop()
+                    break
+
+            if any(t > 0 for t in sensor_data):
+                cnt = 0
+                print("Fahren")
+                self.drive()
+                if sensor_data == [1,0,0,0,0]:
+                    self.steering_angle = 45
+                elif sensor_data == [0,1,0,0,0]:
+                    self.steering_angle = 67.5
+                elif sensor_data == [0,0,1,0,0]:
+                    self.steering_angle = 90
+                elif sensor_data == [0,0,0,1,0]:
+                    self.steering_angle = 112.5
+                elif sensor_data == [0,0,0,0,1]:
+                    self.steering_angle = 135
+                print(self.steering_angle)
+        
+
+def main():
+    sensorcar = SensorCar()
+    sensorcar.fahrmodus5()
+
+if __name__ == "__main__":
+    main()
