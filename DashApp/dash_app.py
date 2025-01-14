@@ -27,17 +27,22 @@ def log_data_to_dicts(df):
 
 # Gauge
 def create_gauge(value, color):
+    unit = "m/s"  # Einheit definieren
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
         value=value,
         domain={'x': [0, 1], 'y': [0, 1]},
         gauge={'axis': {'range': [None, 100]}, 'bar': {'color': f"#{color}" }},
+        number=dict(
+            font=dict(size=20),
+            suffix=f" {unit}"  # Einheit hinzufügen
+        ),
     ))
     fig.update_layout(
-        margin=dict(l=10, r=10, t=30, b=30),  
-        font=dict(size=12),  
-        height=150,          
-        width=200            
+        margin=dict(l=10, r=10, t=30, b=30),
+        font=dict(size=12),
+        height=150,
+        width=200
     )
     return fig
 
