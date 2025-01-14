@@ -45,6 +45,7 @@ class SensorCar(SonicCar):
         self.result[-1]["ir_val"] = self.val_from_infrared
         if flag_previous:
             self.steering_angle_previous = steering_angle
+            
 
     def _stop_and_log(self):
         self.stop()
@@ -97,8 +98,10 @@ class SensorCar(SonicCar):
                 break
             elif self.val_from_infrared == [1, 0, 0, 0, 0]:
                 if driving_back:
-                    self._drive_and_log(speed=-20, steering_angle=135, flag_previous=False)
-                    time.sleep(2)
+                    self._drive_and_log(speed=-30, steering_angle=112.5, flag_previous=False)
+                    time.sleep(0.5)
+                    self._drive_and_log(speed=speed, steering_angle=90, flag_previous=False)
+                    time.sleep(.5)
                 else:
                     self._drive_and_log(speed=speed, steering_angle=45, flag_previous=True)
             elif self.val_from_infrared == [0, 1, 0, 0, 0]:
@@ -111,8 +114,10 @@ class SensorCar(SonicCar):
                 self._drive_and_log(speed=speed, steering_angle=112.5, flag_previous=True)
             elif self.val_from_infrared == [0, 0, 0, 0, 1]:
                 if driving_back:
-                    self._drive_and_log(speed=-20, steering_angle=45, flag_previous=False)
-                    time.sleep(2)
+                    self._drive_and_log(speed=-30, steering_angle=67.5, flag_previous=False)
+                    time.sleep(.5)
+                    self._drive_and_log(speed=speed, steering_angle=90, flag_previous=False)
+                    time.sleep(.5)
                 else:
                     self._drive_and_log(speed=speed, steering_angle=135, flag_previous=True)
 
@@ -129,9 +134,9 @@ class SensorCar(SonicCar):
 
 def main():
     car = SensorCar()
-    car.fahrmodus6(20)
+    car.fahrmodus6(30)
     # car.stop()
-    # car.infrared.cali_references()
+    #car.infrared.cali_references()
     # car._test_measure()
 
 
