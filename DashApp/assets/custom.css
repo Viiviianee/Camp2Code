@@ -59,3 +59,7 @@
 .navbar-logo {
   margin-right: 30px; 
 }
+
+.custom-navbar{
+  background-color: rgb(27, 40, 69);
+}
