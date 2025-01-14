@@ -129,10 +129,10 @@ class SensorCar(SonicCar):
 
 def main():
     car = SensorCar()
-    car.fahrmodus6(20)
+    #car.fahrmodus6(20)
     # car.stop()
-    # car.infrared.cali_references()
-    # car._test_measure()
+    #car.infrared.cali_references()
+    #car._test_measure()
 
 
 if __name__ == "__main__":
