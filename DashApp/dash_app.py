@@ -57,8 +57,8 @@ navbar = dbc.Navbar(
         ],
         fluid=True  # Container über die volle Breite
     ),
-    color="dark",
     dark=True,
+    className= "custom-navbar"
 )
 
 # App Layout
