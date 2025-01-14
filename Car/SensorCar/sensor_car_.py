@@ -95,10 +95,12 @@ class SensorCar(SonicCar):
                 print("Goal reached - quit")
                 self._stop_and_log()
                 break
-            elif self.val_from_infrared == [1, 0, 0, 0, 0]:
+            elif self.val_from_infrared == [1, 0, 0, 0, 0] or self.val_from_infrared == [1, 1, 0, 0, 0]:
                 if driving_back:
-                    self._drive_and_log(speed=-20, steering_angle=135, flag_previous=False)
-                    time.sleep(2)
+                    self._drive_and_log(speed=-30, steering_angle=112.5, flag_previous=False)
+                    time.sleep(0.5)
+                    self._drive_and_log(speed=speed, steering_angle=90, flag_previous=False)
+                    time.sleep(0.5)
                 else:
                     self._drive_and_log(speed=speed, steering_angle=45, flag_previous=True)
             elif self.val_from_infrared == [0, 1, 0, 0, 0]:
@@ -109,10 +111,12 @@ class SensorCar(SonicCar):
 
             elif self.val_from_infrared == [0, 0, 0, 1, 0]:
                 self._drive_and_log(speed=speed, steering_angle=112.5, flag_previous=True)
-            elif self.val_from_infrared == [0, 0, 0, 0, 1]:
+            elif self.val_from_infrared == [0, 0, 0, 0, 1] or self.val_from_infrared == [0, 0, 0, 1, 1]:
                 if driving_back:
-                    self._drive_and_log(speed=-20, steering_angle=45, flag_previous=False)
-                    time.sleep(2)
+                    self._drive_and_log(speed=-30, steering_angle=67.5, flag_previous=False)
+                    time.sleep(0.5)
+                    self._drive_and_log(speed=speed, steering_angle=90, flag_previous=False)
+                    time.sleep(0.5)
                 else:
                     self._drive_and_log(speed=speed, steering_angle=135, flag_previous=True)
 
@@ -129,7 +133,7 @@ class SensorCar(SonicCar):
 
 def main():
     car = SensorCar()
-    #car.fahrmodus6(20)
+    car.fahrmodus6(30)
     # car.stop()
     #car.infrared.cali_references()
     #car._test_measure()
