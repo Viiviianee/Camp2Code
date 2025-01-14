@@ -1,14 +1,19 @@
 from dash import Dash, html, dcc, Input, Output, State
 import pandas as pd
+from pathlib import Path
 import plotly.express as px
 import dash_bootstrap_components as dbc
 
+<<<<<<< HEAD
+app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], suppress_callback_exceptions=True)
+=======
 app = Dash(
          __name__, external_stylesheets=[
              dbc.themes.BOOTSTRAP, 
              "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
             ], 
     )
+>>>>>>> 02d27e1557cc0421b30a058ea67e1a4e606547d3
 
 #Dummy Fahrzeugdaten
 speed_min = 0
@@ -17,10 +22,23 @@ speed_mean = 50
 driving_time = 10
 driving_distance = 500
 
+<<<<<<< HEAD
+# Logdaten einlesen 
+def read_log_data():
+    log_path = Path(__file__).resolve().parent.parent.joinpath("Car", "log.csv")
+    df = pd.read_csv(log_path)
+    return df
+
+# Logdaten in Dictionaries umwandeln
+def log_data_to_dicts(df):
+    return df.to_dict('records')
+
+=======
 
 #Layout-Components
 
 #Cards
+>>>>>>> 02d27e1557cc0421b30a058ea67e1a4e606547d3
 def create_kpi_card(card_id, card_color, header, value):
     card_class_name = "card-" + card_color
     header_class_name = "card-header-" + card_color
@@ -29,10 +47,10 @@ def create_kpi_card(card_id, card_color, header, value):
         dbc.CardHeader(header, class_name=header_class_name),
         dbc.CardBody(
             [
-                html.H5(value)
+                html.H5(value, id=f"{card_id}-value")
             ],
             className="d-flex justify-content-center align-items-center" 
-        ), 
+        ),
     ]
 
     card = dbc.Card(card_content, className=card_class_name + " h-100", id=card_id)
@@ -65,6 +83,34 @@ navbar = dbc.Navbar(
 app.layout = html.Div(
     dbc.Stack(
         [
+<<<<<<< HEAD
+            html.H1("Dashboard", id="my-header"),
+            dbc.Button("Logdaten einlesen", id="load-log-button", n_clicks=0),
+            dbc.Row(
+                [
+                    dbc.Col(create_kpi_card("card-speed-min", "pink", "Geschwindigkeit (Min)", "0.0"), className="align-items-stretch"),
+                    dbc.Col(create_kpi_card("card-speed-max", "green", "Geschwindigkeit (Max)", "0.0"), className="align-items-stretch"),
+                    dbc.Col(create_kpi_card("card-speed-mean", "orange", "Geschwindigkeit (Mean)", "0.0"), className="align-items-stretch"),
+                    dbc.Col(create_kpi_card("card-driving-distance", "yellow", "Zurückgelegte Strecke", "0.0"), className="align-items-stretch"),
+                    dbc.Col(create_kpi_card("card-driving-time", "blue", "Fahrzeit", "0.0"), className="align-items-stretch"),
+                ],
+                className="row-cols-5 g-3"
+            ),
+            html.Div(
+                [
+                    html.Div(id="log-data-output"),
+                    dbc.Stack(
+                        [
+                            # Placeholder can be deleted or replaced
+                            html.Div("Platzhalter DropDown", className="div-place-holder"),
+                            # Placeholder can be deleted or replaced
+                            html.Div("Platzhalter Graph", className="div-place-holder")
+                        ],
+                        gap=1
+                    ),
+                ],
+                className="custom-border"
+=======
             navbar,
             dbc.Stack(
                 [
@@ -93,10 +139,31 @@ app.layout = html.Div(
                 ],
                 gap=5,
                 className="main-container"
+>>>>>>> 02d27e1557cc0421b30a058ea67e1a4e606547d3
             )
         ]
     )
 )
 
-if __name__ == "__main__":
+@app.callback(
+    [Output("card-speed-min-value", "children"),
+     Output("card-speed-max-value", "children"),
+     Output("card-speed-mean-value", "children"),
+     Output("card-driving-distance-value", "children"),
+     Output("card-driving-time-value", "children")],
+    [Input("load-log-button", "n_clicks")]
+)
+def update_log_data(n_clicks):
+    if n_clicks > 0:
+        log_data_df = read_log_data()
+        speed_min_log = round(log_data_df['speed'].min(), 1)
+        speed_max_log = round(log_data_df['speed'].max(), 1)
+        speed_mean_log = round(log_data_df['speed'].mean(), 1)
+        driving_distance_log = round((log_data_df['speed'] * log_data_df['time']).sum(), 1)
+        driving_time_log = round(log_data_df['time'].sum(), 1)
+        return [html.H5(speed_min_log), html.H5(speed_max_log), html.H5(speed_mean_log), html.H5(driving_distance_log), html.H5(driving_time_log)]
+    
+    return ["0.0", "0.0", "0.0", "0.0", "0.0"]
+
+if __name__ == '__main__':
     app.run_server(debug=True, host="0.0.0.0", port=8051)
