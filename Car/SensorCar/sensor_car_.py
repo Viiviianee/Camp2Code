@@ -27,6 +27,7 @@ class SensorCar(SonicCar):
         self.ultrasonic = Ultrasonic()
         self.infrared = Infrared(references=cal_vals)
         self.steering_angle_previous = 90
+        self.flag_started = 0
 
     def get_val_infrared_analog(self):
         return self.infrared.read_analog()
@@ -102,7 +103,7 @@ class SensorCar(SonicCar):
                     # self._drive_and_log(speed=speed, steering_angle=90, flag_previous=False)
                     # time.sleep(0.5)
                     self._drive_and_log(speed=speed, steering_angle=67.5, flag_previous=False)
-                    time.sleep(0.5)
+                    time.sleep(1)
                 else:
                     self._drive_and_log(speed=speed, steering_angle=45, flag_previous=True)
             elif self.val_from_infrared == [0, 1, 0, 0, 0]:
@@ -121,8 +122,6 @@ class SensorCar(SonicCar):
                     # time.sleep(0.5)
                     self._drive_and_log(speed=speed, steering_angle=112.5, flag_previous=False)
                     time.sleep(1)
-                else:
-                    self._drive_and_log(speed=speed, steering_angle=135, flag_previous=True)
 
             else:
                 self._drive_and_log(speed=speed, steering_angle=self.steering_angle_previous)
