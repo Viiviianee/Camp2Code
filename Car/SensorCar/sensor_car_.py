@@ -67,7 +67,7 @@ class SensorCar(SonicCar):
                 if driving_back:
                     self._drive_and_log(speed=-30, steering_angle=130, flag_previous=False) # -30, 130
                     time.sleep(0.35) # 0.35
-                    self._drive_and_log(speed=speed, steering_angle=90, flag_previous=False)
+                    self._drive_and_log(speed=30, steering_angle=90, flag_previous=False)
                     time.sleep(0.35) # 0.35
                 else:
                     self._drive_and_log(speed=speed, steering_angle=45, flag_previous=True)
@@ -84,7 +84,7 @@ class SensorCar(SonicCar):
                 if driving_back:
                     self._drive_and_log(speed=-30, steering_angle=50, flag_previous=False) # -30, 50
                     time.sleep(0.35) # 0.35
-                    self._drive_and_log(speed=speed, steering_angle=90, flag_previous=False)
+                    self._drive_and_log(speed=30, steering_angle=90, flag_previous=False)
                     time.sleep(0.35) # 0.35
 
             else:
@@ -100,7 +100,7 @@ class SensorCar(SonicCar):
 
 def main():
     car = SensorCar()
-    car.fahrmodus6(30)
+    car.fahrmodus6(35)
     #car.stop()
     #car.infrared.cali_references()
     #car._test_measure()
