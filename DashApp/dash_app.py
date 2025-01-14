@@ -4,16 +4,13 @@ from pathlib import Path
 import plotly.express as px
 import dash_bootstrap_components as dbc
 
-<<<<<<< HEAD
-app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], suppress_callback_exceptions=True)
-=======
 app = Dash(
          __name__, external_stylesheets=[
              dbc.themes.BOOTSTRAP, 
              "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-            ], 
+            ],
+            suppress_callback_exceptions=True 
     )
->>>>>>> 02d27e1557cc0421b30a058ea67e1a4e606547d3
 
 #Dummy Fahrzeugdaten
 speed_min = 0
@@ -22,7 +19,6 @@ speed_mean = 50
 driving_time = 10
 driving_distance = 500
 
-<<<<<<< HEAD
 # Logdaten einlesen 
 def read_log_data():
     log_path = Path(__file__).resolve().parent.parent.joinpath("Car", "log.csv")
@@ -33,12 +29,6 @@ def read_log_data():
 def log_data_to_dicts(df):
     return df.to_dict('records')
 
-=======
-
-#Layout-Components
-
-#Cards
->>>>>>> 02d27e1557cc0421b30a058ea67e1a4e606547d3
 def create_kpi_card(card_id, card_color, header, value):
     card_class_name = "card-" + card_color
     header_class_name = "card-header-" + card_color
@@ -83,37 +73,11 @@ navbar = dbc.Navbar(
 app.layout = html.Div(
     dbc.Stack(
         [
-<<<<<<< HEAD
-            html.H1("Dashboard", id="my-header"),
-            dbc.Button("Logdaten einlesen", id="load-log-button", n_clicks=0),
-            dbc.Row(
-                [
-                    dbc.Col(create_kpi_card("card-speed-min", "pink", "Geschwindigkeit (Min)", "0.0"), className="align-items-stretch"),
-                    dbc.Col(create_kpi_card("card-speed-max", "green", "Geschwindigkeit (Max)", "0.0"), className="align-items-stretch"),
-                    dbc.Col(create_kpi_card("card-speed-mean", "orange", "Geschwindigkeit (Mean)", "0.0"), className="align-items-stretch"),
-                    dbc.Col(create_kpi_card("card-driving-distance", "yellow", "Zurückgelegte Strecke", "0.0"), className="align-items-stretch"),
-                    dbc.Col(create_kpi_card("card-driving-time", "blue", "Fahrzeit", "0.0"), className="align-items-stretch"),
-                ],
-                className="row-cols-5 g-3"
-            ),
-            html.Div(
-                [
-                    html.Div(id="log-data-output"),
-                    dbc.Stack(
-                        [
-                            # Placeholder can be deleted or replaced
-                            html.Div("Platzhalter DropDown", className="div-place-holder"),
-                            # Placeholder can be deleted or replaced
-                            html.Div("Platzhalter Graph", className="div-place-holder")
-                        ],
-                        gap=1
-                    ),
-                ],
-                className="custom-border"
-=======
             navbar,
+            dbc.Button("Logdaten einlesen", id="load-log-button", n_clicks=0),
             dbc.Stack(
                 [
+                
                     dbc.Row(
                         [
                             dbc.Col(create_kpi_card("card-speed-min", "pink", "Geschwindigkeit (Min)", speed_min), className="align-items-stretch"),
@@ -139,7 +103,6 @@ app.layout = html.Div(
                 ],
                 gap=5,
                 className="main-container"
->>>>>>> 02d27e1557cc0421b30a058ea67e1a4e606547d3
             )
         ]
     )
