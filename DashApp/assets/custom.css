@@ -55,3 +55,7 @@
   border: 2px solid rgba(0, 0, 0, 0.2);  
   padding: 20px;             
 }
+
+.navbar-logo {
+  margin-right: 30px; 
+}
