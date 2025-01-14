@@ -78,8 +78,8 @@ navbar = dbc.Navbar(
             ),
             dbc.Nav(
                 [
-                    dbc.NavItem(dbc.NavLink("Dashboard", href="Dashboard", active=True)),
-                    dbc.NavItem(dbc.NavLink("Car", href="Car")),
+                    dbc.NavItem(dbc.NavLink("Dashboard", href="Dashboard", active=True, id="nav-dashboard")),
+                    dbc.NavItem(dbc.NavLink("Car", href="Car", active=False, id="nav-car")),
                 ],
                 navbar=True,
                 className="me-auto",  # Links linksbündig
@@ -101,6 +101,15 @@ app.layout = html.Div(
         ]
     )
 )
+
+@app.callback(
+    [Output('nav-dashboard', 'active'), Output('nav-car', 'active')],
+    [Input('url', 'pathname')]
+)
+
+def update_navbar_active(pathname):
+    # Setze den active-Status basierend auf der URL
+    return pathname == '/', pathname == '/Car'
 
 # Callback für das Laden des richtigen Inhalts basierend auf der URL
 @app.callback(
@@ -140,7 +149,47 @@ def display_page(pathname):
             )
         return content
     elif pathname == '/Car':
-        return html.Div([ html.H3("Car Content")])
+        content = dbc.Stack(
+            dbc.Row(
+                [
+                    dbc.Col(
+                        dbc.Select(
+                            placeholder="Fahrmodus",
+                            id="select",
+                            options=[
+                                {"label": "Fahrmodus 1", "value": "1"},
+                                {"label": "Fahrmodus 2", "value": "2"},
+                                {"label": "Fahrmodus 3", "value": "3"},
+                                {"label": "Fahrmodus 4", "value": "4"},
+                                {"label": "Fahrmodus 5", "value": "5"},
+                                {"label": "Fahrmodus 6", "value": "6"},
+                            ],
+                        )
+                    ),
+                    dbc.Col(
+                        dbc.Row(
+                            [
+                                dbc.Col(
+                                    html.H6("Anzahl der Runden:"),
+                                    className="d-flex justify-content-end align-items-center"
+                                ),
+                                dbc.Col(
+                                    html.Div(
+                                            dbc.Input(type="number", min=1, max=10, step=1),
+                                            id="styled-numeric-input",
+                                            className="d-flex justify-content-center align-items-center"
+                                    ),  
+                                ) 
+                            ]
+                           
+                        )
+                            
+                        ),
+                ],
+                className="row-cols-3 g-3"
+            )    
+        )
+        return content
 
 @app.callback(
     [Output("card-speed-min-value", "figure"),
