@@ -1,63 +1,69 @@
-from dash import Dash, html, Dash, html, dash_table, dcc, callback, Output, Input
-import dash_bootstrap_components as dbc
+from dash import Dash, html, dcc, callback, Output, Input
 import pandas as pd
 import plotly.express as px
-import csv
+from pathlib import Path
+import sys
 
-# Incorporate data
-path = "C:\\Users\\bbern\\Downloads\\log.csv"
-with open(path, "r", encoding="unicode_escape") as f:
-            reader = csv.DictReader(f)
-            erste_zeile = next(reader) # Erste Zeile lesen 
-            options_list = list(erste_zeile.values())
-print(options_list)
+# create path to parent directory
+project_path = Path(__file__).resolve().parent.parent
+sys.path.append(str(project_path))
+
+# select log file
+path = project_path.joinpath("Car", "log.csv")
+
+# create dataframe
+df = pd.read_csv(path)
+
+# Dropdown options from log file
+options_list = list(df.columns)
+
+# Mapping options from log file to show in dropdown
+new_dict = {
+    "speed": "Speed",
+    "steering_angle": "Steering Angle",
+    "direction": "Direction",
+    "distance_ahead": "Distance to object",
+    "ir_val": "Line detection",
+}
+
+dd_options = []
+for col in options_list[1:]:
+    dd_options.append(new_dict.get(col))
+print(dd_options)
+
 
 # Initialize the app
-app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+app = Dash()
 
 # App layout
-app.layout = [
-    dbc.CardGroup([
-        dbc.Label("Choose an option:", html_for='my_dropdown')
-]),
-    dbc.Row([
-    dbc.Col(dcc.Dropdown(
-        id='my_dropdown',
-        options=options_list
-            # {"label": "Speed", "value" : "speed"},
-            # {"label": "Steering angle", "value": "steering_angle"},
-            # {"label": "Direction", "value": "direction"},
-            # {"label": "Ultrasonicsensor", "value": "distance_ahead"},
-        ,
-        value="speed")),  # Standardwert
-    dbc.Col(dcc.Graph(figure={}, id='my_graph'), xs=12, md=12),
-    dbc.Button("Load latest Data", id="my_button"),
-    dcc.Markdown(children="", id = "output_div"),
-    dcc.Markdown("fieldnames")
+app.layout = html.Div([
+    html.Div(children="Chose an option for car data analysis"),
+    html.Hr(),
+    dcc.Dropdown(
+            id='my_dropdown',
+            options=[{"label": new_dict.get(col), "value": col} for col in options_list[1:]],
+            value="speed",
+        ),
+    dcc.Graph(figure={}, id='my_graph')
 ])
-    
-]
 
 # Add controls to build the interaction
-@callback( #calls the connected function (in this case update:graph()) as soon as the Input changes
-    Output(component_id='my_graph', component_property='figure'),
-    Input(component_id='my_dropdown', component_property='value')
-)
-def update_graph(value): # the function argument comes from the component property of the Input
-    possible_values = {"speed" : "speed [x/y]",
-                       "steering_angle" : "steering_angle [°]",
-                       "direction" : "direction [-]",
-                       "distance_ahead" : "distance to obstacle [cm]"
-                       }
-    figure=px.line(df, x='time', y=value, labels={"time": "time [s]", value: possible_values[value]}) 
-    return figure # the returned object is assigned to the component property of the Output
-
 @callback(
-    Output("output_div", "children"),
-    Input(component_id='my_button', component_property='n_clicks')
+    Output(component_id='my_graph', component_property='figure'),
+    Input(component_id='my_dropdown', component_property='value'),
 )
-def update_log_data(n_clicks):
-    return f"Der Button wurde {n_clicks} mal geklickt."
+def update_graph(value, new_dict=new_dict):
+    if value:
+        print(value, new_dict.get(value))
+        figure = px.line(
+            df,
+            x='time',
+            y=value,
+            labels={"time": "time [s]", value: new_dict.get(value)}
+        )
+    else:
+        figure = px.line()
+    return figure
 
 # Run the app
 if __name__ == '__main__':

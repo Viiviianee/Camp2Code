@@ -35,7 +35,7 @@ class SensorCar(SonicCar):
                 
 
 
-    def fahrmodus5(self):
+    def fahrmodus5(self, speed=30, maneuvering=False):
         """
         Car tries to follow a line with the use of the infrared sensor. If the end of the line or no line is reached, the car stops.
 
@@ -58,37 +58,52 @@ class SensorCar(SonicCar):
     """
         self.starting_time = time.perf_counter()
         cnt = 0
+        sensor_data_save = [0,0,0,0,0]
         while True :
+
             sensor_data = self.infrared.read_digital()
             self.sensor = sensor_data            
             if all(t == 0 for t in sensor_data):
                 cnt += 1
                 if cnt > 100:
-                    print("Stop")
-                    self.stop()
-                    break
+                    if sensor_data_save == [0,0,0,0,0]:
+                        self.stop()
+                        break
+                    elif sensor_data_save == [1,0,0,0,0]:
+                        self.drive(speed *(-1), steering_angle=135)
+                        time.sleep(0.5)
+                    elif sensor_data_save == [0,0,0,0,1]:
+                        self.drive(speed *(-1), steering_angle=45)
+                        time.sleep(0.5)
 
             if any(t > 0 for t in sensor_data):
                 cnt = 0
                 print("Fahren")
-                self.drive(30)
+                self.drive(speed)
                 self.logging()
                 if sensor_data == [1,0,0,0,0]:
                     self.steering_angle = 45
+                    if maneuvering == True:
+                        sensor_data_save = sensor_data
                 elif sensor_data == [0,1,0,0,0]:
                     self.steering_angle = 67.5
+                    sensor_data_save = [0,0,0,0,0]
                 elif sensor_data == [0,0,1,0,0]:
                     self.steering_angle = 90
+                    sensor_data_save = [0,0,0,0,0]
                 elif sensor_data == [0,0,0,1,0]:
                     self.steering_angle = 112.5
+                    sensor_data_save = [0,0,0,0,0]
                 elif sensor_data == [0,0,0,0,1]:
                     self.steering_angle = 135
+                    if maneuvering == True:
+                        sensor_data_save = sensor_data
 
-        
-
+    def fahrmodus6(self, speed=30, maneuvering=True):
+        self.fahrmodus5(speed, maneuvering)
 def main():
     sensorcar = SensorCar()
-    sensorcar.fahrmodus5()
+    sensorcar.fahrmodus6()
     time.sleep(5)
     sensorcar.stop()
     
