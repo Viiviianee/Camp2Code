@@ -41,67 +41,120 @@ class SensorCar(SonicCar):
             print(self.get_val_infrared_digital())
             time.sleep(time_delay)
 
-    def _drive_and_log(self, speed, steering_angle, flag_previous=False):
+    def _drive_and_log(self, speed, steering_angle, flag_previous=False, using_ultrasonic=False):
         self.drive(speed, steering_angle=steering_angle)
         self.result[-1]["ir_val"] = self.val_from_infrared
+        if using_ultrasonic:
+            self.result[-1]["distance_ahead"] = self.distance
         if flag_previous:
             self.steering_angle_previous = steering_angle
 
-    def _stop_and_log(self):
+    def _stop_and_log(self, using_ultrasonic=False):
         self.stop()
         self.result[-1]["ir_val"] = self.val_from_infrared
+        if using_ultrasonic:
+            self.result[-1]["distance_ahead"] = self.distance
 
 
-    def fahrmodus5(self, speed, driving_back=False):
+    def fahrmodus5(self, speed, driving_back=False, react_to_obstacles=False):
         if "ir_val" not in self.fieldnames:
             self.fieldnames.append("ir_val")
+        if react_to_obstacles:
+            fail_counter = 0
+            if "distance_ahead" not in self.fieldnames:
+                self.fieldnames.append("distance_ahead")
         self.starting_time = time.perf_counter()
         while True:
             self.val_from_infrared = self.get_val_infrared_digital()
+            if react_to_obstacles:
+                self.distance = self.get_distance()
+                if self.distance < 30 and self.distance > 0:
+                    print("Obstacle detected!")
+                    self._stop_and_log(using_ultrasonic=True)
+                    self.ultrasonic.stop()
+                    break
+                elif self.distance < -2:
+                    print(f"Sensor error! {fail_counter}")
+                    self.result[-1]["distance_ahead"] = self.distance
+                    self.result[-1]["ir_val"] = self.val_from_infrared
+                    fail_counter += 1
+                    if fail_counter >= 30:
+                        self._stop_and_log(using_ultrasonic=True)
+                        self.ultrasonic.stop()
+                        break
             if self.val_from_infrared == [1, 1, 1, 1, 1]:
                 print("Goal reached - quit")
-                self._stop_and_log()
+                if react_to_obstacles:
+                    self._stop_and_log(using_ultrasonic=True)
+                else:
+                    self._stop_and_log(using_ultrasonic=False)
                 break
+
             elif self.val_from_infrared == [1, 0, 0, 0, 0] \
                 or self.val_from_infrared == [1, 1, 0, 0, 0]:
                 if driving_back:
-                    self._drive_and_log(speed=-30, steering_angle=130, flag_previous=False) # -30, 130
-                    time.sleep(0.35) # 0.35
-                    self._drive_and_log(speed=30, steering_angle=90, flag_previous=False)
-                    time.sleep(0.35) # 0.35
+                    if react_to_obstacles:
+                        self._drive_and_log(speed=-30, steering_angle=130, flag_previous=False, using_ultrasonic=True) # -30, 130
+                        time.sleep(0.35) # 0.35
+                        self._drive_and_log(speed=30, steering_angle=90, flag_previous=False, using_ultrasonic=True)
+                        time.sleep(0.35) # 0.35
+                    else:
+                        self._drive_and_log(speed=-30, steering_angle=130, flag_previous=False, using_ultrasonic=False) # -30, 130
+                        time.sleep(0.35) # 0.35
+                        self._drive_and_log(speed=30, steering_angle=90, flag_previous=False, using_ultrasonic=False)
+                        time.sleep(0.35) # 0.35                 
                 else:
                     self._drive_and_log(speed=speed, steering_angle=45, flag_previous=True)
-            elif self.val_from_infrared == [0, 1, 0, 0, 0]:
-                self._drive_and_log(speed=speed, steering_angle=67.5, flag_previous=True)
 
+            elif self.val_from_infrared == [0, 1, 0, 0, 0]:
+                if react_to_obstacles:
+                    self._drive_and_log(speed=speed, steering_angle=67.5, flag_previous=True, using_ultrasonic=True)
+                else:
+                    self._drive_and_log(speed=speed, steering_angle=67.5, flag_previous=True, using_ultrasonic=False)
+    
             elif self.val_from_infrared == [0, 0, 1, 0, 0]:
-                self._drive_and_log(speed=speed, steering_angle=90, flag_previous=True)
+                if react_to_obstacles:
+                    self._drive_and_log(speed=speed, steering_angle=90, flag_previous=True, using_ultrasonic=True)
+                else:
+                    self._drive_and_log(speed=speed, steering_angle=90, flag_previous=True, using_ultrasonic=False)
 
             elif self.val_from_infrared == [0, 0, 0, 1, 0]:
-                self._drive_and_log(speed=speed, steering_angle=112.5, flag_previous=True)
+                if react_to_obstacles:
+                    self._drive_and_log(speed=speed, steering_angle=112.5, flag_previous=True, using_ultrasonic=True)
+                else:
+                    self._drive_and_log(speed=speed, steering_angle=112.5, flag_previous=True, using_ultrasonic=False)
+
             elif self.val_from_infrared == [0, 0, 0, 0, 1]\
                     or self.val_from_infrared == [0, 0, 0, 1, 1]:
                 if driving_back:
-                    self._drive_and_log(speed=-30, steering_angle=50, flag_previous=False) # -30, 50
-                    time.sleep(0.35) # 0.35
-                    self._drive_and_log(speed=30, steering_angle=90, flag_previous=False)
-                    time.sleep(0.35) # 0.35
+                    if react_to_obstacles:
+                        self._drive_and_log(speed=-30, steering_angle=50, flag_previous=False, using_ultrasonic=True) # -30, 130
+                        time.sleep(0.35) # 0.35
+                        self._drive_and_log(speed=30, steering_angle=90, flag_previous=False, using_ultrasonic=True)
+                        time.sleep(0.35) # 0.35
+                    else:
+                        self._drive_and_log(speed=-30, steering_angle=50, flag_previous=False, using_ultrasonic=False) # -30, 130
+                        time.sleep(0.35) # 0.35
+                        self._drive_and_log(speed=30, steering_angle=90, flag_previous=False, using_ultrasonic=False)
+                        time.sleep(0.35) # 0.35
+                else:
+                    self._drive_and_log(speed=speed, steering_angle=135, flag_previous=True)
 
             else:
                 self._drive_and_log(speed=speed, steering_angle=self.steering_angle_previous)
         self.logging()
 
     def fahrmodus6(self, speed):
-        self.fahrmodus5(speed=speed, driving_back=True)
+        self.fahrmodus5(speed=speed, driving_back=True, react_to_obstacles=False)
 
     def fahrmodus7(self, speed):
-        pass
+        self.fahrmodus5(speed=speed, driving_back=True, react_to_obstacles=True)
 
 
 def main():
     car = SensorCar()
-    car.fahrmodus6(35)
-    #car.stop()
+    #car.fahrmodus6(35)
+    car.stop()
     #car.infrared.cali_references()
     #car._test_measure()
 
