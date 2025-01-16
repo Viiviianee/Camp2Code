@@ -182,6 +182,7 @@ class BaseCar:
                 time_bw (int): duration car drives backward. Default to 3.
                 time_sp (int): duration car stopps. Default to 1.
         """
+        print(f"Start Fahrmodus 1 mit time_fw {time_fw}, time_bw {time_bw} und time_stop {time_sp}")
         self.starting_time = time.perf_counter()
 
         #fahrt forwärts für 3 sek
@@ -195,6 +196,7 @@ class BaseCar:
         time.sleep(time_bw)
         self.stop()
         self.logging()
+        print("Ende Fahrmodus 1")
 
 
     # def fahrmodus2(self, speed, time_fw=1, time_cw=8, time_ccw=8, time_bw=1):

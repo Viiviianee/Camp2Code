@@ -1,4 +1,4 @@
-from dash import Dash, html, dcc, Input, Output, State
+from dash import Dash, html, dcc, Input, Output, State, no_update
 import pandas as pd
 from pathlib import Path
 import plotly.express as px
@@ -7,6 +7,13 @@ import plotly.graph_objects as go
 import dash_layout_components as layout_components
 import dash_layout_dashboard as layout_dashboard
 import dash_layout_car as layout_car
+import sys
+
+project_path = Path(__file__).resolve().parent.parent / 'Car'
+sys.path.append(str(project_path))
+
+from SensorCar.sensor_car import SensorCar
+
 
 navbar_tab_names= ["Dashboard", "Car"]
 navbar_ids= ["nav-dashboard", "nav-car"]
@@ -40,7 +47,8 @@ app.layout = html.Div(
          layout_components.create_navbar(navbar_logo, navbar_tab_names, navbar_ids),
             dcc.Location(id='url', refresh=False),
             html.Div(id='page-content', className="main-container"),
-            dcc.Store(id='log-data')  #Unsichtbarer Daten-Storage
+            dcc.Store(id='log-data'),
+            dcc.Store(id='temp-data')
         ]
     )
 )
@@ -130,6 +138,61 @@ def display_page(pathname):
         return [layout_dashboard.content, pathname == '/' or pathname =='/Dashboard', pathname == '/Car']
     elif pathname == '/Car':
         return [layout_car.content, pathname == '/' or pathname =='/Dashboard', pathname == '/Car']
-  
+
+@app.callback(
+    Output('form-param-fahrmodus', 'children'),
+    Input('my-select', 'value')
+)
+def update_row(selected_option):
+    if selected_option == '1':
+        return layout_car.form_fahrmodus1
+    elif selected_option == '2':
+        return []
+    elif selected_option == '3':
+        return []
+    elif selected_option == '4':
+        return []
+    elif selected_option == '5':
+        return []
+    elif selected_option == '6':
+        return []
+
+# @app.callback(
+#     Output('start-btn', 'disabled'),
+#     Input('param-speed', 'value')
+# )
+# def activate_start_btn(value):
+#     print(value)
+#     return value != None and value == 0 
+
+#Fahrmodus 1
+@app.callback(
+    [Output('my-traffic-light', 'src', allow_duplicate=True), Output('start-btn', 'disabled')],
+    [Input("start-btn", "n_clicks"), Input('param-speed', 'value')],
+    prevent_initial_call='initial_duplicate'
+)
+def update_traffic_light_and_start_btn(n_clicks,value):
+    if n_clicks and n_clicks > 0:
+        return ["/assets/traffic-light-yellow.svg", True]
+    return ["/assets/traffic-light-red.svg", value != None and value == 0]
+
+#Fahrmodus 1
+@app.callback(
+    [Output('my-traffic-light', 'src', allow_duplicate=True)],
+    [Input("start-btn", "n_clicks")],
+    [State("param-speed", "value"), State("param-time-forward", "value"), State("param-time-backward", "value"), State("param-time-stop", "value")],
+    prevent_initial_call='initial_duplicate'
+)
+def run_fahrmodus(n_clicks, speed, time_forward, time_backward, time_stop):
+    if n_clicks and n_clicks > 0:
+        print("here")
+        car = SensorCar()
+        car.fahrmodus1(speed)
+        print(f"time_forward {time_forward} time_backward {time_backward} time_stop {time_stop}")
+        return ["/assets/traffic-light-green.svg"]
+    return no_update
+
+
+
 if __name__ == '__main__':
     app.run_server(debug=True, host="0.0.0.0", port=8051)
