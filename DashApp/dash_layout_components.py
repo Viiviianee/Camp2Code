@@ -7,7 +7,7 @@ import plotly.graph_objects as go
 
 # Gauge
 def create_gauge(value, color):
-    unit = "m/s"  # Einheit definieren
+    unit = "cm/s"  # Einheit definieren
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
         value=value,
@@ -30,7 +30,7 @@ def create_gauge(value, color):
 def create_kpi_card(card_id, card_color, header, gauge=False):
     card_class_name = "card-" + card_color
     header_class_name = "card-header-" + card_color
-    card_body = html.H1(0.0, id=f"{card_id}-value")
+    card_body = html.H1("N/A", id=f"{card_id}-value")
     if  gauge == True:
         card_body = dcc.Graph(
                     figure=create_gauge(0.0, card_color),

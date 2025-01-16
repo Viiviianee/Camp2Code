@@ -234,15 +234,15 @@ class BaseCar:
     #     self.stop()
     #     self.logging()
 
-    def fahrmodus1_2(self, mode = 0, lst = None):
+    def fahrmodus1_2(self, mode=0, lst=None):
         """
         Executes the driving mode by processing a list of driving commands.
 
         Parameters:
         - mode (int): The mode that defines which subset of driving commands to use.
                       - 0 (default) uses the full list (self.lst).
-                      - 1 uses the first two elements of self.lst.
-                      - 2 uses elements starting from the third element of self.lst.
+                      - 1 uses the first two elements of self.lst (Fahrmodus1).
+                      - 2 uses elements starting from the third element of self.lst (Fahrmodus2).
         - lst (list of dicts, optional): A list of dictionaries containing driving instructions.
                                          If None, uses self.lst.
 
@@ -260,6 +260,8 @@ class BaseCar:
                 lst = self.lst[:2]
             elif mode == 2:
                 lst = self.lst[2:]
+            elif mode == 0:
+                pass
             else:
                 print("Value of mode is not valid")
                 quit()
