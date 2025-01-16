@@ -175,7 +175,7 @@ class SensorCar(SonicCar):
                 
             elif self.val_from_infrared == [0, 0, 0, 0, 0]:
                 self.no_line_counter +=1
-                if driving_back and self.no_line_counter >= 50:
+                if driving_back and self.no_line_counter >= 30:
                     self.no_line_counter = 0
                     if react_to_obstacles:
                         while True:
@@ -229,7 +229,7 @@ class SensorCar(SonicCar):
 
 def main():
     car = SensorCar()
-    car.fahrmodus6(50)
+    car.fahrmodus7(40)
     #car.stop()
     #car.infrared.cali_references()
     #car._test_measure()
