@@ -70,15 +70,18 @@ class SensorCar(SonicCar):
             self.val_from_infrared = self.get_val_infrared_digital()
             if react_to_obstacles:
                 self.distance = self.get_distance()
-                if self.distance < 30 and self.distance > 0:
+                if self.distance < 20 and self.distance > 0:
                     print("Obstacle detected!")
                     self._stop_and_log(using_ultrasonic=True)
                     self.ultrasonic.stop()
                     break
                 elif self.distance < -2:
                     print(f"Sensor error! {fail_counter}")
-                    self.result[-1]["distance_ahead"] = self.distance
-                    self.result[-1]["ir_val"] = self.val_from_infrared
+                    try:
+                        self.result[-1]["distance_ahead"] = self.distance
+                        self.result[-1]["ir_val"] = self.val_from_infrared
+                    except IndexError:
+                        pass
                     fail_counter += 1
                     if fail_counter >= 10000:
                         self._stop_and_log(using_ultrasonic=True)
@@ -97,25 +100,30 @@ class SensorCar(SonicCar):
                     if react_to_obstacles:
                         while True:
                             self.val_from_infrared = self.get_val_infrared_digital()
-                            self._drive_and_log(speed=-30, steering_angle=130, flag_previous=False, using_ultrasonic=True) # -30, 130
+                            self._drive_and_log(speed=-35, steering_angle=130, flag_previous=False, using_ultrasonic=True)
                             if self.val_from_infrared == [0, 0, 1, 0, 0]\
-                                or self.val_from_infrared == [0, 1, 0, 0, 0]\
                                 or self.val_from_infrared == [0, 1, 1, 0, 0]\
                                 or self.val_from_infrared == [1, 1, 1, 0, 0]\
+                                or self.val_from_infrared == [0, 1, 1, 1, 0]\
                             :
+                                self._drive_and_log(speed=35, steering_angle=60, flag_previous=False, using_ultrasonic=True)
+                                time.sleep(0.35)
                                 break
                     else:
                         while True:
                             self.val_from_infrared = self.get_val_infrared_digital()
-                            self._drive_and_log(speed=-30, steering_angle=130, flag_previous=False, using_ultrasonic=False) # -30, 130
+                            self._drive_and_log(speed=-35, steering_angle=130, flag_previous=False, using_ultrasonic=False)
                             if self.val_from_infrared == [0, 0, 1, 0, 0]\
-                                or self.val_from_infrared == [0, 1, 0, 0, 0]\
                                 or self.val_from_infrared == [0, 1, 1, 0, 0]\
                                 or self.val_from_infrared == [1, 1, 1, 0, 0]\
+                                or self.val_from_infrared == [0, 1, 1, 1, 0]\
                             :
+                                self._drive_and_log(speed=35, steering_angle=60, flag_previous=False, using_ultrasonic=False)
+                                time.sleep(0.35)
                                 break           
                 else:
                     self._drive_and_log(speed=speed, steering_angle=45, flag_previous=True)
+
 
             elif self.val_from_infrared == [0, 1, 0, 0, 0]:
                 if react_to_obstacles:
@@ -134,74 +142,82 @@ class SensorCar(SonicCar):
                     self._drive_and_log(speed=speed, steering_angle=112.5, flag_previous=True, using_ultrasonic=True)
                 else:
                     self._drive_and_log(speed=speed, steering_angle=112.5, flag_previous=True, using_ultrasonic=False)
-
+            
             elif self.val_from_infrared == [0, 0, 0, 0, 1]:
-
                 if driving_back:
                     if react_to_obstacles:
                         while True:
                             self.val_from_infrared = self.get_val_infrared_digital()
-                            self._drive_and_log(speed=-30, steering_angle=50, flag_previous=False, using_ultrasonic=True) # -30, 130
+                            self._drive_and_log(speed=-35, steering_angle=50, flag_previous=False, using_ultrasonic=True)
                             if self.val_from_infrared == [0, 0, 1, 0, 0]\
-                                or self.val_from_infrared == [0, 0, 0, 1, 0]\
                                 or self.val_from_infrared == [0, 0, 1, 1, 0]\
                                 or self.val_from_infrared == [0, 0, 1, 1, 1]\
-                                :
+                                or self.val_from_infrared == [0, 1, 1, 1, 0]\
+                            :
+                                self._drive_and_log(speed=35, steering_angle=120, flag_previous=False, using_ultrasonic=True)
+                                time.sleep(0.35)
                                 break
                     else:
                         while True:
                             self.val_from_infrared = self.get_val_infrared_digital()
-                            self._drive_and_log(speed=-30, steering_angle=50, flag_previous=False, using_ultrasonic=False) # -30, 130
+                            self._drive_and_log(speed=-35, steering_angle=50, flag_previous=False, using_ultrasonic=False)
                             if self.val_from_infrared == [0, 0, 1, 0, 0]\
-                                or self.val_from_infrared == [0, 0, 0, 1, 0]\
                                 or self.val_from_infrared == [0, 0, 1, 1, 0]\
                                 or self.val_from_infrared == [0, 0, 1, 1, 1]\
-                                :
-                                break
+                                or self.val_from_infrared == [0, 1, 1, 1, 0]\
+                            :
+                                self._drive_and_log(speed=35, steering_angle=120, flag_previous=False, using_ultrasonic=False)
+                                time.sleep(0.35)
+                                break           
                 else:
                     self._drive_and_log(speed=speed, steering_angle=135, flag_previous=True)
+
                 
-            # elif self.val_from_infrared == [0, 0, 0, 0, 0]:
-            #     self.no_line_counter +=1
-            #     if driving_back and self.no_line_counter >= 20:
-            #         self.no_line_counter = 0
-            #         if react_to_obstacles:
-            #             while True:
-            #                 self.val_from_infrared = self.get_val_infrared_digital()
-            #                 self._drive_and_log(speed=-30, steering_angle=self.steering_angle_previous, flag_previous=False, using_ultrasonic=True) # -30, 130
-            #                 if self.val_from_infrared == [0, 0, 1, 0, 0]\
-            #                     or self.val_from_infrared == [0, 0, 0, 1, 0]\
-            #                     or self.val_from_infrared == [0, 1, 0, 0, 0]\
-            #                     or self.val_from_infrared == [0, 0, 1, 1, 0]\
-            #                     or self.val_from_infrared == [0, 1, 1, 0, 0]\
-            #                     or self.val_from_infrared == [0, 0, 1, 1, 1]\
-            #                     or self.val_from_infrared == [1, 1, 1, 0, 0]\
-            #                     or self.val_from_infrared == [0, 1, 1, 1, 0]\
-            #                     or self.val_from_infrared == [1, 1, 1, 1, 1]\
-            #                     :
-            #                     break
+            elif self.val_from_infrared == [0, 0, 0, 0, 0]:
+                self.no_line_counter +=1
+                if driving_back and self.no_line_counter >= 30:
+                    self.no_line_counter = 0
+                    if react_to_obstacles:
+                        while True:
+                            self.val_from_infrared = self.get_val_infrared_digital()
+                            self._drive_and_log(speed=-35, steering_angle=90, flag_previous=False, using_ultrasonic=True)
+                            if self.val_from_infrared == [0, 0, 1, 0, 0]\
+                                or self.val_from_infrared == [0, 0, 0, 1, 0]\
+                                or self.val_from_infrared == [0, 1, 0, 0, 0]\
+                                or self.val_from_infrared == [0, 0, 1, 1, 0]\
+                                or self.val_from_infrared == [0, 1, 1, 0, 0]\
+                                or self.val_from_infrared == [0, 0, 1, 1, 1]\
+                                or self.val_from_infrared == [1, 1, 1, 0, 0]\
+                                or self.val_from_infrared == [0, 1, 1, 1, 0]\
+                                or self.val_from_infrared == [1, 1, 1, 1, 1]\
+                                :
+                                self._drive_and_log(speed=35, steering_angle=90, flag_previous=False, using_ultrasonic=True)
+                                time.sleep(0.3)
+                                break
 
-            #         else:
-            #             while True:
-            #                 self.val_from_infrared = self.get_val_infrared_digital()
-            #                 self._drive_and_log(speed=-30, steering_angle=self.steering_angle_previous, flag_previous=False, using_ultrasonic=False) # -30, 130
-            #                 if self.val_from_infrared == [0, 0, 1, 0, 0]\
-            #                     or self.val_from_infrared == [0, 0, 0, 1, 0]\
-            #                     or self.val_from_infrared == [0, 1, 0, 0, 0]\
-            #                     or self.val_from_infrared == [0, 0, 1, 1, 0]\
-            #                     or self.val_from_infrared == [0, 1, 1, 0, 0]\
-            #                     or self.val_from_infrared == [0, 0, 1, 1, 1]\
-            #                     or self.val_from_infrared == [1, 1, 1, 0, 0]\
-            #                     or self.val_from_infrared == [0, 1, 1, 1, 0]\
-            #                     or self.val_from_infrared == [1, 1, 1, 1, 1]\
-            #                     :
-            #                     break
-                                
-
-
-
+                    else:
+                        while True:
+                            self.val_from_infrared = self.get_val_infrared_digital()
+                            self._drive_and_log(speed=-35, steering_angle=90, flag_previous=False, using_ultrasonic=False)
+                            if self.val_from_infrared == [0, 0, 1, 0, 0]\
+                                or self.val_from_infrared == [0, 0, 0, 1, 0]\
+                                or self.val_from_infrared == [0, 1, 0, 0, 0]\
+                                or self.val_from_infrared == [0, 0, 1, 1, 0]\
+                                or self.val_from_infrared == [0, 1, 1, 0, 0]\
+                                or self.val_from_infrared == [0, 0, 1, 1, 1]\
+                                or self.val_from_infrared == [1, 1, 1, 0, 0]\
+                                or self.val_from_infrared == [0, 1, 1, 1, 0]\
+                                or self.val_from_infrared == [1, 1, 1, 1, 1]\
+                                :
+                                self._drive_and_log(speed=35, steering_angle=90, flag_previous=False, using_ultrasonic=False)
+                                time.sleep(0.3)
+                                break
             else:
-                self._drive_and_log(speed=speed, steering_angle=self.steering_angle_previous)
+                if react_to_obstacles:
+                    self._drive_and_log(speed=speed, steering_angle=self.steering_angle_previous, flag_previous=True, using_ultrasonic=True)
+                else:
+                    self._drive_and_log(speed=speed, steering_angle=self.steering_angle_previous, flag_previous=True, using_ultrasonic=False)
+
         self.logging()
 
     def fahrmodus6(self, speed):
@@ -213,7 +229,7 @@ class SensorCar(SonicCar):
 
 def main():
     car = SensorCar()
-    car.fahrmodus6(35)
+    car.fahrmodus7(40)
     #car.stop()
     #car.infrared.cali_references()
     #car._test_measure()

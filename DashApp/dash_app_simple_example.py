@@ -14,7 +14,7 @@ from sonic_car import SonicCar
 
 project_path = Path(__file__).resolve().parent.parent.joinpath("Car", "SensorCar")
 sys.path.append(str(project_path))
-from sensor_car import SensorCar
+from sensor_car_alternative_algo import SensorCar
 
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
@@ -45,13 +45,14 @@ class Datahandler:
             for fieldname in fieldnames:
                 try:
                     if fieldname == "ir_val":
-                        values[fieldname] = []
-                        for dictionary in dictionaries:
-                            foo =  dictionary["ir_val"]
-                            foo = foo.replace(",", "")
-                            foo = foo.replace(" ", "")
-                            foo = [int(foo[i]) for i in range (1,6,1) ]
-                            values[fieldname].append(foo)
+                        # values[fieldname] = []
+                        # for dictionary in dictionaries:
+                        #     foo =  dictionary["ir_val"]
+                        #     foo = foo.replace(",", "")
+                        #     foo = foo.replace(" ", "")
+                        #     foo = [int(foo[i]) for i in range (1,6,1) ]
+                        #     values[fieldname].append(foo)
+                        values[fieldname] = [dictionary[fieldname] for dictionary in dictionaries]
                     else:
                         values[fieldname] = [float(dictionary[fieldname]) for dictionary in dictionaries]
 
@@ -60,7 +61,8 @@ class Datahandler:
                     continue
             self.log_values = values
             self.keys = fieldnames
-            self.keys = [fieldname for fieldname in fieldnames if fieldname not in ["time", "ir_val"]]
+            #self.keys = [fieldname for fieldname in fieldnames if fieldname not in ["time", "ir_val"]]
+            self.keys = [fieldname for fieldname in fieldnames if fieldname not in ["time"]]
 
 
     def plot_values(self):
