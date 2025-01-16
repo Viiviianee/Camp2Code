@@ -94,7 +94,7 @@ def update_log_data(n_clicks):
                 [{"label": dropdown_dict.get(col), "value": col} for col in options_list[1:]]
             ]
     
-    return [None, layout_components.create_gauge(0.0, "e9c46b"), layout_components.create_gauge(0.0, "e66f51"), layout_components.create_gauge(0.0, "f3a261"), "0m", "0s", []]
+    return [None, layout_components.create_gauge(0.0, "e9c46b"), layout_components.create_gauge(0.0, "e66f51"), layout_components.create_gauge(0.0, "f3a261"), "0cm", "0s", []]
 
 #Callback zur Aktualisierung des Dropdowns und des Graph
 @app.callback(
@@ -211,7 +211,7 @@ def update_traffic_light_and_start_btn(n_clicks,value):
     [Output('my-traffic-light', 'src', allow_duplicate=True)],
     [Input("start-btn", "n_clicks")],
     [State("param-speed", "value"), State("param-time-forward", "value"), State("param-time-backward", "value"), State("param-time-stop", "value"), 
-     State("param-distance", "value"), State("param-angle", "value"), State("param-threshold", "value"), State("param-time-straight"), State("param-time-curve"), State("my-select", "value")],
+     State("param-distance", "value"), State("param-angle", "value"), State("param-threshold", "value"), State("param-time-straight", "value"), State("param-time-curve", "value"), State("my-select", "value")],
     prevent_initial_call='initial_duplicate'
 )
 def run_fahrmodus(n_clicks, speed, t_forward, t_backward, t_stop, distance, angle, 
