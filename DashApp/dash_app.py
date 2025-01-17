@@ -153,7 +153,7 @@ def update_graph(value, data):
                 df,
                 x='time',
                 y=value,
-                labels={"time": "time [s]", value: dropdown_dict.get(value)}
+                labels={"time": "time [s]", value: DROPDOWN_DICT.get(value)}
             )
         
     else:
