@@ -1,58 +1,61 @@
-from dash import Dash, html, dcc, Input, Output, State, no_update
+"""
+Main application for a car sensor-based dashboard using Dash.
+Provides navigation, data visualization, and control interfaces.
+"""
+
+from dash import Dash, html, dcc, Input, Output, State, no_update, callback_context
 import pandas as pd
 from pathlib import Path
 import plotly.express as px
 import dash_bootstrap_components as dbc
-import plotly.graph_objects as go
 import dash_layout_components as layout_components
 import dash_layout_dashboard as layout_dashboard
 import dash_layout_car as layout_car
 import sys
 
+# Add project path for additional modules
 project_path = Path(__file__).resolve().parent.parent / 'Car'
 sys.path.append(str(project_path))
-
 from SensorCar.sensor_car_alternative_algo import SensorCar
 
-navbar_tab_names= ["Dashboard", "Car"]
-navbar_ids= ["nav-dashboard", "nav-car"]
-navbar_logo= "/assets/car.svg"
+# Configuration for navigation and UI elements
+NAVBAR_TAB_NAMES = ["Dashboard", "Car"]
+NAVBAR_IDS = ["nav-dashboard", "nav-car"]
+NAVBAR_LOGO = "/assets/car.svg"
 
-dropdown_dict = {
+DROPDOWN_DICT = {
     "speed": "Speed",
     "steering_angle": "Steering Angle",
     "distance_ahead": "Distance to object",
     "ir_val": "Line detection",
 }
 
-# Logdaten einlesen 
 def read_log_data():
-    log_path = Path(__file__).resolve().parent.parent.joinpath("Car", "log.csv")
-    df = pd.read_csv(log_path)
-    return df
+    """Reads log data from the car's log file."""
+    log_path = project_path / "log.csv"
+    return pd.read_csv(log_path)
 
+# Initialize Dash app with Bootstrap and external stylesheets
 app = Dash(
-         __name__, external_stylesheets=[
-             dbc.themes.BOOTSTRAP, 
-             "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-            ],
-            suppress_callback_exceptions=True 
-    )
-
-# App Layout
-app.layout = html.Div(
-    dbc.Stack(
-        [
-         layout_components.create_navbar(navbar_logo, navbar_tab_names, navbar_ids),
-            dcc.Location(id='url', refresh=False),
-            html.Div(id='page-content', className="main-container"),
-            dcc.Store(id='log-data'),
-            dcc.Store(id='temp-data')
-        ]
-    )
+    __name__, 
+    external_stylesheets=[
+        dbc.themes.BOOTSTRAP, 
+        "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    ],
+    suppress_callback_exceptions=True
 )
 
-#Callback zur Aktualisierung der Log-Daten
+# Layout configuration
+app.layout = html.Div(
+    dbc.Stack([
+        layout_components.create_navbar(NAVBAR_LOGO, NAVBAR_TAB_NAMES, NAVBAR_IDS),
+        dcc.Location(id='url', refresh=False),
+        html.Div(id='page-content', className="main-container"),
+        dcc.Store(id='log-data'),
+        dcc.Store(id='temp-data')
+    ])
+)
+
 @app.callback(
     [Output('log-data', 'data'),
      Output("card-speed-min-value", "figure"),
@@ -60,41 +63,33 @@ app.layout = html.Div(
      Output("card-speed-mean-value", "figure"),
      Output("card-driving-distance-value", "children"),
      Output("card-driving-time-value", "children"),
-     Output("my-dropdown","options" )],
+     Output("my-dropdown", "options")],
     [Input("load-log-button", "n_clicks")]
 )
 def update_log_data(n_clicks):
+    """Updates log data and associated UI elements when the button is clicked."""
     if n_clicks > 0:
         log_data_df = read_log_data()
-
-        # Dropdown options from log file
         options_list = list(log_data_df.drop('direction', axis=1))
-        dd_options = []
-        for col in options_list[1:]:
-            dd_options.append(dropdown_dict.get(col))
-
+        dropdown_options = [{"label": DROPDOWN_DICT.get(col, col), "value": col} for col in options_list[1:]]
+        
         speeds_greater_than_zero = log_data_df['speed'][log_data_df['speed'] > 0]
-        if not speeds_greater_than_zero.empty:
-            speed_min_log = round(speeds_greater_than_zero.min(), 1)
-        else:
-            speed_min_log = 0.0
-
+        speed_min_log = round(speeds_greater_than_zero.min(), 1) if not speeds_greater_than_zero.empty else 0.0
         speed_max_log = round(log_data_df['speed'].max(), 1)
         speed_mean_log = round(log_data_df['speed'].mean(), 1)
         driving_time_log = round(log_data_df.iloc[-1]['time'] - log_data_df.iloc[0]['time'], 1)
-        driving_distance_log = round((speed_mean_log/2) * driving_time_log, 1)
-        print(driving_distance_log)
+        driving_distance_log = round((speed_mean_log / 2) * driving_time_log, 1)
 
-        return [log_data_df.to_dict(),
-             layout_components.create_gauge(speed_min_log, "e9c46b"),
-             layout_components.create_gauge(speed_max_log, "e66f51"), 
-             layout_components.create_gauge(speed_mean_log, "f3a261"), 
-                html.H5(f"{driving_distance_log} cm"),
-                html.H5(f"{driving_time_log} s"),
-                [{"label": dropdown_dict.get(col), "value": col} for col in options_list[1:]]
-            ]
-    
-    return [None, layout_components.create_gauge(0.0, "e9c46b"), layout_components.create_gauge(0.0, "e66f51"), layout_components.create_gauge(0.0, "f3a261"), "0cm", "0s", []]
+        return [
+            log_data_df.to_dict(),
+            layout_components.create_gauge(speed_min_log, "e9c46b"),
+            layout_components.create_gauge(speed_max_log, "e66f51"),
+            layout_components.create_gauge(speed_mean_log, "f3a261"),
+            html.H5(f"{driving_distance_log} cm"),
+            html.H5(f"{driving_time_log} s"),
+            dropdown_options
+        ]
+    return [None, *[layout_components.create_gauge(0.0, color) for color in ["e9c46b", "e66f51", "f3a261"]], "0 cm", "0 s", []]
 
 #Callback zur Aktualisierung des Dropdowns und des Graph
 @app.callback(
@@ -102,7 +97,7 @@ def update_log_data(n_clicks):
     Input(component_id='my-dropdown', component_property='value'),
     State('log-data', 'data')
 )
-def update_graph(value, data, dropdown_dict=dropdown_dict):
+def update_graph(value, data):
     if value:
         df = pd.DataFrame.from_dict(data)
         df['speed'] = df['speed'] * df['direction']
@@ -179,36 +174,60 @@ def display_page(pathname):
         return [layout_car.content, pathname == '/' or pathname =='/Dashboard', pathname == '/Car']
 
 @app.callback(
-    [Output('param-speed', 'disabled'),Output('param-angle', 'disabled'),Output('param-time-forward', 'disabled'),Output('param-time-backward', 'disabled'),Output('param-time-stop', 'disabled'),Output('param-distance', 'disabled'),Output('param-threshold', 'disabled'), Output('param-time-straight', 'disabled'),Output('param-time-curve', 'disabled')],
-    Input('my-select', 'value')
+    [Output("my-traffic-light", "src", allow_duplicate=True),Output('param-speed', 'disabled'),Output('param-angle', 'disabled'),Output('param-time-forward', 'disabled'),Output('param-time-backward', 'disabled'),Output('param-time-stop', 'disabled'),Output('param-distance', 'disabled'),Output('param-threshold', 'disabled'), Output('param-time-straight', 'disabled'),Output('param-time-curve', 'disabled')],
+    [Input('my-select', 'value'), Input("start-btn", "n_clicks")],
+    prevent_initial_call=True
 )
-def update_row(selected_option):
-    if selected_option == '1':
-        return [False, True, False, False, False, True, True, True, True]
-    elif selected_option == '2':
-        return [False, False, True, True, True, True, True, False, False]
-    elif selected_option == '3':
-        return [False, False, True, True, True, False, True, True, True]
-    elif selected_option == '4':
-        return [False, True, True, True, True, True, False, True, True ]
-    elif selected_option == '5' or selected_option == '6' or selected_option == '7':
-        return [False, True, True, True, True, True, True, True, True, True]
+def update_form(selected_option, n_clicks):
+    src_yellow= "/assets/traffic-light-yellow.svg"
+    src_red= "/assets/traffic-light-red.svg"
+    ctx = callback_context
+    if not ctx.triggered:
+        return no_update
     else:
-        return [True, True, True, True, True, True, True, True, True]
+        trigger_id = ctx.triggered[0]['prop_id'].split('.')[0]
+
+        if trigger_id == 'my-select':
+            if selected_option == '1':
+                return [src_red, False, True, False, False, False, True, True, True, True]
+            elif selected_option == '2':
+                return [src_red, False, False, True, True, True, True, True, False, False]
+            elif selected_option == '3':
+                return [src_red, False, False, True, True, True, False, True, True, True]
+            elif selected_option == '4':
+                return [src_red, False, True, True, True, True, True, False, True, True ]
+            elif selected_option == '5' or selected_option == '6' or selected_option == '7':
+                return [src_red, False, True, True, True, True, True, True, True, True]
+            else:
+                return [src_red, True, True, True, True, True, True, True, True, True]
+            
+        elif trigger_id == 'start-btn':
+            if n_clicks > 0:
+                return [src_yellow,True, True, True, True, True, True, True, True, True]
+        
+    return no_update
+    
 #Fahrmodus 1
 @app.callback(
-    [Output('my-traffic-light', 'src', allow_duplicate=True), Output('start-btn', 'disabled')],
+    [Output('my-traffic-light', 'src', allow_duplicate=True), Output('start-btn', 'disabled'), Output('my-select', 'disabled')],
     [Input("start-btn", "n_clicks"), Input('param-speed', 'value')],
     prevent_initial_call='initial_duplicate'
 )
 def update_traffic_light_and_start_btn(n_clicks,value):
-    if n_clicks and n_clicks > 0:
-        return ["/assets/traffic-light-yellow.svg", True]
-    return ["/assets/traffic-light-red.svg", value != None and value == 0]
+    ctx = callback_context
+    if not ctx.triggered:
+        return no_update
+    else:
+        trigger_id = ctx.triggered[0]['prop_id'].split('.')[0]
+        if trigger_id == 'start-btn'and n_clicks > 0:
+            return ["/assets/traffic-light-yellow.svg", True, True]
+        elif trigger_id == 'param-speed':
+            return ["/assets/traffic-light-red.svg", value == 0, False]
+    return no_update
 
 #Fahrmodus 
 @app.callback(
-    [Output('my-traffic-light', 'src', allow_duplicate=True)],
+    [Output('my-traffic-light', 'src', allow_duplicate=True), Output("start-btn", "disabled", allow_duplicate=True), Output('my-select', 'disabled', allow_duplicate=True)],
     [Input("start-btn", "n_clicks")],
     [State("param-speed", "value"), State("param-time-forward", "value"), State("param-time-backward", "value"), State("param-time-stop", "value"), 
      State("param-distance", "value"), State("param-angle", "value"), State("param-threshold", "value"), State("param-time-straight", "value"), State("param-time-curve", "value"), State("my-select", "value")],
@@ -243,7 +262,7 @@ def run_fahrmodus(n_clicks, speed, t_forward, t_backward, t_stop, distance, angl
         elif selected_option == '7':
             car.fahrmodus7(speed)
         
-        return ["/assets/traffic-light-green.svg"]
+        return ["/assets/traffic-light-green.svg", False, False]
     return no_update
 
 
