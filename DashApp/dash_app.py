@@ -106,7 +106,7 @@ def update_graph(value, data):
                 df,
                 x='time',
                 y=value,
-                labels={"time": "time [s]", value: dropdown_dict.get(value)}
+                labels={"time": "time [s]", value: DROPDOWN_DICT.get(value)}
             )
             figure.update_traces(marker=dict(size=10))
             figure.update_layout(
