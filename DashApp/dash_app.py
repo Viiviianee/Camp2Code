@@ -14,13 +14,14 @@ import dash_layout_car as layout_car
 import dash_layout_cam as layout_cam
 import sys
 from flask import Flask, Response, request
+import numpy as np
+import cv2
 
 # Add project path for additional modules
 project_path = Path(__file__).resolve().parent.parent / 'Car'
 sys.path.append(str(project_path))
 from SensorCar.sensor_car_alternative_algo import SensorCar
 from CamCar import CamCar
-car=CamCar()
 
 # Configuration for navigation and UI elements
 NAVBAR_TAB_NAMES = ["Dashboard", "Car", "Cam"]
@@ -42,14 +43,42 @@ def read_log_data():
 # Initialize Dash app with Bootstrap and external stylesheets
 server = Flask(__name__)
 app = Dash(
-    __name__, 
+    __name__,
     external_stylesheets=[
-        dbc.themes.BOOTSTRAP, 
+        dbc.themes.BOOTSTRAP,
         "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
     ],
     suppress_callback_exceptions=True,
     server=server
 )
+
+camcar = CamCar()
+
+# Hilfsfunktion
+def helper(processor):
+    while True:
+        processor.set_original_img()
+        gray = processor.display_gray()
+        mask = processor.filter_color()
+        blurred = processor.create_blur()
+        canny = processor.create_canny()
+        lines = processor.create_img_with_lines()
+        foo_1 = np.hstack([gray, mask])
+        foo_2 = np.hstack([blurred, canny])
+        try:
+            empty = gray.copy()
+            empty [:,:] = 255
+            foo_3 = np.hstack([lines, empty])
+        except:
+            empty = gray.copy()
+            empty [:,:] = 255
+            foo_3 = np.hstack([gray, empty])
+        stacked = np.vstack([foo_1, foo_2, foo_3])
+        _, frame_as_jpeg = cv2.imencode(".jpeg", stacked)  # Numpy Array in jpeg
+        frame_in_bytes = frame_as_jpeg.tobytes()
+        frame_as_string = b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + frame_in_bytes + b"\r\n\r\n"
+
+        yield frame_as_string  # Return nicht möglich, weil die Funktion sonst verlassen wird und somit die While Schleife
 
 @server.route("/Cam/video_feed1")
 def video_feed1():
@@ -59,45 +88,40 @@ def video_feed1():
         Response: Response object with the video feed
     """
     return Response(
-        car.generate_camera_image(),
+        helper(processor=camcar),
         mimetype="multipart/x-mixed-replace; boundary=frame",
     )
 
-@server.route("/Cam/video_feed2")
-def video_feed2():
-    """Will return the video feed from the camera
-
-    Returns:
-        Response: Response object with the video feed
-    """
-    return Response(
-        car.generate_camera_image(),
-        mimetype="multipart/x-mixed-replace; boundary=frame",
-    )
-
-@server.route("/Cam/video_feed3")
-def video_feed3():
-    """Will return the video feed from the camera
-
-    Returns:
-        Response: Response object with the video feed
-    """
-    return Response(
-        car.generate_camera_image(),
-        mimetype="multipart/x-mixed-replace; boundary=frame",
-    )
-
-@server.route("/Cam/video_feed4")
-def video_feed4():
-    """Will return the video feed from the camera
-
-    Returns:
-        Response: Response object with the video feed
-    """
-    return Response(
-        car.generate_camera_image(),
-        mimetype="multipart/x-mixed-replace; boundary=frame",
-    )
+@app.callback(
+    Output("Wert_Slider_1", "children"),
+    Output("Wert_Slider_2", "children"),
+    Output("Wert_Slider_3", "children"),
+    Output("Wert_Slider_4", "children"),
+    Input("range-slider-1", "value"),
+    Input("range-slider-2", "value"),
+    Input("range-slider-3", "value"),
+    Input("range-slider-4", "value"),
+)
+def update_values(range_slider_1, range_slider_2, range_slider_3, range_slider_4):  # Parameter definiert über Input von app.callback
+    h_low, h_high = range_slider_1
+    s_low, s_high = range_slider_2
+    v_low, v_high = range_slider_3
+    threshold = range_slider_4
+    camcar.lower_h = h_low
+    camcar.upper_h = h_high
+    camcar.lower_s = s_low
+    camcar.upper_s = s_high
+    camcar.lower_v = v_low
+    camcar.upper_v = v_high
+    camcar.threshold = threshold
+    print(f"Werte von processor Klasse Parameter h: {camcar.lower_h}, {camcar.upper_h}")
+    print(f"Werte von processor Klasse Parameter s: {camcar.lower_s}, {camcar.upper_s}")
+    print(f"Werte von processor Klasse Parameter v: {camcar.lower_v}, {camcar.upper_v}")
+    print(f"Werte von processor Klasse Parameter threshold: {camcar.threshold}")
+    return f"Slider für Parameter h: {h_low} und {h_high}.",\
+           f"Slider für Parameter s: {s_low} und {s_high}.",\
+           f"Slider für Parameter v: {v_low} und {v_high}.",\
+           f"Slider für Parameter threshold: {threshold}.",\
 
 # Layout configuration
 app.layout = html.Div(
@@ -127,7 +151,7 @@ def update_log_data(n_clicks):
         log_data_df = read_log_data()
         options_list = list(log_data_df.drop('direction', axis=1))
         dropdown_options = [{"label": DROPDOWN_DICT.get(col, col), "value": col} for col in options_list[1:]]
-        
+
         speeds_greater_than_zero = log_data_df['speed'][log_data_df['speed'] > 0]
         speed_min_log = round(speeds_greater_than_zero.min(), 1) if not speeds_greater_than_zero.empty else 0.0
         speed_max_log = round(log_data_df['speed'].max(), 1)
@@ -200,7 +224,7 @@ def update_graph(value, data):
                         "[1, 1, 1, 0, 1]",
                         "[1, 1, 1, 1, 0]",
                         "[1, 1, 1, 1, 1]"
-                    ]    
+                    ]
                 )
             )
         else:
@@ -210,7 +234,7 @@ def update_graph(value, data):
                 y=value,
                 labels={"time": "time [s]", value: DROPDOWN_DICT.get(value)}
             )
-        
+
     else:
         figure = px.line()
     return figure
@@ -218,10 +242,10 @@ def update_graph(value, data):
 # Callback für das Laden des richtigen Inhalts basierend auf der URL
 @app.callback(
     [Output('page-content', 'children'),
-     Output('nav-dashboard', 'active'), 
+     Output('nav-dashboard', 'active'),
      Output('nav-car', 'active'),
      Output('nav-cam', 'active')],
-    [Input('url', 'pathname')]  
+    [Input('url', 'pathname')]
 )
 def display_page(pathname):
     if pathname is None or pathname == '/' or pathname =='/Dashboard':
@@ -258,13 +282,13 @@ def update_form(selected_option, n_clicks):
                 return [src_red, False, True, True, True, True, True, True, True, True]
             else:
                 return [src_red, True, True, True, True, True, True, True, True, True]
-            
+
         elif trigger_id == 'start-btn':
             if n_clicks > 0:
                 return [src_yellow,True, True, True, True, True, True, True, True, True]
-        
+
     return no_update
-    
+
 #Fahrmodus 1
 @app.callback(
     [Output('my-traffic-light', 'src', allow_duplicate=True), Output('start-btn', 'disabled'), Output('my-select', 'disabled')],
@@ -283,15 +307,15 @@ def update_traffic_light_and_start_btn(n_clicks,value):
             return ["/assets/traffic-light-red.svg", value == 0, False]
     return no_update
 
-#Fahrmodus 
+#Fahrmodus
 @app.callback(
     [Output('my-traffic-light', 'src', allow_duplicate=True), Output("start-btn", "disabled", allow_duplicate=True), Output('my-select', 'disabled', allow_duplicate=True)],
     [Input("start-btn", "n_clicks")],
-    [State("param-speed", "value"), State("param-time-forward", "value"), State("param-time-backward", "value"), State("param-time-stop", "value"), 
+    [State("param-speed", "value"), State("param-time-forward", "value"), State("param-time-backward", "value"), State("param-time-stop", "value"),
      State("param-distance", "value"), State("param-angle", "value"), State("param-threshold", "value"), State("param-time-straight", "value"), State("param-time-curve", "value"), State("my-select", "value")],
     prevent_initial_call='initial_duplicate'
 )
-def run_fahrmodus(n_clicks, speed, t_forward, t_backward, t_stop, distance, angle, 
+def run_fahrmodus(n_clicks, speed, t_forward, t_backward, t_stop, distance, angle,
                   threshold, time_straight, time_curve, selected_option):
     if n_clicks and n_clicks > 0:
         car = SensorCar()
@@ -306,7 +330,7 @@ def run_fahrmodus(n_clicks, speed, t_forward, t_backward, t_stop, distance, angl
                 {"speed" : speed, "steering_angle" : 90, "time" : time_straight, "stop" : 1},
                 {"speed" : speed, "steering_angle" : 180-angle, "time" : time_curve, "stop" : 1},
                 {"speed" : -speed, "steering_angle" : 180-angle, "time" : time_curve, "stop" : 1},
-                {"speed" : -speed, "steering_angle" : 90, "time" : time_straight, "stop" : 1},   
+                {"speed" : -speed, "steering_angle" : 90, "time" : time_straight, "stop" : 1},
             ]
             car.fahrmodus1_2(lst=lst)
         elif selected_option == '3':
@@ -319,7 +343,7 @@ def run_fahrmodus(n_clicks, speed, t_forward, t_backward, t_stop, distance, angl
             car.fahrmodus6(speed)
         elif selected_option == '7':
             car.fahrmodus7(speed)
-        
+
         return ["/assets/traffic-light-green.svg", False, False]
     return no_update
 
