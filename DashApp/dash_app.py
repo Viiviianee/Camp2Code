@@ -11,6 +11,7 @@ import dash_bootstrap_components as dbc
 import dash_layout_components as layout_components
 import dash_layout_dashboard as layout_dashboard
 import dash_layout_car as layout_car
+import dash_layout_cam as layout_cam
 import sys
 
 # Add project path for additional modules
@@ -19,8 +20,8 @@ sys.path.append(str(project_path))
 from SensorCar.sensor_car_alternative_algo import SensorCar
 
 # Configuration for navigation and UI elements
-NAVBAR_TAB_NAMES = ["Dashboard", "Car"]
-NAVBAR_IDS = ["nav-dashboard", "nav-car"]
+NAVBAR_TAB_NAMES = ["Dashboard", "Car", "Cam"]
+NAVBAR_IDS = ["nav-dashboard", "nav-car", "nav-cam"]
 NAVBAR_LOGO = "/assets/car.svg"
 
 DROPDOWN_DICT = {
@@ -172,6 +173,8 @@ def display_page(pathname):
         return [layout_dashboard.content, pathname == '/' or pathname =='/Dashboard', pathname == '/Car']
     elif pathname == '/Car':
         return [layout_car.content, pathname == '/' or pathname =='/Dashboard', pathname == '/Car']
+    elif pathname == '/Cam':
+        return [layout_cam.content, pathname == '/' or pathname =='/Dashboard', pathname == '/Car']
 
 @app.callback(
     [Output("my-traffic-light", "src", allow_duplicate=True),Output('param-speed', 'disabled'),Output('param-angle', 'disabled'),Output('param-time-forward', 'disabled'),Output('param-time-backward', 'disabled'),Output('param-time-stop', 'disabled'),Output('param-distance', 'disabled'),Output('param-threshold', 'disabled'), Output('param-time-straight', 'disabled'),Output('param-time-curve', 'disabled')],

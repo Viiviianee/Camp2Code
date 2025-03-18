@@ -92,6 +92,7 @@ def create_navbar(logo, tab_names, ids):
                     [
                         dbc.NavItem(dbc.NavLink(tab_names[0], href=tab_names[0], active=True, id=ids[0])),
                         dbc.NavItem(dbc.NavLink(tab_names[1], href=tab_names[1], active=False, id=ids[1])),
+                        dbc.NavItem(dbc.NavLink(tab_names[2], href=tab_names[2], active=False, id=ids[2])),
                     ],
                     navbar=True,
                     className="me-auto", 
