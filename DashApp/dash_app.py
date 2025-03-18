@@ -13,11 +13,14 @@ import dash_layout_dashboard as layout_dashboard
 import dash_layout_car as layout_car
 import dash_layout_cam as layout_cam
 import sys
+from flask import Flask, Response, request
 
 # Add project path for additional modules
 project_path = Path(__file__).resolve().parent.parent / 'Car'
 sys.path.append(str(project_path))
 from SensorCar.sensor_car_alternative_algo import SensorCar
+from CamCar import CamCar
+car=CamCar()
 
 # Configuration for navigation and UI elements
 NAVBAR_TAB_NAMES = ["Dashboard", "Car", "Cam"]
@@ -37,14 +40,28 @@ def read_log_data():
     return pd.read_csv(log_path)
 
 # Initialize Dash app with Bootstrap and external stylesheets
+server = Flask(__name__)
 app = Dash(
     __name__, 
     external_stylesheets=[
         dbc.themes.BOOTSTRAP, 
         "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
     ],
-    suppress_callback_exceptions=True
+    suppress_callback_exceptions=True,
+    server=server
 )
+
+@server.route("/Cam/video_feed")
+def video_feed():
+    """Will return the video feed from the camera
+
+    Returns:
+        Response: Response object with the video feed
+    """
+    return Response(
+        car.generate_camera_image(),
+        mimetype="multipart/x-mixed-replace; boundary=frame",
+    )
 
 # Layout configuration
 app.layout = html.Div(
@@ -56,6 +73,7 @@ app.layout = html.Div(
         dcc.Store(id='temp-data')
     ])
 )
+
 
 @app.callback(
     [Output('log-data', 'data'),
@@ -165,7 +183,8 @@ def update_graph(value, data):
 @app.callback(
     [Output('page-content', 'children'),
      Output('nav-dashboard', 'active'), 
-     Output('nav-car', 'active')],
+     Output('nav-car', 'active'),
+     Output('nav-cam', 'active')],
     [Input('url', 'pathname')]  
 )
 def display_page(pathname):
@@ -270,4 +289,4 @@ def run_fahrmodus(n_clicks, speed, t_forward, t_backward, t_stop, distance, angl
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True, host="0.0.0.0", port=8052)
+    app.run_server(debug=False, host="0.0.0.0", port=8052)
