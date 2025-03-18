@@ -25,17 +25,64 @@ import socket
 from cv2 import imencode, imwrite
 import datetime 
 
-
-
-
+param1 = c.create_param_div("Parameter 1", min=0, max=100, step=5, value=0, id="param1", disabled=False)
+param2 = c.create_param_div("Parameter 2", min=0, max=100, step=5, value=0, id="param2", disabled=False)
+param3 = c.create_param_div("Parameter 3", min=0, max=100, step=5, value=0, id="param3", disabled=False)
+param4 = c.create_param_div("Parameter 4", min=0, max=100, step=5, value=0, id="param4", disabled=False)
 
 # Main content layout
-content =html.Div(
-            [
-                html.H2("Kamera Feed"),
-                html.Img(
-                    src="/Cam/video_feed",
-                    style={"width": "30%", "border": "2px red solid"},
-                ),
-            ]
+content = dbc.Stack([
+    param1,
+    param2,
+    param3,
+    param4,
+    dbc.Row([
+        dbc.Col(
+            html.Div(
+                [
+                    html.H5("Kamera Feed 1"),
+                    html.Img(
+                        src="/Cam/video_feed1",
+                        style={"width": "100%", "border": "2px red solid"},
+                    ),
+                ]
+            ),
         ),
+        dbc.Col(
+            html.Div(
+                [
+                    html.H5("Kamera Feed 2"),
+                    html.Img(
+                        src="/Cam/video_feed2",
+                        style={"width": "100%", "border": "2px red solid"},
+                    ),
+                ]
+            ),
+        ),
+
+        dbc.Col(
+            html.Div(
+                [
+                    html.H5("Kamera Feed 3"),
+                    html.Img(
+                        src="/Cam/video_feed3",
+                        style={"width": "100%", "border": "2px red solid"},
+                    ),
+                ]
+            ),
+        ),
+        dbc.Col(
+            html.Div(
+                [
+                    html.H5("Kamera Feed 4"),
+                    html.Img(
+                        src="/Cam/video_feed4",
+                        style={"width": "100%", "border": "2px red solid"},
+                    ),
+                ]
+            ),
+        )
+    ]),
+
+
+])

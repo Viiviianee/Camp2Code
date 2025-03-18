@@ -51,8 +51,44 @@ app = Dash(
     server=server
 )
 
-@server.route("/Cam/video_feed")
-def video_feed():
+@server.route("/Cam/video_feed1")
+def video_feed1():
+    """Will return the video feed from the camera
+
+    Returns:
+        Response: Response object with the video feed
+    """
+    return Response(
+        car.generate_camera_image(),
+        mimetype="multipart/x-mixed-replace; boundary=frame",
+    )
+
+@server.route("/Cam/video_feed2")
+def video_feed2():
+    """Will return the video feed from the camera
+
+    Returns:
+        Response: Response object with the video feed
+    """
+    return Response(
+        car.generate_camera_image(),
+        mimetype="multipart/x-mixed-replace; boundary=frame",
+    )
+
+@server.route("/Cam/video_feed3")
+def video_feed3():
+    """Will return the video feed from the camera
+
+    Returns:
+        Response: Response object with the video feed
+    """
+    return Response(
+        car.generate_camera_image(),
+        mimetype="multipart/x-mixed-replace; boundary=frame",
+    )
+
+@server.route("/Cam/video_feed4")
+def video_feed4():
     """Will return the video feed from the camera
 
     Returns:
@@ -189,11 +225,11 @@ def update_graph(value, data):
 )
 def display_page(pathname):
     if pathname is None or pathname == '/' or pathname =='/Dashboard':
-        return [layout_dashboard.content, pathname == '/' or pathname =='/Dashboard', pathname == '/Car']
+        return [layout_dashboard.content, pathname == '/' or pathname =='/Dashboard', pathname == '/Car', pathname == '/Cam']
     elif pathname == '/Car':
-        return [layout_car.content, pathname == '/' or pathname =='/Dashboard', pathname == '/Car']
+        return [layout_car.content, pathname == '/' or pathname =='/Dashboard', pathname == '/Car', pathname == '/Cam']
     elif pathname == '/Cam':
-        return [layout_cam.content, pathname == '/' or pathname =='/Dashboard', pathname == '/Car']
+        return [layout_cam.content, pathname == '/' or pathname =='/Dashboard', pathname == '/Car', pathname == '/Cam']
 
 @app.callback(
     [Output("my-traffic-light", "src", allow_duplicate=True),Output('param-speed', 'disabled'),Output('param-angle', 'disabled'),Output('param-time-forward', 'disabled'),Output('param-time-backward', 'disabled'),Output('param-time-stop', 'disabled'),Output('param-distance', 'disabled'),Output('param-threshold', 'disabled'), Output('param-time-straight', 'disabled'),Output('param-time-curve', 'disabled')],
