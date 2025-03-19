@@ -55,32 +55,6 @@ app = Dash(
 
 camcar = CamCar()
 
-# Hilfsfunktion
-# def helper(processor):
-#     while True:
-#         processor.set_original_img()
-#         gray = processor.display_gray()
-#         mask = processor.filter_color()
-#         blurred = processor.create_blur()
-#         canny = processor.create_canny()
-#         lines = processor.create_img_with_lines()
-#         foo_1 = np.hstack([gray, mask])
-#         foo_2 = np.hstack([blurred, canny])
-#         try:
-#             empty = gray.copy()
-#             empty [:,:] = 255
-#             foo_3 = np.hstack([lines, empty])
-#         except:
-#             empty = gray.copy()
-#             empty [:,:] = 255
-#             foo_3 = np.hstack([gray, empty])
-#         stacked = np.vstack([foo_1, foo_2, foo_3])
-#         _, frame_as_jpeg = cv2.imencode(".jpeg", stacked)  # Numpy Array in jpeg
-#         frame_in_bytes = frame_as_jpeg.tobytes()
-#         frame_as_string = b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + frame_in_bytes + b"\r\n\r\n"
-
-#         yield frame_as_string  # Return nicht möglich, weil die Funktion sonst verlassen wird und somit die While Schleife
-
 @server.route("/Cam/video_feed1")
 def video_feed1():
     """Will return the video feed from the camera
