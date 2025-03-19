@@ -80,6 +80,8 @@ class CamCar(BaseCar):
     def set_original_img(self):
         if self.cam.get_frame() is not None:
             self.img_original = self.cam.get_frame()
+            h, w, d = self.img_original.shape
+            self.img_original = self.img_original[int(h*0.1):int(h*0.7), :, :]
         return self.img_original
 
     def display_gray(self):
