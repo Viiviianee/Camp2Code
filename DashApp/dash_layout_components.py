@@ -124,7 +124,29 @@ def create_param_div(label, id, min, max, step, value, disabled):
     return html.Div(
         [
             dbc.Label(label, html_for=id),
-            dcc.Slider(min=min, max=max, step=step, value=value, id=id, disabled=disabled)
+            dcc.Slider(min=min, max=max, value=value, id=id, disabled=disabled, step=step)  
         ],
         className="mb-3",
     )
+
+def create_range_div(label, min, max, value, id, ):
+    return html.Div(
+        [
+            dbc.Label(label, html_for=id),
+            dcc.RangeSlider(min=min, max=max, value=value, id=id)  
+        ],
+        className="mb-3",
+    )
+
+
+def create_cam_div(title, src):
+    return html.Div(
+                [
+                    html.H3(title),
+                    html.Img(
+                        src=src,
+                        style={"width": "100%", "border": "2px black solid"},
+                    ),
+                ]
+            ),
+   

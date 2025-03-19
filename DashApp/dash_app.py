@@ -16,6 +16,7 @@ import sys
 from flask import Flask, Response, request
 import numpy as np
 import cv2
+import threading
 
 # Add project path for additional modules
 project_path = Path(__file__).resolve().parent.parent / 'Car'
@@ -55,30 +56,30 @@ app = Dash(
 camcar = CamCar()
 
 # Hilfsfunktion
-def helper(processor):
-    while True:
-        processor.set_original_img()
-        gray = processor.display_gray()
-        mask = processor.filter_color()
-        blurred = processor.create_blur()
-        canny = processor.create_canny()
-        lines = processor.create_img_with_lines()
-        foo_1 = np.hstack([gray, mask])
-        foo_2 = np.hstack([blurred, canny])
-        try:
-            empty = gray.copy()
-            empty [:,:] = 255
-            foo_3 = np.hstack([lines, empty])
-        except:
-            empty = gray.copy()
-            empty [:,:] = 255
-            foo_3 = np.hstack([gray, empty])
-        stacked = np.vstack([foo_1, foo_2, foo_3])
-        _, frame_as_jpeg = cv2.imencode(".jpeg", stacked)  # Numpy Array in jpeg
-        frame_in_bytes = frame_as_jpeg.tobytes()
-        frame_as_string = b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + frame_in_bytes + b"\r\n\r\n"
+# def helper(processor):
+#     while True:
+#         processor.set_original_img()
+#         gray = processor.display_gray()
+#         mask = processor.filter_color()
+#         blurred = processor.create_blur()
+#         canny = processor.create_canny()
+#         lines = processor.create_img_with_lines()
+#         foo_1 = np.hstack([gray, mask])
+#         foo_2 = np.hstack([blurred, canny])
+#         try:
+#             empty = gray.copy()
+#             empty [:,:] = 255
+#             foo_3 = np.hstack([lines, empty])
+#         except:
+#             empty = gray.copy()
+#             empty [:,:] = 255
+#             foo_3 = np.hstack([gray, empty])
+#         stacked = np.vstack([foo_1, foo_2, foo_3])
+#         _, frame_as_jpeg = cv2.imencode(".jpeg", stacked)  # Numpy Array in jpeg
+#         frame_in_bytes = frame_as_jpeg.tobytes()
+#         frame_as_string = b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + frame_in_bytes + b"\r\n\r\n"
 
-        yield frame_as_string  # Return nicht möglich, weil die Funktion sonst verlassen wird und somit die While Schleife
+#         yield frame_as_string  # Return nicht möglich, weil die Funktion sonst verlassen wird und somit die While Schleife
 
 @server.route("/Cam/video_feed1")
 def video_feed1():
@@ -88,40 +89,76 @@ def video_feed1():
         Response: Response object with the video feed
     """
     return Response(
-        helper(processor=camcar),
+        camcar.generate_camera_image(),
         mimetype="multipart/x-mixed-replace; boundary=frame",
     )
 
-@app.callback(
-    Output("Wert_Slider_1", "children"),
-    Output("Wert_Slider_2", "children"),
-    Output("Wert_Slider_3", "children"),
-    Output("Wert_Slider_4", "children"),
-    Input("range-slider-1", "value"),
-    Input("range-slider-2", "value"),
-    Input("range-slider-3", "value"),
-    Input("range-slider-4", "value"),
-)
-def update_values(range_slider_1, range_slider_2, range_slider_3, range_slider_4):  # Parameter definiert über Input von app.callback
-    h_low, h_high = range_slider_1
-    s_low, s_high = range_slider_2
-    v_low, v_high = range_slider_3
-    threshold = range_slider_4
-    camcar.lower_h = h_low
-    camcar.upper_h = h_high
-    camcar.lower_s = s_low
-    camcar.upper_s = s_high
-    camcar.lower_v = v_low
-    camcar.upper_v = v_high
-    camcar.threshold = threshold
-    print(f"Werte von processor Klasse Parameter h: {camcar.lower_h}, {camcar.upper_h}")
-    print(f"Werte von processor Klasse Parameter s: {camcar.lower_s}, {camcar.upper_s}")
-    print(f"Werte von processor Klasse Parameter v: {camcar.lower_v}, {camcar.upper_v}")
-    print(f"Werte von processor Klasse Parameter threshold: {camcar.threshold}")
-    return f"Slider für Parameter h: {h_low} und {h_high}.",\
-           f"Slider für Parameter s: {s_low} und {s_high}.",\
-           f"Slider für Parameter v: {v_low} und {v_high}.",\
-           f"Slider für Parameter threshold: {threshold}.",\
+@server.route("/Cam/video_feed2")
+def video_feed2():
+    """Will return the video feed from the camera
+
+    Returns:
+        Response: Response object with the video feed
+    """
+    return Response(
+        camcar.generate_camera_image(),
+        mimetype="multipart/x-mixed-replace; boundary=frame",
+    )
+
+@server.route("/Cam/video_feed3")
+def video_feed3():
+    """Will return the video feed from the camera
+
+    Returns:
+        Response: Response object with the video feed
+    """
+    return Response(
+        camcar.generate_camera_image(),
+        mimetype="multipart/x-mixed-replace; boundary=frame",
+    )
+
+@server.route("/Cam/video_feed4")
+def video_feed4():
+    """Will return the video feed from the camera
+
+    Returns:
+        Response: Response object with the video feed
+    """
+    return Response(
+        camcar.generate_camera_image(),
+        mimetype="multipart/x-mixed-replace; boundary=frame",
+    )
+
+# @app.callback(
+#     Output("Wert_Slider_1", "children"),
+#     Output("Wert_Slider_2", "children"),
+#     Output("Wert_Slider_3", "children"),
+#     Output("Wert_Slider_4", "children"),
+#     Input("range-slider-1", "value"),
+#     Input("range-slider-2", "value"),
+#     Input("range-slider-3", "value"),
+#     Input("range-slider-4", "value"),
+# )
+# def update_values(range_slider_1, range_slider_2, range_slider_3, range_slider_4):  # Parameter definiert über Input von app.callback
+#     h_low, h_high = range_slider_1
+#     s_low, s_high = range_slider_2
+#     v_low, v_high = range_slider_3
+#     threshold = range_slider_4
+#     camcar.lower_h = h_low
+#     camcar.upper_h = h_high
+#     camcar.lower_s = s_low
+#     camcar.upper_s = s_high
+#     camcar.lower_v = v_low
+#     camcar.upper_v = v_high
+#     camcar.threshold = threshold
+#     print(f"Werte von processor Klasse Parameter h: {camcar.lower_h}, {camcar.upper_h}")
+#     print(f"Werte von processor Klasse Parameter s: {camcar.lower_s}, {camcar.upper_s}")
+#     print(f"Werte von processor Klasse Parameter v: {camcar.lower_v}, {camcar.upper_v}")
+#     print(f"Werte von processor Klasse Parameter threshold: {camcar.threshold}")
+#     return f"Slider für Parameter h: {h_low} und {h_high}.",\
+#            f"Slider für Parameter s: {s_low} und {s_high}.",\
+#            f"Slider für Parameter v: {v_low} und {v_high}.",\
+#            f"Slider für Parameter threshold: {threshold}.",\
 
 # Layout configuration
 app.layout = html.Div(
@@ -349,4 +386,5 @@ def run_fahrmodus(n_clicks, speed, t_forward, t_backward, t_stop, distance, angl
 
 
 if __name__ == '__main__':
-    app.run_server(debug=False, host="0.0.0.0", port=8052)
+    #app.run_server(debug=False, host="0.0.0.0", port=8052, threaded=True)
+    threading.Thread(target=app.run, kwargs={'debug': False, 'port': 8052, 'host':"0.0.0.0", 'threaded': True}).start()
