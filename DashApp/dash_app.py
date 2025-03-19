@@ -386,5 +386,5 @@ def run_fahrmodus(n_clicks, speed, t_forward, t_backward, t_stop, distance, angl
 
 
 if __name__ == '__main__':
-    #app.run_server(debug=False, host="0.0.0.0", port=8052, threaded=True)
-    threading.Thread(target=app.run, kwargs={'debug': False, 'port': 8052, 'host':"0.0.0.0", 'threaded': True}).start()
+    app.run_server(debug=False, host="0.0.0.0", port=8052, threaded=True)
+    #threading.Thread(target=app.run, kwargs={'debug': False, 'port': 8052, 'host':"0.0.0.0", 'threaded': True}).start()
