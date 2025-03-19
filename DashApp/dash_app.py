@@ -16,6 +16,7 @@ import sys
 from flask import Flask, Response, request
 import numpy as np
 import cv2
+import time
 
 # Add project path for additional modules
 project_path = Path(__file__).resolve().parent.parent / 'Car'
@@ -77,6 +78,8 @@ def helper(processor):
         _, frame_as_jpeg = cv2.imencode(".jpeg", stacked)  # Numpy Array in jpeg
         frame_in_bytes = frame_as_jpeg.tobytes()
         frame_as_string = b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + frame_in_bytes + b"\r\n\r\n"
+        time.sleep(0.25)
+        processor.create_steering_angles()
 
         yield frame_as_string  # Return nicht möglich, weil die Funktion sonst verlassen wird und somit die While Schleife
 

@@ -6,6 +6,7 @@ import datetime
 import numpy as np
 from cv2 import imencode, imwrite
 import cv2
+import math
 from pathlib import Path
 import matplotlib.pylab as plt
 from BaseCar.base_car import BaseCar
@@ -34,6 +35,8 @@ class CamCar(BaseCar):
         self.img_cannied = None
         self.lines = None
         self.line_img = None
+
+        self.mean_angle = 0
 
     def generate_camera_image(self):
         """Generator for the images from the camera for the live view in dash
@@ -79,6 +82,8 @@ class CamCar(BaseCar):
 
     def set_original_img(self):
         self.img_original = self.cam.get_frame()
+        h, w, d = self.img_original.shape
+        self.img_original = self.img_original[int(h*0.1):int(h*0.7), :, :]
         return self.img_original
 
     def display_gray(self):
@@ -114,6 +119,17 @@ class CamCar(BaseCar):
             return self.line_img
         except: 
             pass
+    
+    def create_steering_angles(self):
+        if self.lines is not None:
+            list_of_angles = []
+            for line in self.lines:
+                x1, y1, x2, y2 = line[0]
+                angle = np.arctan2(y2 - y1, x2 - x1) * 180 / np.pi  # Formel für Winkelberechnung (Gegenkathete/Ankathete), dann umrechnen von Bogenmaß in Degr
+                list_of_angles.append(angle)
+            avg_angle = np.mean(list_of_angles)
+            self.mean_angle = avg_angle
+            print(f"Mean steering angle : {avg_angle}")
 
 
 def main():
