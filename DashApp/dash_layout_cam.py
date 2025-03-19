@@ -51,7 +51,7 @@ content = dbc.Stack([
                     html.H5("Kamera (Grey, Masked, Blurred, Canny, Edges)"),
                     html.Img(
                         src="/Cam/video_feed1",
-                        style={"width": "75%", "border": "2px red solid"},
+                        style={"width": "100%", "border": "2px red solid"},
                     ),
                 ]
             ),
