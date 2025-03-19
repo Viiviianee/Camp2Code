@@ -103,20 +103,6 @@ def video_feed4():
         mimetype="multipart/x-mixed-replace; boundary=frame",
     )
 
-# # Layout configuration
-# app.layout = html.Div(
-#     [dcc.RangeSlider(min=0, max=180, step=10, value = [45, 180], id="test"), 
-#      html.Div(id="test-div"),
-#     dbc.Stack([
-#         layout_components.create_navbar(NAVBAR_LOGO, NAVBAR_TAB_NAMES, NAVBAR_IDS),
-#         dcc.Location(id='url', refresh=False),
-#         html.Div(id='page-content', className="main-container"),
-#         dcc.Store(id='log-data'),
-#         dcc.Store(id='temp-data'),
-        
-#     ])
-#     ]
-# )
 
 # Layout configuration
 app.layout = html.Div(

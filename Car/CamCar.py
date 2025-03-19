@@ -120,6 +120,17 @@ class CamCar(BaseCar):
             empty_img [:,:] = 255
             self.line_img = empty_img
             return self.line_img
+    
+    def create_steering_angles(self):
+        if self.lines is not None:
+            list_of_angles = []
+            for line in self.lines:
+                x1, y1, x2, y2 = line[0]
+                angle = np.arctan2(y2 - y1, x2 - x1) * 180 / np.pi  # Formel für Winkelberechnung (Gegenkathete/Ankathete), dann umrechnen von Bogenmaß in Degr
+                list_of_angles.append(angle)
+            avg_angle = np.mean(list_of_angles)
+            self.mean_angle = avg_angle
+            print(f"Mean steering angle : {avg_angle}")
 
     def helper_1(self):
         while True:
@@ -129,6 +140,7 @@ class CamCar(BaseCar):
             self.create_blur()
             self.create_canny()
             self.create_img_with_lines()
+            self.create_steering_angles()
 
             _, frame_as_jpeg = cv2.imencode(".jpeg", self.img_original)  # Numpy Array in jpeg
             frame_in_bytes = frame_as_jpeg.tobytes()

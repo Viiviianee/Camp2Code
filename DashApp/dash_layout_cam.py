@@ -26,13 +26,13 @@ from cv2 import imencode, imwrite
 import datetime
 
 range1 = c.create_range_div(" ", min=0, max=180, value=[80, 140], id="range-slider-1")
-text1 = html.P("Weiterer Text", id="Wert_Slider_1")
+text1 = html.P(" ", id="Wert_Slider_1")
 range2 = c.create_range_div(" ", min=0, max=255, value=[40, 255], id="range-slider-2")
-text2 = html.P("Weiterer Text", id="Wert_Slider_2")
+text2 = html.P(" ", id="Wert_Slider_2")
 range3 = c.create_range_div(" ", min=0, max=255, value=[40, 255], id="range-slider-3")
-text3 = html.P("Weiterer Text", id="Wert_Slider_3")
+text3 = html.P(" ", id="Wert_Slider_3")
 threshold_slider = c.create_param_div(" ", min=0, max=100, step=5, value=10, id="range-slider-4", disabled=False)
-text4 = html.P("Weiterer Text", id="Wert_Slider_4")
+text4 = html.P(" ", id="Wert_Slider_4")
 
 
 
