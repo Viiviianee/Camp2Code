@@ -103,36 +103,36 @@ def video_feed4():
         mimetype="multipart/x-mixed-replace; boundary=frame",
     )
 
-# @app.callback(
-#     Output("Wert_Slider_1", "children"),
-#     Output("Wert_Slider_2", "children"),
-#     Output("Wert_Slider_3", "children"),
-#     Output("Wert_Slider_4", "children"),
-#     Input("range-slider-1", "value"),
-#     Input("range-slider-2", "value"),
-#     Input("range-slider-3", "value"),
-#     Input("range-slider-4", "value"),
-# )
-# def update_values(range_slider_1, range_slider_2, range_slider_3, range_slider_4):  # Parameter definiert über Input von app.callback
-#     h_low, h_high = range_slider_1
-#     s_low, s_high = range_slider_2
-#     v_low, v_high = range_slider_3
-#     threshold = range_slider_4
-#     camcar.lower_h = h_low
-#     camcar.upper_h = h_high
-#     camcar.lower_s = s_low
-#     camcar.upper_s = s_high
-#     camcar.lower_v = v_low
-#     camcar.upper_v = v_high
-#     camcar.threshold = threshold
-#     print(f"Werte von processor Klasse Parameter h: {camcar.lower_h}, {camcar.upper_h}")
-#     print(f"Werte von processor Klasse Parameter s: {camcar.lower_s}, {camcar.upper_s}")
-#     print(f"Werte von processor Klasse Parameter v: {camcar.lower_v}, {camcar.upper_v}")
-#     print(f"Werte von processor Klasse Parameter threshold: {camcar.threshold}")
-#     return f"Slider für Parameter h: {h_low} und {h_high}.",\
-#            f"Slider für Parameter s: {s_low} und {s_high}.",\
-#            f"Slider für Parameter v: {v_low} und {v_high}.",\
-#            f"Slider für Parameter threshold: {threshold}.",\
+@app.callback(
+    Output("Wert_Slider_1", "children"),
+    Output("Wert_Slider_2", "children"),
+    Output("Wert_Slider_3", "children"),
+    Output("Wert_Slider_4", "children"),
+    Input("range-slider-1", "value"),
+    Input("range-slider-2", "value"),
+    Input("range-slider-3", "value"),
+    Input("range-slider-4", "value"),
+)
+def update_values(range_slider_1, range_slider_2, range_slider_3, range_slider_4):  # Parameter definiert über Input von app.callback
+    h_low, h_high = range_slider_1
+    s_low, s_high = range_slider_2
+    v_low, v_high = range_slider_3
+    threshold = range_slider_4
+    camcar.lower_h = h_low
+    camcar.upper_h = h_high
+    camcar.lower_s = s_low
+    camcar.upper_s = s_high
+    camcar.lower_v = v_low
+    camcar.upper_v = v_high
+    camcar.threshold = threshold
+    print(f"Werte von processor Klasse Parameter h: {camcar.lower_h}, {camcar.upper_h}")
+    print(f"Werte von processor Klasse Parameter s: {camcar.lower_s}, {camcar.upper_s}")
+    print(f"Werte von processor Klasse Parameter v: {camcar.lower_v}, {camcar.upper_v}")
+    print(f"Werte von processor Klasse Parameter threshold: {camcar.threshold}")
+    return f"Slider für Parameter h: {h_low} und {h_high}.",\
+           f"Slider für Parameter s: {s_low} und {s_high}.",\
+           f"Slider für Parameter v: {v_low} und {v_high}.",\
+           f"Slider für Parameter threshold: {threshold}.",\
 
 # Layout configuration
 app.layout = html.Div(
