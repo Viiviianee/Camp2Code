@@ -23,6 +23,7 @@ project_path = Path(__file__).resolve().parent.parent / 'Car'
 sys.path.append(str(project_path))
 from SensorCar.sensor_car_alternative_algo import SensorCar
 from CamCar import CamCar
+from OpenCVCar import Opencvcar
 
 # Configuration for navigation and UI elements
 NAVBAR_TAB_NAMES = ["Dashboard", "Car", "Cam"]
@@ -53,7 +54,7 @@ app = Dash(
     server=server
 )
 
-camcar = CamCar()
+car = Opencvcar()
 
 @server.route("/Cam/video_feed1")
 def video_feed1():
@@ -63,7 +64,7 @@ def video_feed1():
         Response: Response object with the video feed
     """
     return Response(
-        camcar.helper_1(),
+        car.helper_1(),
         mimetype="multipart/x-mixed-replace; boundary=frame",
     )
 
@@ -75,7 +76,7 @@ def video_feed2():
         Response: Response object with the video feed
     """
     return Response(
-        camcar.helper_2(),
+        car.helper_2(),
         mimetype="multipart/x-mixed-replace; boundary=frame",
     )
 
@@ -87,7 +88,7 @@ def video_feed3():
         Response: Response object with the video feed
     """
     return Response(
-        camcar.helper_3(),
+        car.helper_3(),
         mimetype="multipart/x-mixed-replace; boundary=frame",
     )
 
@@ -99,7 +100,7 @@ def video_feed4():
         Response: Response object with the video feed
     """
     return Response(
-        camcar.helper_4(),
+        car.helper_4(),
         mimetype="multipart/x-mixed-replace; boundary=frame",
     )
 
@@ -151,17 +152,17 @@ def update_values(range_slider_1, range_slider_2, range_slider_3, range_slider_4
     s_low, s_high = range_slider_2
     v_low, v_high = range_slider_3
     threshold = range_slider_4
-    camcar.lower_h = h_low
-    camcar.upper_h = h_high
-    camcar.lower_s = s_low
-    camcar.upper_s = s_high
-    camcar.lower_v = v_low
-    camcar.upper_v = v_high
-    camcar.threshold = threshold
-    print(f"Werte von processor Klasse Parameter h: {camcar.lower_h}, {camcar.upper_h}")
-    print(f"Werte von processor Klasse Parameter s: {camcar.lower_s}, {camcar.upper_s}")
-    print(f"Werte von processor Klasse Parameter v: {camcar.lower_v}, {camcar.upper_v}")
-    print(f"Werte von processor Klasse Parameter threshold: {camcar.threshold}")
+    car.lower_h = h_low
+    car.upper_h = h_high
+    car.lower_s = s_low
+    car.upper_s = s_high
+    car.lower_v = v_low
+    car.upper_v = v_high
+    car.threshold = threshold
+    print(f"Werte von processor Klasse Parameter h: {car.lower_h}, {car.upper_h}")
+    print(f"Werte von processor Klasse Parameter s: {car.lower_s}, {car.upper_s}")
+    print(f"Werte von processor Klasse Parameter v: {car.lower_v}, {car.upper_v}")
+    print(f"Werte von processor Klasse Parameter threshold: {car.threshold}")
     print(40*"**")
     return f"Slider für Parameter h: {h_low} und {h_high}.",\
            f"Slider für Parameter s: {s_low} und {s_high}.",\

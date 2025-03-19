@@ -1,17 +1,15 @@
 from CamCar import CamCar
-import cv2 as cv
+import time
 
 class Opencvcar(CamCar):
     def __init__(self): 
-        super().__init__()  # Initialisiert die Basisklassen
-        self.img=None
+        super().__init__()
 
-    def get_image(self):   
-        self.img = self.cam.get_frame()
+    def drive_with_cam(self):
+        self.starting_time = time.perf_counter()
+        while True:
+            self.drive(speed=30, steering_angle=self.mean_angle)
 
-car=Opencvcar()
-car.get_image()
-print(car.img.shape)
-# Ändern des Farbraums RGB->HSV
-img_hsv = cv.cvtColor(car.img, cv.COLOR_BGR2HSV)
-
+if __name__ == "__main__":
+    car = Opencvcar()
+    car.stop()

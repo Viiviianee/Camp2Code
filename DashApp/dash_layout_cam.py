@@ -48,16 +48,16 @@ content = dbc.Stack([
     threshold_slider,
     dbc.Row([
         dbc.Col(
-            c.create_cam_div("Colored", "/Cam/video_feed1")
+            c.create_cam_div("Colored - Original", "/Cam/video_feed1")
         ),
         dbc.Col(
-            c.create_cam_div("Filtered", "/Cam/video_feed2")
+            c.create_cam_div("HSV - ROI", "/Cam/video_feed2")
         ),
         dbc.Col(
-            c.create_cam_div("Blurred", "/Cam/video_feed3")
+            c.create_cam_div("Blurred - ROI", "/Cam/video_feed3")
         ),
         dbc.Col(
-            c.create_cam_div("Edges", "/Cam/video_feed4")
+            c.create_cam_div("Edges - ROI", "/Cam/video_feed4")
         ),
     ]),
 

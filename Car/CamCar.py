@@ -6,6 +6,7 @@ import datetime
 import numpy as np
 from cv2 import imencode, imwrite
 import cv2
+import time
 from pathlib import Path
 import matplotlib.pylab as plt
 from BaseCar.base_car import BaseCar
@@ -26,7 +27,11 @@ class CamCar(BaseCar):
         self.upper_v = 255
         self.threshold = 10
 
+        self.mean_angle_lists = [0, 0, 0, 0 , 0]
+        self.mean_angle = 0
+
         self.img_original = np.random.randint(0, 256, (300, 400, 3), dtype=np.uint8)
+        self.img_original_roi = np.random.randint(0, 256, (300, 400, 3), dtype=np.uint8)
         self.gray_img = np.random.randint(0, 256, (300, 400, 3), dtype=np.uint8)
         self.img_hsv = np.random.randint(0, 256, (300, 400, 3), dtype=np.uint8)
         self.img_filtered = np.random.randint(0, 256, (300, 400, 3), dtype=np.uint8)
@@ -81,15 +86,15 @@ class CamCar(BaseCar):
         if self.cam.get_frame() is not None:
             self.img_original = self.cam.get_frame()
             h, w, d = self.img_original.shape
-            self.img_original = self.img_original[int(h*0.1):int(h*0.7), :, :]
+            self.img_original_roi = self.img_original[int(h*0.1):int(h*0.7), :, :]
         return self.img_original
 
     def display_gray(self):
-        self.gray_img = cv2.cvtColor(self.img_original, cv2.COLOR_BGR2GRAY)
+        self.gray_img = cv2.cvtColor(self.img_original_roi, cv2.COLOR_BGR2GRAY)
         return self.gray_img
 
     def filter_color(self):
-        self.img_hsv = cv2.cvtColor(self.img_original, cv2.COLOR_BGR2HSV)
+        self.img_hsv = cv2.cvtColor(self.img_original_roi, cv2.COLOR_BGR2HSV)
         array_low = np.array([self.lower_h, self.lower_s, self.lower_v])
         array_high= np.array([self.upper_h, self.upper_s, self.upper_v])
         self.img_filtered = cv2.inRange(self.img_hsv, array_low, array_high)
@@ -110,16 +115,16 @@ class CamCar(BaseCar):
     def create_img_with_lines(self):
         try:
             self.create_lines()
-            line_img = self.gray_img.copy()
+            line_img = self.img_original_roi.copy()
             for line in self.lines:
                 x1, y1, x2, y2 = line[0]
                 cv2.line(line_img, (x1, y1), (x2, y2), (0, 130, 0), 5)
             self.line_img = line_img
             return self.line_img
         except: 
-            empty_img = self.img_original.copy()
-            empty_img = empty_img [:,:]
-            empty_img [:,:] = 255
+            empty_img = self.img_original_roi.copy()
+            empty_img = empty_img [:,:,:]
+            empty_img [:,:,:] = 255
             self.line_img = empty_img
             return self.line_img
     
@@ -131,8 +136,11 @@ class CamCar(BaseCar):
                 angle = np.arctan2(y2 - y1, x2 - x1) * 180 / np.pi  # Formel für Winkelberechnung (Gegenkathete/Ankathete), dann umrechnen von Bogenmaß in Degr
                 list_of_angles.append(angle)
             avg_angle = np.mean(list_of_angles)
-            self.mean_angle = avg_angle
-            print(f"Mean steering angle : {avg_angle}")
+            self.mean_angle_lists = [avg_angle] + self.mean_angle_lists[:-1]
+            self.mean_angle = sum(self.mean_angle_lists) / len(self.mean_angle_lists)
+        print(f"Mean steering angle_list : {self.mean_angle_lists}")
+        print(f"Mean steering angle: {self.mean_angle }")
+        time.sleep(1)
 
     def helper_1(self):
         while True:
@@ -176,7 +184,6 @@ def main():
     Hauptfunktion, um ein CamCar-Objekt zu erstellen und die Kamera anzuzeigen.
     """
     car = CamCar()
-    #car.generate_camera_image()
     img = car.cam.get_frame()
     print (img.shape)
 
