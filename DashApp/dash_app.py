@@ -49,7 +49,7 @@ app = Dash(
         dbc.themes.BOOTSTRAP,
         "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
     ],
-    suppress_callback_exceptions=True,
+    suppress_callback_exceptions=False,
     server=server
 )
 
@@ -63,7 +63,7 @@ def video_feed1():
         Response: Response object with the video feed
     """
     return Response(
-        camcar.generate_camera_image(),
+        camcar.helper_1(),
         mimetype="multipart/x-mixed-replace; boundary=frame",
     )
 
@@ -75,7 +75,7 @@ def video_feed2():
         Response: Response object with the video feed
     """
     return Response(
-        camcar.generate_camera_image(),
+        camcar.helper_2(),
         mimetype="multipart/x-mixed-replace; boundary=frame",
     )
 
@@ -87,7 +87,7 @@ def video_feed3():
         Response: Response object with the video feed
     """
     return Response(
-        camcar.generate_camera_image(),
+        camcar.helper_3(),
         mimetype="multipart/x-mixed-replace; boundary=frame",
     )
 
@@ -99,9 +99,56 @@ def video_feed4():
         Response: Response object with the video feed
     """
     return Response(
-        camcar.generate_camera_image(),
+        camcar.helper_4(),
         mimetype="multipart/x-mixed-replace; boundary=frame",
     )
+
+# # Layout configuration
+# app.layout = html.Div(
+#     [dcc.RangeSlider(min=0, max=180, step=10, value = [45, 180], id="test"), 
+#      html.Div(id="test-div"),
+#     dbc.Stack([
+#         layout_components.create_navbar(NAVBAR_LOGO, NAVBAR_TAB_NAMES, NAVBAR_IDS),
+#         dcc.Location(id='url', refresh=False),
+#         html.Div(id='page-content', className="main-container"),
+#         dcc.Store(id='log-data'),
+#         dcc.Store(id='temp-data'),
+        
+#     ])
+#     ]
+# )
+
+# Layout configuration
+app.layout = html.Div(
+    [
+    dbc.Stack([
+        layout_components.create_navbar(NAVBAR_LOGO, NAVBAR_TAB_NAMES, NAVBAR_IDS),
+        dcc.Location(id='url', refresh=False),
+        html.Div(id='page-content', className="main-container"),
+        dcc.Store(id='log-data'),
+        dcc.Store(id='temp-data'),
+        
+    ])
+    ]
+)
+
+# Callback für das Laden des richtigen Inhalts basierend auf der URL
+@app.callback(
+    [Output('page-content', 'children'),
+     Output('nav-dashboard', 'active'),
+     Output('nav-car', 'active'),
+     Output('nav-cam', 'active')],
+    [Input('url', 'pathname')]
+)
+def display_page(pathname):
+    if pathname is None or pathname == '/' or pathname =='/Dashboard':
+        return [layout_dashboard.content, pathname == '/' or pathname =='/Dashboard', pathname == '/Car', pathname == '/Cam']
+    elif pathname == '/Car':
+        return [layout_car.content, pathname == '/' or pathname =='/Dashboard', pathname == '/Car', pathname == '/Cam']
+    elif pathname == '/Cam':
+        return [layout_cam.content, pathname == '/' or pathname =='/Dashboard', pathname == '/Car', pathname == '/Cam']
+
+
 
 @app.callback(
     Output("Wert_Slider_1", "children"),
@@ -129,21 +176,11 @@ def update_values(range_slider_1, range_slider_2, range_slider_3, range_slider_4
     print(f"Werte von processor Klasse Parameter s: {camcar.lower_s}, {camcar.upper_s}")
     print(f"Werte von processor Klasse Parameter v: {camcar.lower_v}, {camcar.upper_v}")
     print(f"Werte von processor Klasse Parameter threshold: {camcar.threshold}")
+    print(40*"**")
     return f"Slider für Parameter h: {h_low} und {h_high}.",\
            f"Slider für Parameter s: {s_low} und {s_high}.",\
            f"Slider für Parameter v: {v_low} und {v_high}.",\
            f"Slider für Parameter threshold: {threshold}.",\
-
-# Layout configuration
-app.layout = html.Div(
-    dbc.Stack([
-        layout_components.create_navbar(NAVBAR_LOGO, NAVBAR_TAB_NAMES, NAVBAR_IDS),
-        dcc.Location(id='url', refresh=False),
-        html.Div(id='page-content', className="main-container"),
-        dcc.Store(id='log-data'),
-        dcc.Store(id='temp-data')
-    ])
-)
 
 
 @app.callback(
@@ -250,21 +287,6 @@ def update_graph(value, data):
         figure = px.line()
     return figure
 
-# Callback für das Laden des richtigen Inhalts basierend auf der URL
-@app.callback(
-    [Output('page-content', 'children'),
-     Output('nav-dashboard', 'active'),
-     Output('nav-car', 'active'),
-     Output('nav-cam', 'active')],
-    [Input('url', 'pathname')]
-)
-def display_page(pathname):
-    if pathname is None or pathname == '/' or pathname =='/Dashboard':
-        return [layout_dashboard.content, pathname == '/' or pathname =='/Dashboard', pathname == '/Car', pathname == '/Cam']
-    elif pathname == '/Car':
-        return [layout_car.content, pathname == '/' or pathname =='/Dashboard', pathname == '/Car', pathname == '/Cam']
-    elif pathname == '/Cam':
-        return [layout_cam.content, pathname == '/' or pathname =='/Dashboard', pathname == '/Car', pathname == '/Cam']
 
 @app.callback(
     [Output("my-traffic-light", "src", allow_duplicate=True),Output('param-speed', 'disabled'),Output('param-angle', 'disabled'),Output('param-time-forward', 'disabled'),Output('param-time-backward', 'disabled'),Output('param-time-stop', 'disabled'),Output('param-distance', 'disabled'),Output('param-threshold', 'disabled'), Output('param-time-straight', 'disabled'),Output('param-time-curve', 'disabled')],
@@ -360,5 +382,6 @@ def run_fahrmodus(n_clicks, speed, t_forward, t_backward, t_stop, distance, angl
 
 
 if __name__ == '__main__':
-    app.run_server(debug=False, host="0.0.0.0", port=8052, threaded=True)
+    app.run_server(host="0.0.0.0", port=8050, debug=False,  use_reloader=False)  # Debug ist false wegen Kamera
+    #app.run_server(debug=True, host="0.0.0.0", port=8054, threaded=True, use_reloader=False)
     #threading.Thread(target=app.run, kwargs={'debug': False, 'port': 8052, 'host':"0.0.0.0", 'threaded': True}).start()

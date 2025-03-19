@@ -25,29 +25,39 @@ import socket
 from cv2 import imencode, imwrite
 import datetime
 
-threshold_slider = c.create_param_div("Slider für Parameter threshold", min=0, max=100, step=5, value=10, id="range-slider-4", disabled=False)
-range1 = c.create_range_div("Slider für Parameter h", min=0, max=180, value=[80, 140], id="range-slider-1")
-range2 = c.create_range_div("Slider für Parameter s", min=0, max=255, value=[40, 255], id="range-slider-2")
-range3 = c.create_range_div("Slider für Parameter v", min=0, max=255, value=[40, 255], id="range-slider-3")
+range1 = c.create_range_div(" ", min=0, max=180, value=[80, 140], id="range-slider-1")
+text1 = html.P("Weiterer Text", id="Wert_Slider_1")
+range2 = c.create_range_div(" ", min=0, max=255, value=[40, 255], id="range-slider-2")
+text2 = html.P("Weiterer Text", id="Wert_Slider_2")
+range3 = c.create_range_div(" ", min=0, max=255, value=[40, 255], id="range-slider-3")
+text3 = html.P("Weiterer Text", id="Wert_Slider_3")
+threshold_slider = c.create_param_div(" ", min=0, max=100, step=5, value=10, id="range-slider-4", disabled=False)
+text4 = html.P("Weiterer Text", id="Wert_Slider_4")
+
+
 
 # Main content layout
 content = dbc.Stack([
+    text1,
     range1,
+    text2,
     range2,
+    text3,
     range3,
+    text4,
     threshold_slider,
     dbc.Row([
         dbc.Col(
-            c.create_cam_div("Title1", "/Cam/video_feed1")
+            c.create_cam_div("Colored", "/Cam/video_feed1")
         ),
         dbc.Col(
-            c.create_cam_div("Title2", "/Cam/video_feed2")
+            c.create_cam_div("Filtered", "/Cam/video_feed2")
         ),
         dbc.Col(
-            c.create_cam_div("Title3", "/Cam/video_feed3")
+            c.create_cam_div("Blurred", "/Cam/video_feed3")
         ),
         dbc.Col(
-            c.create_cam_div("Title4", "/Cam/video_feed4")
+            c.create_cam_div("Edges", "/Cam/video_feed4")
         ),
     ]),
 
