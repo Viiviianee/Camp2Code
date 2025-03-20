@@ -74,7 +74,7 @@ content = dbc.Stack([
     canny_max,
     dbc.Row([
         dbc.Col(
-            c.create_cam_div("Line img, Blurred img, HSV filtered img", "/Cam/video_feed1")
+            c.create_cam_div(" ", "/Cam/video_feed1")
         ),
     ]),
 

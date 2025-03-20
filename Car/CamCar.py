@@ -5,6 +5,7 @@ import numpy as np
 from cv2 import imencode, imwrite
 import cv2
 from BaseCar.base_car import BaseCar
+#from BaseCar.basecar import BaseCar
 from basisklassen_cam import Camera
 
 
@@ -150,17 +151,15 @@ class CamCar(BaseCar):
             current_time = datetime.datetime.now().strftime("%H:%M:%S.%f")[:-3]
             #print(current_time, self.mean_angle)
 
-            foo_1 = np.zeros((self.line_img.shape[0], self.line_img.shape[1], 3), dtype=int)
-            foo_1[:, :, 0] = self.img_blured
+            # foo_1 = np.zeros((300, 300, 3), dtype=int)
+            # foo_1[:, :, 0] = cv2.resize(self.img_blured, (300, 300))
+            # foo_2 = np.zeros((300, 300, 3), dtype=int)
+            # foo_2[:, :, 0] = cv2.resize(self.img_filtered, (300, 300))
+            # stacked = np.hstack([cv2.resize(self.line_img, (300, 300)), foo_1, foo_2])
+            # _, frame_as_jpeg = cv2.imencode(".jpeg", stacked)  # Numpy Array in jpeg
 
-            foo_2 = np.zeros((self.line_img.shape[0], self.line_img.shape[1], 3), dtype=int)
-            foo_2[:, :, 0] = self.img_filtered
-
-            #stacked = np.hstack([self.line_img, foo_1, foo_2])
-            #stacked = np.hstack([self.line_img])
-    
-            #_, frame_as_jpeg = cv2.imencode(".jpeg", stacked)  # Numpy Array in jpeg
             _, frame_as_jpeg = cv2.imencode(".jpeg", cv2.resize(self.line_img, (300, 300)))  # Numpy Array in jpeg
+    
             frame_in_bytes = frame_as_jpeg.tobytes()
             frame_as_string_color = b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + frame_in_bytes + b"\r\n\r\n"
             

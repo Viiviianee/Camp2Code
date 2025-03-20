@@ -145,7 +145,7 @@ def create_cam_div(title, src):
                     html.H3(title),
                     html.Img(
                         src=src,
-                        style={"width": "100%", "border": "2px black solid"},
+                        style={"width": "35%", "border": "2px black solid"},
                     ),
                 ]
             ),
