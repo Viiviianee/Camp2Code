@@ -188,7 +188,7 @@ def update_values(range_slider_1, range_slider_2, range_slider_3, range_slider_4
     car.lower_v = v_low
     car.upper_v = v_high
     car.threshold = threshold
-    car.speed = speed
+    car.speed(speed)
     print(f"Werte von processor Klasse Parameter h: {car.lower_h}, {car.upper_h}")
     print(f"Werte von processor Klasse Parameter s: {car.lower_s}, {car.upper_s}")
     print(f"Werte von processor Klasse Parameter v: {car.lower_v}, {car.upper_v}")
