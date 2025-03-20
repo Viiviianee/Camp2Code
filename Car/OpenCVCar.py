@@ -5,7 +5,7 @@ class Opencvcar(CamCar):
     def __init__(self): 
         super().__init__()
 
-    def drive_with_cam(self):
+    def fahrmodus_cam(self):
         self.starting_time = time.perf_counter()
         while True:
             self.drive(speed=30, steering_angle=self.mean_angle)
