@@ -27,7 +27,7 @@ class CamCar(BaseCar):
         self.upper_v = 255
         self.threshold = 10
 
-        self.mean_angle_lists = [0, 0, 0, 0 , 0]
+        self.mean_angle_lists = [0, 0, 0]
         self.mean_angle = 0
 
         self.img_original = np.random.randint(0, 256, (300, 400, 3), dtype=np.uint8)
@@ -138,8 +138,8 @@ class CamCar(BaseCar):
             avg_angle = np.mean(list_of_angles) * -1 + 90
             self.mean_angle_lists = [avg_angle] + self.mean_angle_lists[:-1]
             self.mean_angle = sum(self.mean_angle_lists) / len(self.mean_angle_lists)
-        print(f"Mean steering angle_list : {self.mean_angle_lists}")
-        print(f"Mean steering angle: {self.mean_angle }")
+#        print(f"Mean steering angle_list : {self.mean_angle_lists}")
+#        print(f"Mean steering angle: {self.mean_angle }")
 
     def helper_1(self):
         while True:
@@ -151,19 +151,19 @@ class CamCar(BaseCar):
             self.create_img_with_lines()
             self.create_steering_angles()
 
-            """
-            *****************************************************************************
-            Nur prototypisch, bis buttons für das Fahren und Stoppen eingepflegt sind
-            So startet das Auto mit dem Fahren, sobald auf den Reiter Cam geklickt wird
-            Wenn das Auto nicht fahren soll, diesen Abschnitt auskommentieren
-            """
-            if not self.starting_time:
-                self.starting_time = time.perf_counter()
-            self.drive(speed=30, steering_angle=self.mean_angle)
-            time.sleep(0.25)
-            """
-            *****************************************************************************
-            """
+            # """
+            # *****************************************************************************
+            # Nur prototypisch, bis buttons für das Fahren und Stoppen eingepflegt sind
+            # So startet das Auto mit dem Fahren, sobald auf den Reiter Cam geklickt wird
+            # Wenn das Auto nicht fahren soll, diesen Abschnitt auskommentieren
+            # """
+            # if not self.starting_time:
+            #     self.starting_time = time.perf_counter()
+            # self.drive(speed=30, steering_angle=self.mean_angle)
+            # time.sleep(0.25)
+            # """
+            # *****************************************************************************
+            # """
             _, frame_as_jpeg = cv2.imencode(".jpeg", self.img_original)  # Numpy Array in jpeg
             frame_in_bytes = frame_as_jpeg.tobytes()
             frame_as_string_color = b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + frame_in_bytes + b"\r\n\r\n"

@@ -169,14 +169,12 @@ def stop_Fahrmodus(n_clicks):
     Output("Wert_Slider_2", "children"),
     Output("Wert_Slider_3", "children"),
     Output("Wert_Slider_4", "children"),
-    Output("Wert_Slider_speed", "children"),
     Input("range-slider-1", "value"),
     Input("range-slider-2", "value"),
     Input("range-slider-3", "value"),
     Input("range-slider-4", "value"),
-    Input("range-slider", "value"),
 )
-def update_values(range_slider_1, range_slider_2, range_slider_3, range_slider_4, speed):  # Parameter definiert über Input von app.callback
+def update_values(range_slider_1, range_slider_2, range_slider_3, range_slider_4):  # Parameter definiert über Input von app.callback
     h_low, h_high = range_slider_1
     s_low, s_high = range_slider_2
     v_low, v_high = range_slider_3
@@ -188,7 +186,6 @@ def update_values(range_slider_1, range_slider_2, range_slider_3, range_slider_4
     car.lower_v = v_low
     car.upper_v = v_high
     car.threshold = threshold
-    car.speed(speed)
     print(f"Werte von processor Klasse Parameter h: {car.lower_h}, {car.upper_h}")
     print(f"Werte von processor Klasse Parameter s: {car.lower_s}, {car.upper_s}")
     print(f"Werte von processor Klasse Parameter v: {car.lower_v}, {car.upper_v}")
@@ -198,8 +195,6 @@ def update_values(range_slider_1, range_slider_2, range_slider_3, range_slider_4
            f"Slider für Parameter s: {s_low} und {s_high}.",\
            f"Slider für Parameter v: {v_low} und {v_high}.",\
            f"Slider für Parameter threshold: {threshold}.",\
-           f"Slider für Parameter speed: {speed}.",\
-
 
 @app.callback(
     [Output('log-data', 'data'),

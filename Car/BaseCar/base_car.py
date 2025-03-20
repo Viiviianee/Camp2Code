@@ -42,6 +42,7 @@ class BaseCar:
         self.fieldnames = ["time", "speed", "steering_angle", "direction"]
         self.starting_time = None
         self.number_digits = 1
+        self.running =  False
         path = Path(__file__).parents[0].joinpath("config.json")
         with open(path, "r") as f:
                 data = json.load(f)
@@ -162,6 +163,7 @@ class BaseCar:
 
         This method stops the car by calling the `stop` method on the `backwheels` object and sets the direction to 0.
         """
+        self.running = False
         self.backwheels.stop()
         self._direction = 0
         self.result_t = {
