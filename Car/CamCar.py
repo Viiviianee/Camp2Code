@@ -135,7 +135,7 @@ class CamCar(BaseCar):
                 x1, y1, x2, y2 = line[0]
                 angle = np.arctan2(y2 - y1, x2 - x1) * 180 / np.pi  # Formel für Winkelberechnung (Gegenkathete/Ankathete), dann umrechnen von Bogenmaß in Degr
                 list_of_angles.append(angle)
-            avg_angle = np.mean(list_of_angles)
+            avg_angle = np.mean(list_of_angles) * -1
             self.mean_angle_lists = [avg_angle] + self.mean_angle_lists[:-1]
             self.mean_angle = sum(self.mean_angle_lists) / len(self.mean_angle_lists)
         print(f"Mean steering angle_list : {self.mean_angle_lists}")
