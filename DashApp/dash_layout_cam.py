@@ -25,6 +25,10 @@ import socket
 from cv2 import imencode, imwrite
 import datetime
 
+
+text = html.P(" ", id="Wert_Slider_speed")
+speed_slider = c.create_param_div(text, min=0, max=100, step=5, value=15, id="range-slider", disabled=False)
+
 text1 = html.P(" ", id="Wert_Slider_1")
 range1 = c.create_range_div(text1, min=0, max=180, value=[80, 140], id="range-slider-1")
 text2 = html.P(" ", id="Wert_Slider_2")
@@ -51,7 +55,7 @@ content = dbc.Stack([
         dbc.Col(dbc.Button("Start", className="custom-btn w-100", id="start-btn-cam-car", disabled=False, n_clicks=0)),
         dbc.Col(dbc.Button("Stop", className="custom-btn w-100", id="stop-btn-cam-car", disabled=False, n_clicks=0))
     ]),
-
+    speed_slider,
     range1,
     range2,
     range3,
