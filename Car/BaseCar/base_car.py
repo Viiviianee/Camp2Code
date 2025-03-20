@@ -156,7 +156,6 @@ class BaseCar:
                         }
         self.result.append(self.result_t)
 
-
     def stop(self):
         """
         Stop the car.
