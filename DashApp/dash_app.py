@@ -148,7 +148,7 @@ def display_page(pathname):
 def start_Fahrmodus(n_clicks, selected_option):
     if n_clicks and n_clicks > 0:
         if selected_option == '1':
-            car.drive_with_cam()
+            car.fahrmodus_cam()
         elif selected_option == '2':
             pass
     return no_update
