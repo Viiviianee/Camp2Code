@@ -25,27 +25,38 @@ import socket
 from cv2 import imencode, imwrite
 import datetime
 
-range1 = c.create_range_div(" ", min=0, max=180, value=[80, 140], id="range-slider-1")
 text1 = html.P(" ", id="Wert_Slider_1")
-range2 = c.create_range_div(" ", min=0, max=255, value=[40, 255], id="range-slider-2")
+range1 = c.create_range_div(text1, min=0, max=180, value=[80, 140], id="range-slider-1")
 text2 = html.P(" ", id="Wert_Slider_2")
-range3 = c.create_range_div(" ", min=0, max=255, value=[40, 255], id="range-slider-3")
+range2 = c.create_range_div(text2, min=0, max=255, value=[40, 255], id="range-slider-2")
 text3 = html.P(" ", id="Wert_Slider_3")
-threshold_slider = c.create_param_div(" ", min=0, max=100, step=5, value=10, id="range-slider-4", disabled=False)
+range3 = c.create_range_div(text3, min=0, max=255, value=[40, 255], id="range-slider-3")
 text4 = html.P(" ", id="Wert_Slider_4")
-
+threshold_slider = c.create_param_div(text4, min=0, max=100, step=5, value=10, id="range-slider-4", disabled=False)
 
 
 # Main content layout
 content = dbc.Stack([
-    text1,
+    dbc.Row([
+        dbc.Col(
+            dbc.Select(
+                placeholder="Fahrmodus",
+                id="my-select-cam-car",
+                options=[
+                    {"label": "Fahrmodus OpenCV", "value": "1"},
+                    {"label": "Fahrmodus Neuronales Netz", "value": "2"},
+                ],
+            ),
+        ),
+        dbc.Col(dbc.Button("Start", className="custom-btn w-100", id="start-btn-cam-car", disabled=False, n_clicks=0)),
+        dbc.Col(dbc.Button("Stop", className="custom-btn w-100", id="stop-btn-cam-car", disabled=False, n_clicks=0))
+    ]),
+
     range1,
-    text2,
     range2,
-    text3,
     range3,
-    text4,
     threshold_slider,
+    
     dbc.Row([
         dbc.Col(
             c.create_cam_div("Colored - Original", "/Cam/video_feed1")

@@ -114,6 +114,8 @@ app.layout = html.Div(
         html.Div(id='page-content', className="main-container"),
         dcc.Store(id='log-data'),
         dcc.Store(id='temp-data'),
+        html.Div(id="dummy-output1", style={"display": "none"}),
+        html.Div(id="dummy-output2", style={"display": "none"})
         
     ])
     ]
@@ -135,6 +137,31 @@ def display_page(pathname):
     elif pathname == '/Cam':
         return [layout_cam.content, pathname == '/' or pathname =='/Dashboard', pathname == '/Car', pathname == '/Cam']
 
+#Fahrmodus OpenCV oder Neuronales Netz
+@app.callback(
+    Output("dummy-output1", "children"),
+    [Input("start-btn-cam-car", "n_clicks"),
+     Input('my-select-cam-car', 'value')
+    ],
+    prevent_initial_call=True
+)
+def start_Fahrmodus(n_clicks, selected_option):
+    if n_clicks and n_clicks > 0:
+        if selected_option == '1':
+            car.drive_with_cam()
+        elif selected_option == '2':
+            pass
+    return no_update
+
+@app.callback(
+    Output("dummy-output2", "children"),
+    [Input("stop-btn-cam-car", "n_clicks")],
+    prevent_initial_call=True
+)
+def stop_Fahrmodus(n_clicks):
+    if n_clicks and n_clicks > 0:
+        car.stop()
+    return no_update
 
 
 @app.callback(
