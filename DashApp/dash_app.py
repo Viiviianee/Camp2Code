@@ -169,16 +169,35 @@ def stop_Fahrmodus(n_clicks):
     Output("Wert_Slider_2", "children"),
     Output("Wert_Slider_3", "children"),
     Output("Wert_Slider_4", "children"),
+    Output("Wert_Slider_5", "children"),
+    Output("Wert_Slider_6", "children"),
+    Output("Wert_Slider_7", "children"),
+    Output("Wert_Slider_8", "children"),
     Input("range-slider-1", "value"),
     Input("range-slider-2", "value"),
     Input("range-slider-3", "value"),
     Input("range-slider-4", "value"),
+    Input("range-slider-5", "value"),
+    Input("range-slider-6", "value"),
+    Input("range-slider-7", "value"),
+    Input("range-slider-8", "value"),
 )
-def update_values(range_slider_1, range_slider_2, range_slider_3, range_slider_4):  # Parameter definiert über Input von app.callback
+def update_values(range_slider_1, 
+                  range_slider_2, 
+                  range_slider_3, 
+                  range_slider_4,
+                  range_slider_5,
+                  range_slider_6,
+                  range_slider_7,
+                  range_slider_8,):  # Parameter definiert über Input von app.callback
     h_low, h_high = range_slider_1
     s_low, s_high = range_slider_2
     v_low, v_high = range_slider_3
     threshold = range_slider_4
+    minLineLength_slider_val = range_slider_5
+    maxLineGap_val = range_slider_6
+    canny_min_val = range_slider_7
+    canny_max_val = range_slider_8
     car.lower_h = h_low
     car.upper_h = h_high
     car.lower_s = s_low
@@ -186,15 +205,27 @@ def update_values(range_slider_1, range_slider_2, range_slider_3, range_slider_4
     car.lower_v = v_low
     car.upper_v = v_high
     car.threshold = threshold
+    car.minLineLength_slider_val = minLineLength_slider_val
+    car.maxLineGap_val = maxLineGap_val
+    car.canny_min_val = canny_min_val
+    car.canny_max_val = canny_max_val
     print(f"Werte von processor Klasse Parameter h: {car.lower_h}, {car.upper_h}")
     print(f"Werte von processor Klasse Parameter s: {car.lower_s}, {car.upper_s}")
     print(f"Werte von processor Klasse Parameter v: {car.lower_v}, {car.upper_v}")
     print(f"Werte von processor Klasse Parameter threshold: {car.threshold}")
+    print(f"Werte von processor Klasse Parameter minLineLength: {car.minLineLength_slider_val}")
+    print(f"Werte von processor Klasse Parameter maxLineGap: {car.maxLineGap_val}")
+    print(f"Werte von processor Klasse Parameter canny_min: {car.canny_min_val}")
+    print(f"Werte von processor Klasse Parameter canny_max: {car.canny_max_val}")
     print(40*"**")
     return f"Slider für Parameter h: {h_low} und {h_high}.",\
            f"Slider für Parameter s: {s_low} und {s_high}.",\
            f"Slider für Parameter v: {v_low} und {v_high}.",\
            f"Slider für Parameter threshold: {threshold}.",\
+           f"Slider für Parameter minLineLength: {minLineLength_slider_val}.",\
+           f"Slider für Parameter maxLineGap: {maxLineGap_val}.",\
+           f"Slider für Parameter canny_min: {canny_min_val}.",\
+           f"Slider für Parameter canny_max: {canny_max_val}.",\
 
 @app.callback(
     [Output('log-data', 'data'),

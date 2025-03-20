@@ -36,7 +36,15 @@ range2 = c.create_range_div(text2, min=0, max=255, value=[40, 255], id="range-sl
 text3 = html.P(" ", id="Wert_Slider_3")
 range3 = c.create_range_div(text3, min=0, max=255, value=[40, 255], id="range-slider-3")
 text4 = html.P(" ", id="Wert_Slider_4")
-threshold_slider = c.create_param_div(text4, min=0, max=100, step=5, value=10, id="range-slider-4", disabled=False)
+threshold_slider = c.create_param_div(text4, min=0, max=100, step=5, value=25, id="range-slider-4", disabled=False)
+text5 = html.P(" ", id="Wert_Slider_5")
+minLineLength_slider = c.create_param_div(text5, min=0, max=100, step=80, value=50, id="range-slider-5", disabled=False)
+text6 = html.P(" ", id="Wert_Slider_6")
+maxLineGap = c.create_param_div(text6, min=0, max=100, step=10, value=60, id="range-slider-6", disabled=False)
+text7 = html.P(" ", id="Wert_Slider_7")
+canny_min = c.create_param_div(text7, min=0, max=300, step=20, value=240, id="range-slider-7", disabled=False)
+text8 = html.P(" ", id="Wert_Slider_8")
+canny_max = c.create_param_div(text8, min=0, max=300, step=20, value=300, id="range-slider-8", disabled=False)
 
 
 # Main content layout
@@ -60,19 +68,13 @@ content = dbc.Stack([
     range2,
     range3,
     threshold_slider,
-    
+    minLineLength_slider,
+    maxLineGap,
+    canny_min,
+    canny_max,
     dbc.Row([
         dbc.Col(
-            c.create_cam_div("Colored - Original", "/Cam/video_feed1")
-        ),
-        dbc.Col(
-            c.create_cam_div("HSV - ROI", "/Cam/video_feed2")
-        ),
-        dbc.Col(
-            c.create_cam_div("Blurred - ROI", "/Cam/video_feed3")
-        ),
-        dbc.Col(
-            c.create_cam_div("Edges - ROI", "/Cam/video_feed4")
+            c.create_cam_div("Line img, Blurred img, HSV filtered img", "/Cam/video_feed1")
         ),
     ]),
 

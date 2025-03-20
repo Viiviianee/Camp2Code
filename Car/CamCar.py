@@ -1,14 +1,9 @@
 import os.path
-import json
 import uuid
-import sys
 import datetime
 import numpy as np
 from cv2 import imencode, imwrite
 import cv2
-import time
-from pathlib import Path
-import matplotlib.pylab as plt
 from BaseCar.base_car import BaseCar
 from basisklassen_cam import Camera
 
@@ -26,19 +21,22 @@ class CamCar(BaseCar):
         self.lower_v = 255
         self.upper_v = 255
         self.threshold = 10
+        self.minLineLength_slider_val = 0
+        self.maxLineGap_val = 0
+        self.canny_min_val = 0
+        self.canny_max_val = 0
 
-        self.mean_angle_lists = [0]
         self.mean_angle = 0
 
-        self.img_original = np.random.randint(0, 256, (300, 400, 3), dtype=np.uint8)
-        self.img_original_roi = np.random.randint(0, 256, (300, 400, 3), dtype=np.uint8)
-        self.gray_img = np.random.randint(0, 256, (300, 400, 3), dtype=np.uint8)
-        self.img_hsv = np.random.randint(0, 256, (300, 400, 3), dtype=np.uint8)
-        self.img_filtered = np.random.randint(0, 256, (300, 400, 3), dtype=np.uint8)
-        self.img_blured = np.random.randint(0, 256, (300, 400, 3), dtype=np.uint8)
-        self.img_cannied = np.random.randint(0, 256, (300, 400, 3), dtype=np.uint8)
-        self.lines = np.random.randint(0, 256, (300, 400, 3), dtype=np.uint8)
-        self.line_img = np.random.randint(0, 256, (300, 400, 3), dtype=np.uint8)
+        self.img_original = np.random.randint(0, 256, (288, 640, 3), dtype=np.uint8)
+        self.img_original_roi = np.random.randint(0, 256, (288, 640, 3), dtype=np.uint8)
+        self.gray_img = np.random.randint(0, 256, (288, 640, 3), dtype=np.uint8)
+        self.img_hsv = np.random.randint(0, 256, (288, 640, 3), dtype=np.uint8)
+        self.img_filtered = np.random.randint(0, 256, (288, 640, 3), dtype=np.uint8)
+        self.img_blured = np.random.randint(0, 256, (288, 640, 3), dtype=np.uint8)
+        self.img_cannied = np.random.randint(0, 256, (288, 640, 3), dtype=np.uint8)
+        self.lines = np.random.randint(0, 256, (288, 640, 3), dtype=np.uint8)
+        self.line_img = np.random.randint(0, 256, (288, 640, 3), dtype=np.uint8)
 
     def generate_camera_image(self):
         """Generator for the images from the camera for the live view in dash
@@ -85,8 +83,8 @@ class CamCar(BaseCar):
     def set_original_img(self):
         if self.cam.get_frame() is not None:
             self.img_original = self.cam.get_frame()
-            h, w, d = self.img_original.shape
-            self.img_original_roi = self.img_original[int(h*0.2):int(h*0.85), :, :]
+            h, _, _ = self.img_original.shape
+            self.img_original_roi = self.img_original[int(h*0.25):int(h*0.85), :, :]
         return self.img_original
 
     def display_gray(self):
@@ -94,22 +92,22 @@ class CamCar(BaseCar):
         return self.gray_img
 
     def filter_color(self):
-        self.img_hsv = cv2.cvtColor(self.img_original_roi, cv2.COLOR_BGR2HSV)
+        #self.img_hsv = cv2.cvtColor(self.img_original_roi, cv2.COLOR_BGR2HSV)
         array_low = np.array([self.lower_h, self.lower_s, self.lower_v])
         array_high= np.array([self.upper_h, self.upper_s, self.upper_v])
-        self.img_filtered = cv2.inRange(self.img_hsv, array_low, array_high)
+        self.img_filtered = cv2.inRange(cv2.cvtColor(self.img_original_roi, cv2.COLOR_BGR2HSV), array_low, array_high)
         return self.img_filtered
     
     def create_blur(self):
-        self.img_blured = cv2.medianBlur(self.img_filtered, 7)
+        self.img_blured = cv2.medianBlur(self.img_filtered, 5)
         return self.img_blured
 
     def create_canny(self):
-        self.img_cannied = cv2.Canny(self.img_blured, 100, 200)
+        self.img_cannied = cv2.Canny(self.img_blured, self.canny_min_val, self.canny_max_val)
         return self.img_cannied
 
     def create_lines(self):
-        self.lines = cv2.HoughLinesP(self.img_cannied, 1, np.pi/180, threshold=self.threshold, minLineLength=50, maxLineGap=10)
+        self.lines = cv2.HoughLinesP(self.img_cannied, 1, np.pi/180, threshold=self.threshold, minLineLength=self.minLineLength_slider_val, maxLineGap=self.maxLineGap_val)
         return self.lines
 
     def create_img_with_lines(self):
@@ -121,11 +119,12 @@ class CamCar(BaseCar):
             self.line_img = line_img
             return self.line_img
         except: 
-            empty_img = self.img_original_roi.copy()
-            empty_img = empty_img [:,:,:]
-            empty_img [:,:,:] = 255
-            self.line_img = empty_img
-            return self.line_img
+            # empty_img = self.img_original_roi.copy()
+            # empty_img = empty_img [:,:,:]
+            # empty_img [:,:,:] = 255
+            # self.line_img = empty_img
+            # return self.line_img
+            return self.img_original_roi
     
     def create_steering_angles(self):
         if self.lines is not None:
@@ -136,15 +135,12 @@ class CamCar(BaseCar):
                 list_of_angles.append(angle)
             avg_angle = np.mean(list_of_angles) * -1 + 90
             self.mean_angle = avg_angle
-#            self.mean_angle_lists = [avg_angle] + self.mean_angle_lists[:-1]
-#            self.mean_angle = sum(self.mean_angle_lists) / len(self.mean_angle_lists)
-#        print(f"Mean steering angle_list : {self.mean_angle_lists}")
-#        print(f"Mean steering angle: {self.mean_angle }")
+#           self.mean_angle_lists = [avg_angle] + self.mean_angle_lists[:-1]
+#           self.mean_angle = sum(self.mean_angle_lists) / len(self.mean_angle_lists)
 
     def helper_1(self):
         while True:
             self.set_original_img()
-#           self.display_gray()
             self.filter_color()
             self.create_blur()
             self.create_canny()
@@ -152,46 +148,22 @@ class CamCar(BaseCar):
             self.create_img_with_lines()
             self.create_steering_angles()
             current_time = datetime.datetime.now().strftime("%H:%M:%S.%f")[:-3]
-            print(current_time, self.mean_angle)
-            # """
-            # *****************************************************************************
-            # Nur prototypisch, bis buttons für das Fahren und Stoppen eingepflegt sind
-            # So startet das Auto mit dem Fahren, sobald auf den Reiter Cam geklickt wird
-            # Wenn das Auto nicht fahren soll, diesen Abschnitt auskommentieren
-            # """
-            # if not self.starting_time:
-            #     self.starting_time = time.perf_counter()
-            # self.drive(speed=30, steering_angle=self.mean_angle)
-            # time.sleep(0.25)
-            # """
-            # *****************************************************************************
-            # """
-            _, frame_as_jpeg = cv2.imencode(".jpeg", self.line_img)  # Numpy Array in jpeg
+            #print(current_time, self.mean_angle)
+
+            foo_1 = np.zeros((self.line_img.shape[0], self.line_img.shape[1], 3), dtype=int)
+            foo_1[:, :, 0] = self.img_blured
+
+            foo_2 = np.zeros((self.line_img.shape[0], self.line_img.shape[1], 3), dtype=int)
+            foo_2[:, :, 0] = self.img_filtered
+
+            #stacked = np.hstack([self.line_img, foo_1, foo_2])
+            stacked = np.hstack([self.line_img])
+    
+            _, frame_as_jpeg = cv2.imencode(".jpeg", stacked)  # Numpy Array in jpeg
             frame_in_bytes = frame_as_jpeg.tobytes()
             frame_as_string_color = b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + frame_in_bytes + b"\r\n\r\n"
             
             yield frame_as_string_color
-
-    def helper_2(self):
-        while True:
-            _, frame_as_jpeg = cv2.imencode(".jpeg", self.img_filtered)  # Numpy Array in jpeg
-            frame_in_bytes = frame_as_jpeg.tobytes()
-            frame_as_string_img_filtered = b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + frame_in_bytes + b"\r\n\r\n"
-            yield frame_as_string_img_filtered
-    
-    def helper_3(self):
-        while True:
-            _, frame_as_jpeg = cv2.imencode(".jpeg", self.img_blured)  # Numpy Array in jpeg
-            frame_in_bytes = frame_as_jpeg.tobytes()
-            frame_as_string_blured = b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + frame_in_bytes + b"\r\n\r\n"
-            yield frame_as_string_blured
-
-    def helper_4(self):
-        while True:
-            _, frame_as_jpeg = cv2.imencode(".jpeg", self.line_img)  # Numpy Array in jpeg
-            frame_in_bytes = frame_as_jpeg.tobytes()
-            frame_as_string_line = b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + frame_in_bytes + b"\r\n\r\n"
-            yield frame_as_string_line
 
 def main():
     """
