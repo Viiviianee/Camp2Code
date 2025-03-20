@@ -152,16 +152,17 @@ class CamCar(BaseCar):
             self.create_steering_angles()
 
             """
+            *****************************************************************************
             Nur prototypisch, bis buttons für das Fahren und Stoppen eingepflegt sind
             So startet das Auto mit dem Fahren, sobald auf den Reiter Cam geklickt wird
+            Wenn das Auto nicht fahren soll, diesen Abschnitt auskommentieren
             """
             if not self.starting_time:
                 self.starting_time = time.perf_counter()
             self.drive(speed=30, steering_angle=self.mean_angle)
             time.sleep(0.25)
             """
-            Nur prototypisch, bis buttons für das Fahren und Stoppen eingepflegt sind
-            So startet das Auto mit dem Fahren, sobald auf den Reiter Cam geklickt wird
+            *****************************************************************************
             """
             _, frame_as_jpeg = cv2.imencode(".jpeg", self.img_original)  # Numpy Array in jpeg
             frame_in_bytes = frame_as_jpeg.tobytes()
