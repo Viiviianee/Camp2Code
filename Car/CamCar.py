@@ -27,7 +27,7 @@ class CamCar(BaseCar):
         self.upper_v = 255
         self.threshold = 10
 
-        self.mean_angle_lists = [0, 0, 0]
+        self.mean_angle_lists = [0]
         self.mean_angle = 0
 
         self.img_original = np.random.randint(0, 256, (300, 400, 3), dtype=np.uint8)
@@ -86,7 +86,7 @@ class CamCar(BaseCar):
         if self.cam.get_frame() is not None:
             self.img_original = self.cam.get_frame()
             h, w, d = self.img_original.shape
-            self.img_original_roi = self.img_original[int(h*0.1):int(h*0.7), :, :]
+            self.img_original_roi = self.img_original[int(h*0.2):int(h*0.85), :, :]
         return self.img_original
 
     def display_gray(self):
@@ -109,12 +109,11 @@ class CamCar(BaseCar):
         return self.img_cannied
 
     def create_lines(self):
-        self.lines = cv2.HoughLinesP(self.img_cannied, 1, np.pi/180, threshold=self.threshold)
+        self.lines = cv2.HoughLinesP(self.img_cannied, 1, np.pi/180, threshold=self.threshold, minLineLength=50, maxLineGap=10)
         return self.lines
 
     def create_img_with_lines(self):
         try:
-            self.create_lines()
             line_img = self.img_original_roi.copy()
             for line in self.lines:
                 x1, y1, x2, y2 = line[0]
@@ -136,21 +135,24 @@ class CamCar(BaseCar):
                 angle = np.arctan2(y2 - y1, x2 - x1) * 180 / np.pi  # Formel für Winkelberechnung (Gegenkathete/Ankathete), dann umrechnen von Bogenmaß in Degr
                 list_of_angles.append(angle)
             avg_angle = np.mean(list_of_angles) * -1 + 90
-            self.mean_angle_lists = [avg_angle] + self.mean_angle_lists[:-1]
-            self.mean_angle = sum(self.mean_angle_lists) / len(self.mean_angle_lists)
+            self.mean_angle = avg_angle
+#            self.mean_angle_lists = [avg_angle] + self.mean_angle_lists[:-1]
+#            self.mean_angle = sum(self.mean_angle_lists) / len(self.mean_angle_lists)
 #        print(f"Mean steering angle_list : {self.mean_angle_lists}")
 #        print(f"Mean steering angle: {self.mean_angle }")
 
     def helper_1(self):
         while True:
             self.set_original_img()
-            self.display_gray()
+#           self.display_gray()
             self.filter_color()
             self.create_blur()
             self.create_canny()
+            self.create_lines()
             self.create_img_with_lines()
             self.create_steering_angles()
-
+            current_time = datetime.datetime.now().strftime("%H:%M:%S.%f")[:-3]
+            print(current_time, self.mean_angle)
             # """
             # *****************************************************************************
             # Nur prototypisch, bis buttons für das Fahren und Stoppen eingepflegt sind
@@ -164,7 +166,7 @@ class CamCar(BaseCar):
             # """
             # *****************************************************************************
             # """
-            _, frame_as_jpeg = cv2.imencode(".jpeg", self.img_original)  # Numpy Array in jpeg
+            _, frame_as_jpeg = cv2.imencode(".jpeg", self.line_img)  # Numpy Array in jpeg
             frame_in_bytes = frame_as_jpeg.tobytes()
             frame_as_string_color = b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + frame_in_bytes + b"\r\n\r\n"
             

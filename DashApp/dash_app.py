@@ -68,41 +68,41 @@ def video_feed1():
         mimetype="multipart/x-mixed-replace; boundary=frame",
     )
 
-@server.route("/Cam/video_feed2")
-def video_feed2():
-    """Will return the video feed from the camera
+# @server.route("/Cam/video_feed2")
+# def video_feed2():
+#     """Will return the video feed from the camera
 
-    Returns:
-        Response: Response object with the video feed
-    """
-    return Response(
-        car.helper_2(),
-        mimetype="multipart/x-mixed-replace; boundary=frame",
-    )
+#     Returns:
+#         Response: Response object with the video feed
+#     """
+#     return Response(
+#         car.helper_2(),
+#         mimetype="multipart/x-mixed-replace; boundary=frame",
+#     )
 
-@server.route("/Cam/video_feed3")
-def video_feed3():
-    """Will return the video feed from the camera
+# @server.route("/Cam/video_feed3")
+# def video_feed3():
+#     """Will return the video feed from the camera
 
-    Returns:
-        Response: Response object with the video feed
-    """
-    return Response(
-        car.helper_3(),
-        mimetype="multipart/x-mixed-replace; boundary=frame",
-    )
+#     Returns:
+#         Response: Response object with the video feed
+#     """
+#     return Response(
+#         car.helper_3(),
+#         mimetype="multipart/x-mixed-replace; boundary=frame",
+#     )
 
-@server.route("/Cam/video_feed4")
-def video_feed4():
-    """Will return the video feed from the camera
+# @server.route("/Cam/video_feed4")
+# def video_feed4():
+#     """Will return the video feed from the camera
 
-    Returns:
-        Response: Response object with the video feed
-    """
-    return Response(
-        car.helper_4(),
-        mimetype="multipart/x-mixed-replace; boundary=frame",
-    )
+#     Returns:
+#         Response: Response object with the video feed
+#     """
+#     return Response(
+#         car.helper_4(),
+#         mimetype="multipart/x-mixed-replace; boundary=frame",
+#     )
 
 
 # Layout configuration
