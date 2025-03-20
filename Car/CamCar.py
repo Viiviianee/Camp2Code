@@ -157,9 +157,10 @@ class CamCar(BaseCar):
             foo_2[:, :, 0] = self.img_filtered
 
             #stacked = np.hstack([self.line_img, foo_1, foo_2])
-            stacked = np.hstack([self.line_img])
+            #stacked = np.hstack([self.line_img])
     
-            _, frame_as_jpeg = cv2.imencode(".jpeg", stacked)  # Numpy Array in jpeg
+            #_, frame_as_jpeg = cv2.imencode(".jpeg", stacked)  # Numpy Array in jpeg
+            _, frame_as_jpeg = cv2.imencode(".jpeg", cv2.resize(self.line_img, (300, 300)))  # Numpy Array in jpeg
             frame_in_bytes = frame_as_jpeg.tobytes()
             frame_as_string_color = b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + frame_in_bytes + b"\r\n\r\n"
             

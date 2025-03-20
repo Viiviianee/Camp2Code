@@ -149,13 +149,13 @@ class BaseCar:
         else:
             self.backwheels.forward()
             self._direction = 1
-        self.result_t = {
-                        "time": round(time.perf_counter() - self.starting_time,self.number_digits),
-                        "speed": self.backwheels.speed,
-                        "steering_angle": self.steering_angle,
-                        "direction": self.direction,
-                        }
-        self.result.append(self.result_t)
+        # self.result_t = {
+        #                 "time": round(time.perf_counter() - self.starting_time,self.number_digits),
+        #                 "speed": self.backwheels.speed,
+        #                 "steering_angle": self.steering_angle,
+        #                 "direction": self.direction,
+        #                 }
+        # self.result.append(self.result_t)
 
     def stop(self):
         """
