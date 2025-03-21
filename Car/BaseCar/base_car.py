@@ -140,8 +140,10 @@ class BaseCar:
         if speed != None:
             self._speed = speed
         if steering_angle != None:
-            self._steering_angle = steering_angle
-        self.frontwheels.turn(self._steering_angle)
+            self.steering_angle = steering_angle
+            #self._steering_angle = steering_angle
+        #self.frontwheels.turn(self._steering_angle)
+        self.frontwheels.turn(self.steering_angle)
         self.backwheels.speed = abs(self.speed)
         if self._speed < 0:
             self.backwheels.backward()

@@ -17,6 +17,7 @@ from flask import Flask, Response, request
 import numpy as np
 import cv2
 import threading
+import os
 
 # Add project path for additional modules
 project_path = Path(__file__).resolve().parent.parent / 'Car'
@@ -24,6 +25,10 @@ sys.path.append(str(project_path))
 from SensorCar.sensor_car_alternative_algo import SensorCar
 from CamCar import CamCar
 from OpenCVCar import Opencvcar
+
+cmd = "v4l2-ctl -d 0 --set-ctrl=saturation=400"
+res = os.system(cmd)
+ 
 
 # Configuration for navigation and UI elements
 NAVBAR_TAB_NAMES = ["Dashboard", "Car", "Cam"]
