@@ -29,15 +29,15 @@ class CamCar(BaseCar):
 
         self.mean_angle = 0
 
-        self.img_original = np.random.randint(0, 256, (288, 640, 3), dtype=np.uint8)
-        self.img_original_roi = np.random.randint(0, 256, (288, 640, 3), dtype=np.uint8)
-        self.gray_img = np.random.randint(0, 256, (288, 640, 3), dtype=np.uint8)
-        self.img_hsv = np.random.randint(0, 256, (288, 640, 3), dtype=np.uint8)
-        self.img_filtered = np.random.randint(0, 256, (288, 640, 3), dtype=np.uint8)
-        self.img_blured = np.random.randint(0, 256, (288, 640, 3), dtype=np.uint8)
-        self.img_cannied = np.random.randint(0, 256, (288, 640, 3), dtype=np.uint8)
-        self.lines = np.random.randint(0, 256, (288, 640, 3), dtype=np.uint8)
-        self.line_img = np.random.randint(0, 256, (288, 640, 3), dtype=np.uint8)
+        self.img_original = np.random.randint(0, 256, (300, 300, 3), dtype=np.uint8)
+        self.img_original_roi = np.random.randint(0, 256, (300, 300, 3), dtype=np.uint8)
+        self.gray_img = np.random.randint(0, 256, (300, 300, 3), dtype=np.uint8)
+        self.img_hsv = np.random.randint(0, 256, (300, 300, 3), dtype=np.uint8)
+        self.img_filtered = np.random.randint(0, 256, (300, 300, 3), dtype=np.uint8)
+        self.img_blured = np.random.randint(0, 256, (300, 300, 3), dtype=np.uint8)
+        self.img_cannied = np.random.randint(0, 256, (300, 300, 3), dtype=np.uint8)
+        self.lines = np.random.randint(0, 256, (300, 300, 3), dtype=np.uint8)
+        self.line_img = np.random.randint(0, 256, (300, 300, 3), dtype=np.uint8)
 
     def generate_camera_image(self):
         """Generator for the images from the camera for the live view in dash
