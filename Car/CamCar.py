@@ -87,6 +87,7 @@ class CamCar(BaseCar):
             self.img_original = frame
             h, _, _ = self.img_original.shape
             self.img_original_roi = self.img_original[int(h*0.25):int(h*0.85), :, :]
+            self.img_original_roi = cv2.resize(self.img_original_roi, (300, 300))
         return self.img_original
 
     def display_gray(self):
@@ -101,7 +102,7 @@ class CamCar(BaseCar):
         return self.img_filtered
     
     def create_blur(self):
-        self.img_blured = cv2.medianBlur(self.img_filtered, 5)
+        self.img_blured = cv2.blur(self.img_filtered, (5, 5))
         return self.img_blured
 
     def create_canny(self):
@@ -153,14 +154,9 @@ class CamCar(BaseCar):
             #print(current_time, self.mean_angle)
 
             foo_1 = np.zeros((300, 300, 3), dtype=int)
-            foo_1[:, :, 0] = cv2.resize(self.img_blured, (300, 300))
-            # foo_2 = np.zeros((300, 300, 3), dtype=int)
-            # foo_2[:, :, 0] = cv2.resize(self.img_filtered, (300, 300))
-            stacked = np.hstack([cv2.resize(self.line_img, (300, 300)), foo_1])
+            foo_1[:, :, 0] = self.img_blured
+            stacked = np.hstack([self.line_img, foo_1])
             _, frame_as_jpeg = cv2.imencode(".jpeg", stacked)  # Numpy Array in jpeg
-
-            #_, frame_as_jpeg = cv2.imencode(".jpeg", cv2.resize(self.line_img, (300, 300)))  # Numpy Array in jpeg
-    
             frame_in_bytes = frame_as_jpeg.tobytes()
             frame_as_string_color = b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + frame_in_bytes + b"\r\n\r\n"
             
