@@ -150,10 +150,11 @@ class CamCar(BaseCar):
             current_time = datetime.datetime.now().strftime("%H:%M:%S.%f")[:-3]
             #print(current_time, self.mean_angle)
 
-            # foo_1 = np.zeros((280, 280, 3), dtype=int)
-            # foo_1[:, :, 0] = self.img_blured
-            # stacked = np.hstack([self.line_img, foo_1])
-            stacked = self.line_img
+            foo_1 = np.zeros((self.img_blured.shape[0], self.img_blured.shape[1], 3), dtype=int)
+            foo_1[:, :, 0] = self.img_blured
+            stacked = np.hstack([self.line_img, foo_1])
+            
+            #stacked = self.line_img
             _, frame_as_jpeg = cv2.imencode(".jpeg", stacked)  # Numpy Array in jpeg
             frame_in_bytes = frame_as_jpeg.tobytes()
             frame_as_string_color = b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + frame_in_bytes + b"\r\n\r\n"
