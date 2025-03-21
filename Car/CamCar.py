@@ -29,15 +29,15 @@ class CamCar(BaseCar):
 
         self.mean_angle = 0
 
-        self.img_original = np.random.randint(0, 256, (280, 280, 3), dtype=np.uint8)
-        self.img_original_roi = np.random.randint(0, 256, (280, 280, 3), dtype=np.uint8)
-        self.gray_img = np.random.randint(0, 256, (280, 280, 3), dtype=np.uint8)
-        self.img_hsv = np.random.randint(0, 256, (280, 280, 3), dtype=np.uint8)
-        self.img_filtered = np.random.randint(0, 256, (280, 280, 3), dtype=np.uint8)
-        self.img_blured = np.random.randint(0, 256, (280, 280, 3), dtype=np.uint8)
-        self.img_cannied = np.random.randint(0, 256, (280, 280, 3), dtype=np.uint8)
-        self.lines = np.random.randint(0, 256, (280, 280, 3), dtype=np.uint8)
-        self.line_img = np.random.randint(0, 256, (280, 280, 3), dtype=np.uint8)
+        self.img_original = np.random.randint(0, 256, (288, 640, 3), dtype=np.uint8)
+        self.img_original_roi = np.random.randint(0, 256, (288, 640, 3), dtype=np.uint8)
+        self.gray_img = np.random.randint(0, 256, (288, 640, 3), dtype=np.uint8)
+        self.img_hsv = np.random.randint(0, 256, (288, 640, 3), dtype=np.uint8)
+        self.img_filtered = np.random.randint(0, 256, (288, 640, 3), dtype=np.uint8)
+        self.img_blured = np.random.randint(0, 256, (288, 640, 3), dtype=np.uint8)
+        self.img_cannied = np.random.randint(0, 256, (288, 640, 3), dtype=np.uint8)
+        self.lines = np.random.randint(0, 256, (288, 640, 3), dtype=np.uint8)
+        self.line_img = np.random.randint(0, 256, (288, 640, 3), dtype=np.uint8)
 
     def generate_camera_image(self):
         """Generator for the images from the camera for the live view in dash
@@ -84,8 +84,9 @@ class CamCar(BaseCar):
     def set_original_img(self):
         frame = self.cam.get_frame()
         if frame is not None:
-            self.img_original = cv2.resize(frame, (280, 280))
-            self.img_original_roi = self.img_original[int(self.img_original.shape[0]*0.1):int(self.img_original.shape[1]*0.8), :, :]
+            self.img_original = frame
+            self.img_original_roi = self.img_original[int(self.img_original.shape[0]*0.1):int(self.img_original.shape[1]*0.95), :, :]
+            print(self.img_original_roi.shape)
 
     def display_gray(self):
         self.gray_img = cv2.cvtColor(self.img_original_roi, cv2.COLOR_BGR2GRAY)
