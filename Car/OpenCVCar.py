@@ -24,7 +24,6 @@ class Opencvcar(CamCar):
 
             # #     # Speichere das Bild mit den richtigen Argumenten
             if self.speed > 0:
-                print(f"Speichere Bild: ID={self.image_id}, Run-ID={self.run_id}")
                 self.save_image(self.image_id, self.run_id, frame)
                 self.image_id += 1
             else:

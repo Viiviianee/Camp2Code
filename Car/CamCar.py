@@ -7,6 +7,7 @@ import cv2
 from BaseCar.base_car import BaseCar
 #from BaseCar.basecar import BaseCar
 from basisklassen_cam import Camera
+from pathlib import Path
 
 
 class CamCar(BaseCar):
@@ -73,12 +74,15 @@ class CamCar(BaseCar):
             frame: Frame from the camera
         """
         current_time = datetime.now().strftime("%Y%m%d_%H-%M-%S")
-        path = "./images/"
+        path = Path(__file__).parents[0].joinpath("images")
+        if not os.path.exists(path):
+            os.mkdir(path)
         filename = "IMG_{}_{}_{}_{:04d}_S{:03d}_A{:03d}.jpg".format(
-            "DRC", run_id, current_time, image_id, self.speed, self.steering_angle
-        )
-        imwrite(path + filename, frame)
-        print(filename)
+             "DRC", run_id, current_time, image_id, self.speed, self.steering_angle
+         )
+        path = Path().joinpath(path, filename)
+        path = str(path)
+        imwrite(path, frame)
 
     def set_original_img(self):
         frame = self.cam.get_frame()
@@ -149,12 +153,11 @@ class CamCar(BaseCar):
             #current_time = datetime.datetime.now().strftime("%H:%M:%S.%f")[:-3]
             #print(current_time, self.mean_angle)
 
-            # foo_1 = np.zeros((self.img_blured.shape[0], self.img_blured.shape[1], 3), dtype=int)
-            # foo_1[:, :, 0] = self.img_blured
-            # stacked = np.hstack([self.line_img, foo_1])
-            # stacked = self.line_img
+            foo_1 = np.zeros((self.img_blured.shape[0], self.img_blured.shape[1], 3), dtype=int)
+            foo_1[:, :, 0] = self.img_blured
+            stacked = np.hstack([self.line_img, foo_1])
             
-            _, frame_as_jpeg = cv2.imencode(".jpeg", self.line_img)  # Numpy Array in jpeg
+            _, frame_as_jpeg = cv2.imencode(".jpeg", stacked)  # Numpy Array in jpeg
             frame_in_bytes = frame_as_jpeg.tobytes()
             frame_as_string_color = b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + frame_in_bytes + b"\r\n\r\n"
             
