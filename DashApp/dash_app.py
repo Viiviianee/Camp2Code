@@ -73,43 +73,6 @@ def video_feed1():
         mimetype="multipart/x-mixed-replace; boundary=frame",
     )
 
-# @server.route("/Cam/video_feed2")
-# def video_feed2():
-#     """Will return the video feed from the camera
-
-#     Returns:
-#         Response: Response object with the video feed
-#     """
-#     return Response(
-#         car.helper_2(),
-#         mimetype="multipart/x-mixed-replace; boundary=frame",
-#     )
-
-# @server.route("/Cam/video_feed3")
-# def video_feed3():
-#     """Will return the video feed from the camera
-
-#     Returns:
-#         Response: Response object with the video feed
-#     """
-#     return Response(
-#         car.helper_3(),
-#         mimetype="multipart/x-mixed-replace; boundary=frame",
-#     )
-
-# @server.route("/Cam/video_feed4")
-# def video_feed4():
-#     """Will return the video feed from the camera
-
-#     Returns:
-#         Response: Response object with the video feed
-#     """
-#     return Response(
-#         car.helper_4(),
-#         mimetype="multipart/x-mixed-replace; boundary=frame",
-#     )
-
-
 # Layout configuration
 app.layout = html.Div(
     [
@@ -144,7 +107,7 @@ def display_page(pathname):
 
 #Fahrmodus OpenCV oder Neuronales Netz
 @app.callback(
-    Output("dummy-output1", "children"),
+    Output("dummy-output1", "children", allow_duplicate=True),
     [Input("start-btn-cam-car", "n_clicks"),
      Input('my-select-cam-car', 'value')
     ],
@@ -159,13 +122,35 @@ def start_Fahrmodus(n_clicks, selected_option):
     return no_update
 
 @app.callback(
-    Output("dummy-output2", "children"),
+    Output("dummy-output2", "children", allow_duplicate=True),
     [Input("stop-btn-cam-car", "n_clicks")],
     prevent_initial_call=True
 )
 def stop_Fahrmodus(n_clicks):
     if n_clicks and n_clicks > 0:
         car.stop()
+    return no_update
+
+
+#Buttons zum Aufnehmen von Bildern
+@app.callback(
+    Output("dummy-output1", "children", allow_duplicate=True),
+    [Input("start-btn-cam-car-rec", "n_clicks")],
+    prevent_initial_call=True
+)
+def start_recording(n_clicks):
+    if n_clicks and n_clicks > 0:
+        car.record(flag=True)
+    return no_update
+
+@app.callback(
+    Output("dummy-output2", "children", allow_duplicate=True),
+    [Input("stop-btn-cam-car-rec", "n_clicks")],
+    prevent_initial_call=True
+)
+def stop_Frecording(n_clicks):
+    if n_clicks and n_clicks > 0:
+        car.record(flag=False)
     return no_update
 
 
@@ -432,5 +417,3 @@ def run_fahrmodus(n_clicks, speed, t_forward, t_backward, t_stop, distance, angl
 
 if __name__ == '__main__':
     app.run_server(host="0.0.0.0", port=8050, debug=False,  use_reloader=False)  # Debug ist false wegen Kamera
-    #app.run_server(debug=True, host="0.0.0.0", port=8054, threaded=True, use_reloader=False)
-    #threading.Thread(target=app.run, kwargs={'debug': False, 'port': 8052, 'host':"0.0.0.0", 'threaded': True}).start()

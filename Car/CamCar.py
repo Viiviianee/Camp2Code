@@ -14,6 +14,7 @@ class CamCar(BaseCar):
     def __init__(self):
         self.cam = Camera()
         self.take_image = False
+        self.recording = False
         super().__init__()  # Initialisiert die Basisklassen
 
         self.lower_h = 0
@@ -154,11 +155,14 @@ class CamCar(BaseCar):
             #current_time = datetime.datetime.now().strftime("%H:%M:%S.%f")[:-3]
             #print(current_time, self.mean_angle)
 
-            foo_1 = np.zeros((self.img_blured.shape[0], self.img_blured.shape[1], 3), dtype=int)
-            foo_1[:, :, 0] = self.img_blured
-            stacked = np.hstack([self.line_img, foo_1])
-            
-            _, frame_as_jpeg = cv2.imencode(".jpeg", stacked)  # Numpy Array in jpeg
+            try:
+                foo_1 = np.zeros((self.img_blured.shape[0], self.img_blured.shape[1], 3), dtype=int)
+                foo_1[:, :, 0] = self.img_blured
+                stacked = np.hstack([self.line_img, foo_1])
+                _, frame_as_jpeg = cv2.imencode(".jpeg", stacked)  # Numpy Array in jpeg
+            except:
+                _, frame_as_jpeg = cv2.imencode(".jpeg", self.line_img)
+
             frame_in_bytes = frame_as_jpeg.tobytes()
             frame_as_string_color = b"--frame\r\n" b"Content-Type: image/jpeg\r\n\r\n" + frame_in_bytes + b"\r\n\r\n"
             

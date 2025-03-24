@@ -60,8 +60,10 @@ content = dbc.Stack([
                 ],
             ),
         ),
-        dbc.Col(dbc.Button("Start", className="custom-btn w-100", id="start-btn-cam-car", disabled=False, n_clicks=0)),
-        dbc.Col(dbc.Button("Stop", className="custom-btn w-100", id="stop-btn-cam-car", disabled=False, n_clicks=0))
+        dbc.Col(dbc.Button("Start_Fahren", className="custom-btn w-100", id="start-btn-cam-car", disabled=False, n_clicks=0)),
+        dbc.Col(dbc.Button("Stop_Fahren", className="custom-btn w-100", id="stop-btn-cam-car", disabled=False, n_clicks=0)),
+        dbc.Col(dbc.Button("Start_Aufnahme", className="custom-btn w-100", id="start-btn-cam-car-rec", disabled=False, n_clicks=0)),
+        dbc.Col(dbc.Button("Stop_Aufnahme", className="custom-btn w-100", id="stop-btn-cam-car-rec", disabled=False, n_clicks=0))
     ]),
     speed_slider,
     range1,
