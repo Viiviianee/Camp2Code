@@ -83,6 +83,7 @@ class CamCar(BaseCar):
         path = Path().joinpath(path, filename)
         path = str(path)
         imwrite(path, frame)
+        print(f"Image saved in {path}")
 
     def set_original_img(self):
         frame = self.cam.get_frame()

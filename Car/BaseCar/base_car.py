@@ -168,6 +168,7 @@ class BaseCar:
         self.running = False
         self.backwheels.stop()
         self._direction = 0
+        self.speed = 0
         self.result_t = {
                         "time": round(time.perf_counter() - self.starting_time,self.number_digits ),
                         "speed": self.backwheels.speed,
