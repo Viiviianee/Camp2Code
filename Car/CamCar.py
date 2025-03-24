@@ -1,6 +1,6 @@
 import os.path
 import uuid
-import datetime
+from datetime import datetime
 import numpy as np
 from cv2 import imencode, imwrite
 import cv2
@@ -146,7 +146,7 @@ class CamCar(BaseCar):
             self.create_lines()
             self.create_img_with_lines()
             self.create_steering_angles()
-            current_time = datetime.datetime.now().strftime("%H:%M:%S.%f")[:-3]
+            #current_time = datetime.datetime.now().strftime("%H:%M:%S.%f")[:-3]
             #print(current_time, self.mean_angle)
 
             # foo_1 = np.zeros((self.img_blured.shape[0], self.img_blured.shape[1], 3), dtype=int)
