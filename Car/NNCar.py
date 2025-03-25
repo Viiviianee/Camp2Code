@@ -145,6 +145,7 @@ class NNCar(CamCar):
         print(test[0][0])
 
     def model_drive(self):
+        self.starting_time = time.perf_counter()
         model_path = Path(__file__).parents[0].joinpath("model.keras")
         path = str(model_path)
         self.model = load_model(filepath=path)
