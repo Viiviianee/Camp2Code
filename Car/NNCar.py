@@ -18,6 +18,9 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.optimizers import Optimizer
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.callbacks import ModelCheckpoint
+from tensorflow.keras.callbacks import ReduceLROnPlateau
+from tensorflow.keras.models import save_model
+from tensorflow.keras.models import load_model
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 
@@ -85,7 +88,7 @@ class NNCar(CamCar):
 
         model = Model(inputs=[input_img], outputs=[output])
         model.compile(loss="mse",
-                      optimizer=Adam(learning_rate=0.005),
+                      optimizer=Adam(learning_rate=0.001),
                       metrics=["mae"])
         self.model = model
         model.summary()
@@ -94,20 +97,16 @@ class NNCar(CamCar):
         x = np.load("/home/pi/Desktop/Camp2Code/Car/images/x.npy")
         y = np.load("/home/pi/Desktop/Camp2Code/Car/images/y.npy")
         es_callback = EarlyStopping(
-                monitor="val_mae",
-                patience=30,
+                monitor="val_loss",
+                patience=7,
                 verbose=1,
                 restore_best_weights=True,
                 min_delta=0.05)
         
         # sudo apt-get install libhdf5-dev
         # pip install h5py
-        weights_path = Path(__file__).parents[0].joinpath("best_weights.h5")
-        mcp = ModelCheckpoint(
-        str(weights_path),
-        monitor="val_mae",
-        save_best_only=True,
-        save_weights_only=True)
+        model_path = Path(__file__).parents[0].joinpath("model.keras")
+        mcp = ModelCheckpoint(str(model_path), monitor="val_loss", save_best_only=True, mode="min")
 
         x_train, x_test, y_train, y_test = train_test_split(x, y,test_size=0.2)
 
@@ -136,9 +135,9 @@ class NNCar(CamCar):
     def model_loading_weights(self):
         x = np.load("/home/pi/Desktop/Camp2Code/Car/images/x.npy")
         y = np.load("/home/pi/Desktop/Camp2Code/Car/images/y.npy")
-        path = Path(__file__).parents[0].joinpath("best_weights.h5")
-        path = str(path)
-        self.model.load_weights(filepath=path)
+        model_path = Path(__file__).parents[0].joinpath("model.keras")
+        path = str(model_path)
+        self.model = load_model(filepath=path)
         print(self.model(np.expand_dims(x[0], axis=0)))
 
 
@@ -152,7 +151,7 @@ if __name__ == "__main__":
     # print(y.shape)
 
     car.build_model()
-    # car.train_model()
+    car.train_model()
 
     car.model_loading_weights()
 
