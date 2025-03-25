@@ -94,8 +94,10 @@ class NNCar(CamCar):
         model.summary()
 
     def train_model(self):
-        x = np.load("/home/pi/Desktop/Camp2Code/Car/images/x.npy")
-        y = np.load("/home/pi/Desktop/Camp2Code/Car/images/y.npy")
+        x_path = self.img_path = Path(__file__).parents[0].joinpath("images", "x.npy")
+        y_path = self.img_path = Path(__file__).parents[0].joinpath("images", "y.npy")
+        x = np.load(x_path)
+        y = np.load(y_path)
         es_callback = EarlyStopping(
                 monitor="val_loss",
                 patience=7,
@@ -132,28 +134,40 @@ class NNCar(CamCar):
         plt.show()  # Wird im Raspberry nicht angezeigt, da zusätzliches Fenster geöffnet wird
     
 
-    def model_loading_weights(self):
+    def model_loading(self):
         x = np.load("/home/pi/Desktop/Camp2Code/Car/images/x.npy")
         y = np.load("/home/pi/Desktop/Camp2Code/Car/images/y.npy")
         model_path = Path(__file__).parents[0].joinpath("model.keras")
         path = str(model_path)
         self.model = load_model(filepath=path)
-        print(self.model(np.expand_dims(x[0], axis=0)))
+        test = self.model(np.expand_dims(x[10], axis=0))
+        test = test.numpy()
+        print(test[0][0])
+
+    def model_drive(self):
+        model_path = Path(__file__).parents[0].joinpath("model.keras")
+        path = str(model_path)
+        self.model = load_model(filepath=path)
+        self.running = True
+        while self.running:
+            frame = self.img_original
+            frame = cv2.resize(frame, self.img_size_for_resize)
+            frame = frame / 255
+            self.mean_angle = self.model(np.expand_dims(frame, axis=0))
+            self.drive(speed=25, steering_angle=int(self.mean_angle))
+            print(f"Lenkwinkel: {self.mean_angle}")
 
 
 if __name__ == "__main__":
     car = NNCar()
-    #car.process_img()
+    # car.process_img()
 
     # x = np.load("/home/pi/Desktop/Camp2Code/Car/images/x.npy")
     # y = np.load("/home/pi/Desktop/Camp2Code/Car/images/y.npy")
     # print(x.shape)
     # print(y.shape)
 
-    car.build_model()
-    car.train_model()
+    # car.build_model()
+    # car.train_model()
 
-    car.model_loading_weights()
-
-
-
+    car.model_loading()

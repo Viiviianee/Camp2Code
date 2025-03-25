@@ -25,6 +25,7 @@ sys.path.append(str(project_path))
 from SensorCar.sensor_car_alternative_algo import SensorCar
 from CamCar import CamCar
 from OpenCVCar import Opencvcar
+from NNCar import NNCar
 
 cmd = "v4l2-ctl -d 0 --set-ctrl=saturation=400"
 res = os.system(cmd)
@@ -59,7 +60,7 @@ app = Dash(
     server=server
 )
 
-car = Opencvcar()
+car = NNCar()
 
 @server.route("/Cam/video_feed1")
 def video_feed1():
@@ -116,11 +117,12 @@ def display_page(pathname):
 def start_Fahrmodus(n_clicks, selected_option):
     if n_clicks and n_clicks > 0:
         if selected_option == '1':
-            car.fahrmodus_cam()
-        elif selected_option == '2':
+            #car.fahrmodus_cam()
             pass
+        elif selected_option == '2':
+            car.model_drive()
     return no_update
-
+##
 @app.callback(
     Output("dummy-output2", "children", allow_duplicate=True),
     [Input("stop-btn-cam-car", "n_clicks")],
