@@ -161,14 +161,8 @@ class NNCar(CamCar):
 
 if __name__ == "__main__":
     car = NNCar()
-    # car.process_img()
-
-    # x = np.load("/home/pi/Desktop/Camp2Code/Car/images/x.npy")
-    # y = np.load("/home/pi/Desktop/Camp2Code/Car/images/y.npy")
-    # print(x.shape)
-    # print(y.shape)
-
-    # car.build_model()
-    # car.train_model()
+    car.process_img()
+    car.build_model()
+    car.train_model()
 
     car.model_loading()
