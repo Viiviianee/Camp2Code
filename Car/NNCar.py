@@ -33,18 +33,11 @@ class NNCar(CamCar):
         self.img_depth = 3
         self.img_shape = (self.img_size_for_resize[0], self.img_size_for_resize[1], self.img_depth)
 
-        _model_path = Path(__file__).parents[0].joinpath("TFLite_Modell.tflite")
-        print(_model_path)
-        self.interpreter = tflite.Interpreter(model_path="/home/pi/Camp2Code/Car/TFLite_Modell.tflite") # path=Pfad zur .tflite Datei
-
-
-    # def fahrmodus_nn(self):
-    #     self.running = True
-    #     self.starting_time = time.perf_counter()
-
-    #     while self.running:
-    #         self.drive(speed=25, steering_angle=int(self.mean_angle))
-    #         print(f"Lenkwinkel: {self.mean_angle}")
+        _model_path = str(Path(__file__).parents[0].joinpath("TFLite_Modell.tflite"))
+        if os.path.exists(_model_path):
+            self.interpreter = tflite.Interpreter(model_path="/home/pi/Camp2Code/Car/TFLite_Modell.tflite")
+        else:
+            print("TFLite_Modell liegt nicht vor.")
 
     def process_img(self):
         if os.path.exists(self.img_path):
@@ -159,16 +152,14 @@ class NNCar(CamCar):
             frame = cv2.resize(frame, self.img_size_for_resize)
             frame = frame / 255
             frame = frame.astype(np.float32)
-            frame = frame.reshape(1, 128, 128, 3)
+            frame = frame.reshape(1, self.img_size_for_resize[0], self.img_size_for_resize[1], self.img_depth)
             input_details = self.interpreter.get_input_details()
             output_details = self.interpreter.get_output_details()
             self.interpreter.allocate_tensors()
             self.interpreter.set_tensor(input_details[0]['index'], frame)
             self.interpreter.invoke()
             output_data = self.interpreter.get_tensor(output_details[0]['index'])
-            print(output_data)
             self.mean_angle = output_data[0][0]
-            # self.mean_angle = self.model(output_data(frame, axis=0))
             self.drive(speed=25, steering_angle=int(self.mean_angle))
             print(f"Lenkwinkel: {self.mean_angle}")
 
@@ -185,8 +176,7 @@ class NNCar(CamCar):
 
 if __name__ == "__main__":
     car = NNCar()
-    ### car.process_img()
+    # car.process_img()
     # car.build_model()
     # car.train_model()
-    #car.model_loading()
     #car.convert_model_to_tflite()
