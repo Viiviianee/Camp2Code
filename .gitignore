@@ -8,3 +8,4 @@ test.ipynb
 test_2.py
 *.jpg
 *.keras
+*.npy
