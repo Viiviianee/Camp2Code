@@ -113,8 +113,8 @@ class NNCar(CamCar):
         model.summary()
 
     def train_model(self):
-        x_path = self.img_path = Path(__file__).parents[0].joinpath("images", "x.npy")
-        y_path = self.img_path = Path(__file__).parents[0].joinpath("images", "y.npy")
+        x_path = Path(__file__).parents[0].joinpath("images", "x.npy")
+        y_path = Path(__file__).parents[0].joinpath("images", "y.npy")
         x = np.load(x_path)
         y = np.load(y_path)
         es_callback = EarlyStopping(
