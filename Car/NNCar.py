@@ -38,6 +38,7 @@ class NNCar(CamCar):
             self.interpreter = tflite.Interpreter(model_path="/home/pi/Camp2Code/Car/TFLite_Modell.tflite")
         else:
             print("TFLite_Modell liegt nicht vor.")
+            self.interpreter = None
 
     def process_img(self):
         if os.path.exists(self.img_path):
@@ -124,6 +125,7 @@ class NNCar(CamCar):
         plt.xlabel('Epoch')
         plt.ylabel('Loss')
         plt.legend(loc='lower right')
+        plt.show()
         plt.plot(history.history['mae'], label='mae')
         plt.plot(history.history['val_mae'], label = 'val_mae')
         plt.xlabel('Epoch')
