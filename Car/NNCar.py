@@ -86,6 +86,26 @@ class NNCar(CamCar):
         output = Dense(units=1)(x)
 
         model = Model(inputs=[input_img], outputs=[output])
+    
+        # # Keras Sequntial API
+        # model = tf.keras.Sequential(name='BeispielModell') 
+        # # Convolution Layers 
+        # # elu: Expenential Linear Unit, similar to leaky Relu 
+        # model.add(Conv2D(24, (5, 5), strides=(2, 2), input_shape=(100, 200, 3), activation='elu')) 
+        # model.add(Conv2D(36, (5, 5), strides=(2, 2), activation='elu'))
+        # model.add(Conv2D(48, (5, 5), strides=(2, 2), activation='elu'))
+        # model.add(Conv2D(64, (3, 3), activation='elu')) 
+        # model.add(Dropout(0.2)) # more robustness 
+        # model.add(Conv2D(64, (3, 3), activation='elu')) 
+        # # Fully Connected Layers 
+        # model.add(Flatten()) 
+        # model.add(Dropout(0.2)) # more robustness 
+        # model.add(Dense(100, activation='elu')) 
+        # model.add(Dense(50, activation='elu')) 
+        # model.add(Dense(10, activation='elu'))
+        # # Output Layer: turning angle
+        # model.add(Dense(1)) 
+        
         model.compile(loss="mse",
                       optimizer=Adam(learning_rate=0.001),
                       metrics=["mae"])
@@ -132,7 +152,6 @@ class NNCar(CamCar):
         plt.ylabel('Mean absolute error')
         plt.legend(loc='lower right')
         plt.show()  # Wird im Raspberry nicht angezeigt, da zusätzliches Fenster geöffnet wird
-
 
     def model_loading(self):
         x = str(Path(__file__).parents[0].joinpath("images", "x.npy"))
