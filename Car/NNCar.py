@@ -185,7 +185,7 @@ class NNCar(CamCar):
 
 if __name__ == "__main__":
     car = NNCar()
-    # car.process_img()
+    ## car.process_img()
     # car.build_model()
     # car.train_model()
     #car.model_loading()
