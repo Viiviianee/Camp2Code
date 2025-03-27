@@ -136,6 +136,7 @@ class NNCar(CamCar):
             y=y_train,
             epochs=100,
             verbose=1,
+            batch_size=64,
             validation_data=(x_test, y_test),
             callbacks=[es_callback, mcp]
         )
