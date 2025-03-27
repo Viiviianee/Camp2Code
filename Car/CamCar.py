@@ -11,7 +11,19 @@ from pathlib import Path
 
 
 class CamCar(BaseCar):
+    """
+    Eine Klasse, die ein Fahrzeug mit einer Kamera repräsentiert und Bilder verarbeitet, 
+    um Steuerbefehle zu generieren. Sie bietet Funktionen zur Bildaufnahme, Bildverarbeitung 
+    (einschließlich Farbfilterung, Kantenbestimmung, Linienerkennung und Berechnung von 
+    Steuerwinkeln) sowie zum Speichern und Anzeigen von Bildern.
+    """
     def __init__(self):
+        """
+        Initialisiert das CamCar-Objekt und die zugehörigen Variablen. 
+        Dabei wird eine Kamera instanziiert und einige Standardwerte für die Bildverarbeitung festgelegt.
+        Es werden Standardwerte für die Farbfilterung, den Canny-Algorithmus, die Linienerkennung 
+        sowie die Bilddaten initialisiert.
+        """
         self.cam = Camera()
         self.take_image = False
         self.recording = False
@@ -87,35 +99,72 @@ class CamCar(BaseCar):
         print(f"Image saved in {path}")
 
     def set_original_img(self):
+        """
+        Nimmt ein Bild von der Kamera auf und speichert es als Originalbild.
+        ROI wird festgelegt.
+        """
         frame = self.cam.get_frame()
         if frame is not None:
             self.img_original = frame
-            self.img_original_roi = self.img_original[int(self.img_original.shape[0]*0.5):int(self.img_original.shape[1]*0.95), :, :]
+            self.img_original_roi = self.img_original[int(self.img_original.shape[0]*0.3):int(self.img_original.shape[1]*0.6), :, :]
 
     def display_gray(self):
+        """
+        Konvertiert das Originalbild in ein Graustufenbild.
+        Returns:
+            ndarray: Das Graustufenbild der Region of Interest (ROI).
+        """
         self.gray_img = cv2.cvtColor(self.img_original_roi, cv2.COLOR_BGR2GRAY)
         return self.gray_img
 
     def filter_color(self):
-        #self.img_hsv = cv2.cvtColor(self.img_original_roi, cv2.COLOR_BGR2HSV)
+        """
+        Filtert das Bild basierend auf den HSV-Farbwerten.
+        Returns:
+            ndarray: Das gefilterte Bild, das nur die Farben im angegebenen HSV-Bereich enthält.
+        """
         array_low = np.array([self.lower_h, self.lower_s, self.lower_v])
         array_high= np.array([self.upper_h, self.upper_s, self.upper_v])
         self.img_filtered = cv2.inRange(cv2.cvtColor(self.img_original_roi, cv2.COLOR_BGR2HSV), array_low, array_high)
         return self.img_filtered
     
     def create_blur(self):
+        """
+        Wendet einen Unschärfe-Filter auf das gefilterte Bild an.
+
+        Returns:
+            ndarray: Das verschwommene Bild.
+        """
         self.img_blured = cv2.blur(self.img_filtered, (5, 5))
         return self.img_blured
 
     def create_canny(self):
+        """
+        Wendet den Canny-Kantenerkennungsalgorithmus auf das unscharfe Bild an.
+
+        Returns:
+            ndarray: Das Bild mit den erkannten Kanten.
+        """
         self.img_cannied = cv2.Canny(self.img_blured, self.canny_min_val, self.canny_max_val)
         return self.img_cannied
 
     def create_lines(self):
+        """
+        Verwendet den Hough-Transformations-Algorithmus, um Linien im Bild zu erkennen.
+
+        Returns:
+            list: Eine Liste der erkannten Linien im Bild.
+        """
         self.lines = cv2.HoughLinesP(self.img_cannied, 1, np.pi/180, threshold=self.threshold, minLineLength=self.minLineLength_slider_val, maxLineGap=self.maxLineGap_val)
         return self.lines
 
     def create_img_with_lines(self):
+        """
+        Zeichnet die erkannten Linien auf dem Originalbild.
+
+        Returns:
+            ndarray: Das Bild mit den gezeichneten Linien.
+        """
         try:
             line_img = self.img_original_roi.copy()
             for line in self.lines:
@@ -124,14 +173,12 @@ class CamCar(BaseCar):
             self.line_img = line_img
             return self.line_img
         except: 
-            # empty_img = self.img_original_roi.copy()
-            # empty_img = empty_img [:,:,:]
-            # empty_img [:,:,:] = 255
-            # self.line_img = empty_img
-            # return self.line_img
             return self.img_original_roi
     
     def create_steering_angles(self):
+        """
+        Der Winkel wird anhand der Hough-Linien berechnet, wobei der Mittelwert der Winkel verwendet wird.
+        """
         if self.lines is not None:
             list_of_angles = []
             for line in self.lines:
@@ -144,6 +191,15 @@ class CamCar(BaseCar):
 #           self.mean_angle = sum(self.mean_angle_lists) / len(self.mean_angle_lists)
 
     def helper_1(self):
+        """
+        Ein Hilfsprozess, der kontinuierlich das Bild von der Kamera verarbeitet, Farbfilter anwendet, 
+        Kanten erkennt, Linien extrahiert und den Steuerwinkel berechnet.
+
+        Diese Methode stellt das verarbeitete Bild zur Verfügung, das in einer Live-Ansicht angezeigt werden kann.
+        
+        Yields:
+            bytes: Bilddaten im JPEG-Format für die Live-Ansicht.
+        """
         while True:
             self.set_original_img()
             self.filter_color()
@@ -152,13 +208,12 @@ class CamCar(BaseCar):
             self.create_lines()
             self.create_img_with_lines()
             self.create_steering_angles()
-            #current_time = datetime.datetime.now().strftime("%H:%M:%S.%f")[:-3]
-            #print(current_time, self.mean_angle)
 
             try:
+                foo_0 = cv2.resize(self.img_original, (self.img_blured.shape[1], self.img_blured.shape[0]) )
                 foo_1 = np.zeros((self.img_blured.shape[0], self.img_blured.shape[1], 3), dtype=int)
                 foo_1[:, :, 0] = self.img_blured
-                stacked = np.hstack([self.line_img, foo_1])
+                stacked = np.hstack([foo_0, foo_1, self.line_img])
                 _, frame_as_jpeg = cv2.imencode(".jpeg", stacked)  # Numpy Array in jpeg
             except:
                 _, frame_as_jpeg = cv2.imencode(".jpeg", self.line_img)

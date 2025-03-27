@@ -26,7 +26,18 @@ import matplotlib.pyplot as plt
 import tflite_runtime.interpreter as tflite
 
 class NNCar(CamCar):
+    """
+    Eine Klasse, die ein neuronales Netzwerk für ein autonomes Fahrzeug repräsentiert, 
+    das mit Bildern arbeitet, um Steuerbefehle zu generieren. 
+    Diese Klasse erbt von der CamCar-Klasse und implementiert Funktionen zur 
+    Bilderverarbeitung, Modellbildung, -training und -nutzung.
+    """
     def __init__(self):
+        """
+        Initialisiert das NNCar-Objekt und lädt das TFLite-Modell, wenn es existiert.
+        Die Größe und Form der Bilder wird ebenfalls festgelegt, sowie der Pfad 
+        zu den Bildern und das Modell.
+        """
         super().__init__()
         self.img_path = Path(__file__).parents[0].joinpath("images")
         self.img_size_for_resize = (128, 128)
@@ -41,6 +52,11 @@ class NNCar(CamCar):
             self.interpreter = None
 
     def process_img(self):
+        """
+        Lädt alle Bilder im angegebenen Verzeichnis, konvertiert sie in ein geeignetes Format 
+        und speichert die Bilddaten sowie die Labels als .npy-Dateien.
+        Der Label wird aus dem Dateinamen extrahiert.
+        """
         if os.path.exists(self.img_path):
             images = []
             labels = []
@@ -67,6 +83,10 @@ class NNCar(CamCar):
             print("Image folder does not exist on this file level")
 
     def build_model(self):
+        """
+        Erstellt und kompiliert ein Convolutional Neural Network (CNN)-Modell für die 
+        Vorhersage eines kontinuierlichen Wertes, wie z. B. den Lenkwinkel eines Fahrzeugs.
+        """
         input_img = Input(shape=self.img_shape)
         x = Conv2D(filters=32, kernel_size=(3,3))(input_img)
         x = Activation("relu")(x)
@@ -113,6 +133,12 @@ class NNCar(CamCar):
         model.summary()
 
     def train_model(self):
+        """
+        Trainiert das Modell mit den vorbereiteten Trainingsdaten und validiert es 
+        mit einem Testdatensatz. Während des Trainings werden die Verlustfunktionen 
+        und die mittlere absolute Fehler (MAE) über die Epochen hinweg angezeigt.
+        Verwendet EarlyStopping und ModelCheckpoint für die Modellverbesserung.
+        """
         x_path = self.img_path = Path(__file__).parents[0].joinpath("images", "x.npy")
         y_path = self.img_path = Path(__file__).parents[0].joinpath("images", "y.npy")
         x = np.load(x_path)
@@ -155,6 +181,10 @@ class NNCar(CamCar):
         plt.show()  # Wird im Raspberry nicht angezeigt, da zusätzliches Fenster geöffnet wird
 
     def model_loading(self):
+        """
+        Lädt das vortrainierte Modell und führt eine Vorhersage für ein Beispielbild durch.
+        Die Eingabedaten werden aus den gespeicherten .npy-Dateien geladen.
+        """
         x = str(Path(__file__).parents[0].joinpath("images", "x.npy"))
         x = np.load(x)
         y = str(Path(__file__).parents[0].joinpath("images", "y.npy"))
@@ -167,6 +197,11 @@ class NNCar(CamCar):
         print(test[0][0])
 
     def model_drive(self):
+        """
+        Führt das autonome Fahrzeug basierend auf der Vorhersage des Modells.
+        Verwendet das TFLite-Modell, um Bilder in Steuerbefehle (Lenkwinkel) umzuwandeln.
+        Die Fahrt wird kontinuierlich mit einer festen Geschwindigkeit ausgeführt.
+        """
         self.starting_time = time.perf_counter()
         self.running = True
         while self.running:
@@ -187,6 +222,10 @@ class NNCar(CamCar):
 
     @staticmethod
     def convert_model_to_tflite():
+        """
+        Konvertiert das Keras-Modell in das TFLite-Format und speichert es als .tflite-Datei.
+        Dies ist nützlich für die Ausführung des Modells auf einem Edge-Gerät wie einem Raspberry Pi.
+        """
         model_path = Path(__file__).parents[0].joinpath("model.keras")
         model_path = str(model_path)
         loaded_model = load_model(model_path)
