@@ -60,7 +60,7 @@ app = Dash(
     server=server
 )
 
-car = NNCar()
+car = Opencvcar()
 
 @server.route("/Cam/video_feed1")
 def video_feed1():
